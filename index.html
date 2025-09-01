@@ -116,7 +116,7 @@
     </main>
 
     <!-- Modals -->
-    <div id="login-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-8 w-11/12 sm:w-96 animate-fade-in"><div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold">Admin Login</h3><button onclick="closeLoginModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="space-y-4"><div><label for="email" class="block text-sm font-medium text-gray-700">Email</label><input type="email" id="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><div><label for="password" class="block text-sm font-medium text-gray-700">Password</label><input type="password" id="password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><p id="login-error" class="text-sm text-red-600 hidden"></p><div class="flex justify-end pt-4"><button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Login</button></div><p class="text-xs text-gray-500 text-center pt-2">First time? Use this form to create your account. Your login details will be saved securely.</p></form></div></div>
+    <div id="login-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-8 w-11/12 sm:w-96 animate-fade-in"><div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold">Admin Login</h3><button onclick="closeLoginModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="space-y-4"><div><label for="email" class="block text-sm font-medium text-gray-700">Email</label><input type="email" id="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><div><label for="password" class="block text-sm font-medium text-gray-700">Password</label><input type="password" id="password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><p id="login-error" class="text-sm text-red-600 hidden"></p><div class="flex justify-end pt-4"><button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Login</button></div><p class="text-xs text-gray-500 text-center pt-2">Enter your admin credentials to log in. Account creation is handled by the administrator.</p></form></div></div>
     <div id="box-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="box-modal-title" class="text-2xl font-bold">Add New Box</h2><button onclick="closeBoxModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="box-form" class="space-y-4"><input type="hidden" id="box-id"><div><label for="box-number" class="block text-sm font-medium">Box Number</label><input type="text" id="box-number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="box-room-area" class="block text-sm font-medium">Room / Area</label><input type="text" id="box-room-area" list="room-suggestions" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label class="block text-sm font-medium">Dimensions (cm)</label><div class="grid grid-cols-3 gap-2 mt-1"><input type="number" id="box-height" placeholder="H" class="block w-full border-gray-300 rounded-md shadow-sm"><input type="number" id="box-width" placeholder="W" class="block w-full border-gray-300 rounded-md shadow-sm"><input type="number" id="box-length" placeholder="L" class="block w-full border-gray-300 rounded-md shadow-sm"></div></div><div><p class="text-sm text-gray-600">Calculated Volume: <span id="box-volume" class="font-bold text-indigo-600">0.000 m³</span></p></div><div id="qr-code-section" class="pt-4 border-t mt-4 text-center hidden"><div id="qr-code-container" class="mx-auto w-40 h-40 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-500 p-2">QR Code will appear here</div><div class="mt-4 flex justify-center space-x-2"><button type="button" onclick="generateQRCodeForBox()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700"><i class="fas fa-qrcode mr-2"></i>Generate QR</button><button type="button" id="print-qr-btn" onclick="printQRCode()" class="hidden bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"><i class="fas fa-print mr-2"></i>Print</button></div><p id="qr-new-box-note" class="text-xs text-gray-500 mt-2">Save the box first to generate a QR code.</p></div><div class="flex justify-end space-x-4 pt-4 border-t"><button type="button" onclick="closeBoxModal()" class="bg-gray-200 px-6 py-2 rounded-lg">Cancel</button><button type="submit" id="save-box-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg">Save Box</button></div></form></div></div>
     <div id="item-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-2/3 lg:w-1/2 xl:w-2/5 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="item-modal-title" class="text-2xl font-bold">Add New Item</h2><button onclick="closeItemModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="item-form" class="space-y-4"><input type="hidden" id="item-id"><div><label for="item-box-select" class="block text-sm font-medium">Assign to Box</label><select id="item-box-select" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select></div><hr><h3 class="text-lg font-semibold">Item Details</h3><div><label for="item-name" class="block text-sm font-medium">Item Name</label><input type="text" id="item-name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="estimated-value" class="block text-sm font-medium">Estimated Current Value ($)</label><input type="number" step="0.01" id="estimated-value" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="is-new-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="is-new-checkbox" class="font-medium text-gray-700">Is this item 12 months or newer?</label></div></div><div id="new-item-details" class="hidden space-y-4 pt-2 border-t mt-4"><div><label for="purchase-date" class="block text-sm font-medium">Purchase Date</label><input type="date" id="purchase-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="item-cost" class="block text-sm font-medium">Cost ($)</label><input type="number" step="0.01" id="item-cost" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div></div><div class="space-y-2 pt-2 border-t mt-4"><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="has-wood-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="has-wood-checkbox" class="font-medium text-gray-700">Does this item have any wood?</label></div></div><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="is-treated-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="is-treated-checkbox" class="font-medium text-gray-700">Is it sealed / treated?</label></div></div></div><textarea id="item-notes" rows="2" placeholder="Notes (e.g., fragile, parts, etc.)" class="block w-full border-gray-300 rounded-md shadow-sm"></textarea><div><label class="block text-sm font-medium">Photo</label><div class="mt-1 flex items-center gap-4"><img id="photo-preview" class="hidden h-20 w-20 rounded-md object-cover border"><input type="file" id="item-photo-input" accept="image/*" capture="environment" class="hidden"><label for="item-photo-input" class="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md"><span><i class="fas fa-camera mr-2"></i>Take/Upload</span></label><button type="button" id="remove-photo-btn" class="hidden text-red-600">Remove</button></div></div><div class="flex justify-end space-x-4 pt-4"><button type="button" onclick="closeItemModal()" class="bg-gray-200 px-6 py-2 rounded-lg">Cancel</button><button type="submit" id="save-item-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg">Save Item</button></div></form></div></div>
     <div id="photo-modal" class="modal-backdrop"><div class="relative animate-fade-in"><button onclick="closePhotoModal()" class="absolute -top-4 -right-4 text-white bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center text-2xl">&times;</button><img id="full-photo" src="" class="max-h-[85vh] max-w-[90vw] rounded-lg shadow-xl"></div></div>
@@ -140,7 +140,7 @@
 
         // Firebase state
         let db, auth;
-        let isLoggedIn = false;
+        let isOwnerLoggedIn = false;
         let unsubscribeBoxes = () => {};
         let unsubscribeItems = () => {};
         
@@ -180,20 +180,25 @@
         const qrNewBoxNote = document.getElementById('qr-new-box-note');
         
         function updateUIForLoginState(user) {
-            isLoggedIn = !!user;
-            loginBtn.classList.toggle('hidden', isLoggedIn);
-            logoutBtn.classList.toggle('hidden', !isLoggedIn);
-            addBoxBtn.classList.toggle('hidden', !isLoggedIn);
-            addItemBtn.classList.toggle('hidden', !isLoggedIn);
+            isOwnerLoggedIn = user && user.uid === OWNER_USER_ID;
+            loginBtn.classList.toggle('hidden', isOwnerLoggedIn);
+            logoutBtn.classList.toggle('hidden', !isOwnerLoggedIn);
+            addBoxBtn.classList.toggle('hidden', !isOwnerLoggedIn);
+            addItemBtn.classList.toggle('hidden', !isOwnerLoggedIn);
             
-            if (isLoggedIn) {
-                userIdDisplay.textContent = `Logged in: ${user.email}`;
-                document.getElementById('empty-state-subtext').textContent = 'You are logged in! Start adding boxes and items.';
+            if (user) {
+                if(isOwnerLoggedIn) {
+                    userIdDisplay.textContent = `Logged in as Admin: ${user.email}`;
+                    document.getElementById('empty-state-subtext').textContent = 'You are logged in! Start adding boxes and items.';
+                } else {
+                    userIdDisplay.textContent = `Logged in as Guest (Read-Only): ${user.email}`;
+                    document.getElementById('empty-state-subtext').textContent = 'Login with the correct admin account to make changes.';
+                }
             } else {
                 userIdDisplay.textContent = 'Public Read-Only View';
                  document.getElementById('empty-state-subtext').textContent = 'Login as an admin to start adding boxes and items.';
             }
-            render(); // Re-render to show/hide edit/delete buttons
+            render();
         }
 
         // --- RENDER ---
@@ -225,7 +230,7 @@
             boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden';
             const itemsHTML = boxItems.map(createItemHTML).join('');
             const adminButtons = `<button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button><button onclick="editBox('${box.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button><button onclick="confirmDelete('box', '${box.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
-            boxEl.innerHTML = `<div class="bg-gray-50 p-4 border-b flex justify-between items-center"><div><h3 class="text-xl font-bold text-indigo-700">Box ${box.number}</h3><p class="text-sm text-gray-500">${box.room} <span class="mx-2 text-gray-300">|</span> ${box.volume.toFixed(3)} m³</p></div><div class="space-x-2 flex items-center">${isLoggedIn ? adminButtons : `<button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>`}</div></div><div class="divide-y divide-gray-200">${itemsHTML || '<p class="p-4 text-gray-500 text-sm">No items in this box yet.</p>'}</div>`;
+            boxEl.innerHTML = `<div class="bg-gray-50 p-4 border-b flex justify-between items-center"><div><h3 class="text-xl font-bold text-indigo-700">Box ${box.number}</h3><p class="text-sm text-gray-500">${box.room} <span class="mx-2 text-gray-300">|</span> ${box.volume.toFixed(3)} m³</p></div><div class="space-x-2 flex items-center">${isOwnerLoggedIn ? adminButtons : `<button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>`}</div></div><div class="divide-y divide-gray-200">${itemsHTML || '<p class="p-4 text-gray-500 text-sm">No items in this box yet.</p>'}</div>`;
             return boxEl;
         }
 
@@ -234,7 +239,7 @@
             const newTag = item.isNew ? '<span class="ml-2 text-xs font-semibold bg-green-100 text-green-800 px-2 py-0.5 rounded-full">NEW</span>' : '';
             let woodInfo = item.hasWood ? `<p class="text-xs text-amber-700 mt-1"><i class="fas fa-tree mr-1"></i> Wood ${item.isTreated ? '(Treated)' : '(Untreated)'}</p>` : '';
             const adminButtons = `<button onclick="editItem('${item.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button><button onclick="confirmDelete('item', '${item.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
-            return `<div class="p-4 grid grid-cols-6 gap-4 items-center"><div class="col-span-1">${photoThumb}</div><div class="col-span-6 sm:col-span-3"><p class="font-semibold flex items-center">${item.name} ${newTag}</p><p class="text-sm text-gray-500">${item.notes || ''}</p>${woodInfo}</div><div class="col-span-3 sm:col-span-1 text-right sm:text-left"><p class="font-semibold text-green-600">$${formatCurrency(item.value)}</p></div><div class="col-span-3 sm:col-span-1 flex items-center justify-end space-x-2">${isLoggedIn ? adminButtons : ''}</div></div>`;
+            return `<div class="p-4 grid grid-cols-6 gap-4 items-center"><div class="col-span-1">${photoThumb}</div><div class="col-span-6 sm:col-span-3"><p class="font-semibold flex items-center">${item.name} ${newTag}</p><p class="text-sm text-gray-500">${item.notes || ''}</p>${woodInfo}</div><div class="col-span-3 sm:col-span-1 text-right sm:text-left"><p class="font-semibold text-green-600">$${formatCurrency(item.value)}</p></div><div class="col-span-3 sm:col-span-1 flex items-center justify-end space-x-2">${isOwnerLoggedIn ? adminButtons : ''}</div></div>`;
         }
         
         // --- Login Modal & Auth Logic ---
@@ -245,12 +250,25 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             loginError.classList.add('hidden');
-            try { await signInWithEmailAndPassword(auth, email, password); closeLoginModal(); } 
-            catch (error) {
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                closeLoginModal();
+            } catch (error) {
                 if (error.code === 'auth/user-not-found') {
-                    try { await createUserWithEmailAndPassword(auth, email, password); closeLoginModal(); } 
-                    catch (createError) { loginError.textContent = createError.message; loginError.classList.remove('hidden'); }
-                } else { loginError.textContent = error.message; loginError.classList.remove('hidden'); }
+                    // This block is for the very first time the owner creates an account.
+                    // It can be removed for better security after the first account is created.
+                     try { 
+                        await createUserWithEmailAndPassword(auth, email, password); 
+                        closeLoginModal(); 
+                        showInfoModal("Admin account created successfully! You can now find your User ID in the Firebase console to complete the setup.", "Account Created");
+                    } catch (createError) { 
+                        loginError.textContent = createError.message; 
+                        loginError.classList.remove('hidden'); 
+                    }
+                } else {
+                    loginError.textContent = "Login failed: Invalid email or password.";
+                    loginError.classList.remove('hidden');
+                }
             }
         });
         window.logout = async () => { await signOut(auth); };
@@ -302,79 +320,30 @@
         // --- EVENT LISTENERS FOR FORMS ---
         document.getElementById('box-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!isLoggedIn) {
-                showInfoModal("You must be logged in to save changes.");
-                return;
-            }
+            if (!isOwnerLoggedIn) { showInfoModal("You must be logged in as admin to save changes."); return; }
             const saveBtn = document.getElementById('save-box-btn');
             saveBtn.disabled = true;
             saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
-
             const id = document.getElementById('box-id').value;
-            const boxData = {
-                number: document.getElementById('box-number').value,
-                room: document.getElementById('box-room-area').value,
-                height: parseFloat(document.getElementById('box-height').value) || 0,
-                width: parseFloat(document.getElementById('box-width').value) || 0,
-                length: parseFloat(document.getElementById('box-length').value) || 0,
-            };
+            const boxData = { number: document.getElementById('box-number').value, room: document.getElementById('box-room-area').value, height: parseFloat(document.getElementById('box-height').value) || 0, width: parseFloat(document.getElementById('box-width').value) || 0, length: parseFloat(document.getElementById('box-length').value) || 0, };
             boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000;
-
-            try {
-                if (id) {
-                    await setDoc(doc(db, "users", OWNER_USER_ID, "boxes", id), boxData);
-                } else {
-                    await addDoc(collection(db, "users", OWNER_USER_ID, "boxes"), boxData);
-                }
-                closeBoxModal();
-            } catch (error) {
-                console.error("Error saving box: ", error);
-                showInfoModal("Failed to save box. Please try again.");
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = 'Save Box';
-            }
+            try { if (id) { await setDoc(doc(db, "users", OWNER_USER_ID, "boxes", id), boxData); } else { await addDoc(collection(db, "users", OWNER_USER_ID, "boxes"), boxData); } closeBoxModal(); } 
+            catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); } 
+            finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Box'; }
         });
 
         document.getElementById('item-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!isLoggedIn) {
-                showInfoModal("You must be logged in to save changes.");
-                return;
-            }
+            if (!isOwnerLoggedIn) { showInfoModal("You must be logged in as admin to save changes."); return; }
             const saveBtn = document.getElementById('save-item-btn');
             saveBtn.disabled = true;
             saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
-            
             const id = document.getElementById('item-id').value;
             const isNew = isNewCheckbox.checked;
-            const itemData = {
-                boxId: document.getElementById('item-box-select').value,
-                name: document.getElementById('item-name').value,
-                value: parseFloat(document.getElementById('estimated-value').value) || 0,
-                notes: document.getElementById('item-notes').value,
-                photoDataUrl: photoDataUrlCache,
-                isNew: isNew,
-                purchaseDate: isNew ? document.getElementById('purchase-date').value : '',
-                cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0,
-                hasWood: document.getElementById('has-wood-checkbox').checked,
-                isTreated: document.getElementById('is-treated-checkbox').checked,
-            };
-
-            try {
-                if (id) {
-                    await setDoc(doc(db, "users", OWNER_USER_ID, "items", id), itemData);
-                } else {
-                    await addDoc(collection(db, "users", OWNER_USER_ID, "items"), itemData);
-                }
-                closeItemModal();
-            } catch (error) {
-                console.error("Error saving item: ", error);
-                showInfoModal("Failed to save item. Please try again.");
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = 'Save Item';
-            }
+            const itemData = { boxId: document.getElementById('item-box-select').value, name: document.getElementById('item-name').value, value: parseFloat(document.getElementById('estimated-value').value) || 0, notes: document.getElementById('item-notes').value, photoDataUrl: photoDataUrlCache, isNew: isNew, purchaseDate: isNew ? document.getElementById('purchase-date').value : '', cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0, hasWood: document.getElementById('has-wood-checkbox').checked, isTreated: document.getElementById('is-treated-checkbox').checked, };
+            try { if (id) { await setDoc(doc(db, "users", OWNER_USER_ID, "items", id), itemData); } else { await addDoc(collection(db, "users", OWNER_USER_ID, "items"), itemData); } closeItemModal(); } 
+            catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); } 
+            finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; }
         });
 
         // --- FULL FUNCTION IMPLEMENTATIONS ---
@@ -395,7 +364,7 @@
         function resetPhotoPreview() { photoDataUrlCache = null; photoPreview.src = ''; photoPreview.classList.add('hidden'); removePhotoBtn.classList.add('hidden'); photoInput.value = ''; }
         window.openPhotoModal = (url) => { document.getElementById('full-photo').src = url; photoModal.style.display = 'flex'; }
         window.closePhotoModal = () => { photoModal.style.display = 'none'; }
-        window.confirmDelete = (type, id) => { if (!isLoggedIn) { showInfoModal("You must be logged in to delete items."); return; } if (type === 'item') { itemToDelete = id; boxToDelete = null; } if (type === 'box') { boxToDelete = id; itemToDelete = null; } confirmModal.style.display = 'flex'; }
+        window.confirmDelete = (type, id) => { if (!isOwnerLoggedIn) { showInfoModal("You must be logged in as admin to delete items."); return; } if (type === 'item') { itemToDelete = id; boxToDelete = null; } if (type === 'box') { boxToDelete = id; itemToDelete = null; } confirmModal.style.display = 'flex'; }
         async function executeDelete() { try { if (itemToDelete) { await deleteDoc(doc(db, "users", OWNER_USER_ID, "items", itemToDelete)); } if (boxToDelete) { const itemsInBoxQuery = query(collection(db, "users", OWNER_USER_ID, "items"), where("boxId", "==", boxToDelete)); const itemsInBoxSnapshot = await getDocs(itemsInBoxQuery); const batch = writeBatch(db); itemsInBoxSnapshot.forEach(doc => batch.delete(doc.ref)); batch.delete(doc(db, "users", OWNER_USER_ID, "boxes", boxToDelete)); await batch.commit(); } } catch (error) { console.error("Error deleting document: ", error); showInfoModal("Failed to delete. Please try again."); } closeConfirmModal(); }
         function closeConfirmModal() { itemToDelete = null; boxToDelete = null; confirmModal.style.display = 'none'; }
         document.getElementById('confirm-delete-btn').addEventListener('click', executeDelete);
