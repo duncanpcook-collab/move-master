@@ -11,7 +11,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* Tailwind gray-50 */
+            background-color: #f8fafc;
         }
         .modal-backdrop {
             display: none;
@@ -43,26 +43,18 @@
         .modal-content::-webkit-scrollbar { width: 8px; }
         .modal-content::-webkit-scrollbar-track { background: #f1f5f9; }
         .modal-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .modal-content::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         #photo-preview { max-height: 120px; }
         #loading-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(255, 255, 255, 0.8);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
             backdrop-filter: blur(5px);
         }
-         .spinner {
+        .spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
-            width: 36px;
-            height: 36px;
+            width: 36px; height: 36px;
             border-radius: 50%;
             border-left-color: #4f46e5;
             animation: spin 1s ease infinite;
@@ -86,18 +78,26 @@
             <div class="flex flex-col sm:flex-row justify-between items-center">
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
-                    <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Your personal moving inventory, simplified.</p>
+                    <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Public Read-Only View</p>
                 </div>
                 <div class="mt-4 sm:mt-0 flex items-center space-x-2 sm:space-x-4">
                     <button onclick="openExportModal()" class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
                         <i class="fas fa-file-csv mr-2"></i>Export CSV
                     </button>
-                    <button onclick="openBoxModal()" class="bg-white text-indigo-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-50 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                    <button id="add-box-btn" onclick="openBoxModal()" class="hidden bg-white text-indigo-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-50 transition-transform transform hover:scale-105 text-sm sm:text-base">
                         <i class="fas fa-box mr-2"></i>Add Box
                     </button>
-                    <button onclick="openItemModal()" class="bg-white text-indigo-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-50 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                    <button id="add-item-btn" onclick="openItemModal()" class="hidden bg-white text-indigo-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-50 transition-transform transform hover:scale-105 text-sm sm:text-base">
                         <i class="fas fa-plus-circle mr-2"></i>Add Item
                     </button>
+                    <div id="auth-container">
+                         <button id="login-btn" onclick="openLoginModal()" class="bg-white text-indigo-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-50 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Admin Login
+                        </button>
+                        <button id="logout-btn" onclick="logout()" class="hidden bg-red-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,32 +105,18 @@
 
     <!-- Main Content -->
     <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center">
-                <div class="bg-blue-100 text-blue-600 p-4 rounded-full"><i class="fas fa-box-open text-2xl"></i></div>
-                <div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Boxes</p><p id="total-boxes" class="text-2xl font-bold">0</p></div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center">
-                <div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div>
-                <div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center">
-                <div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div>
-                <div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-blue-100 text-blue-600 p-4 rounded-full"><i class="fas fa-box-open text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Boxes</p><p id="total-boxes" class="text-2xl font-bold">0</p></div></div>
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div></div>
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
         </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-4">
-            <div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></div>
-            <div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><select id="room-filter" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"><option value="all">All Rooms</option></select></div>
-            <button onclick="resetFilters()" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">Reset</button>
-        </div>
-        
+        <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-4"><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></div><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><select id="room-filter" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"><option value="all">All Rooms</option></select></div><button onclick="resetFilters()" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">Reset</button></div>
         <div id="inventory-list" class="space-y-6"></div>
-        <div id="empty-state" class="text-center py-16 hidden"><img src="https://placehold.co/300x200/E9D5FF/4C1D95?text=Start+Packing!" alt="Empty state illustration" class="mx-auto mb-6 rounded-lg"><h2 class="text-2xl font-semibold text-gray-700">Your inventory is empty!</h2><p class="text-gray-500 mt-2">Click "Add Box" to create your first box, then "Add Item" to start cataloging.</p></div>
+        <div id="empty-state" class="text-center py-16 hidden"><img src="https://placehold.co/300x200/E9D5FF/4C1D95?text=Start+Packing!" alt="Empty state illustration" class="mx-auto mb-6 rounded-lg"><h2 class="text-2xl font-semibold text-gray-700">The inventory is empty!</h2><p id="empty-state-subtext" class="text-gray-500 mt-2">Login as an admin to start adding boxes and items.</p></div>
     </main>
 
     <!-- Modals -->
+    <div id="login-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-8 w-11/12 sm:w-96 animate-fade-in"><div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold">Admin Login</h3><button onclick="closeLoginModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="space-y-4"><div><label for="email" class="block text-sm font-medium text-gray-700">Email</label><input type="email" id="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><div><label for="password" class="block text-sm font-medium text-gray-700">Password</label><input type="password" id="password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><p id="login-error" class="text-sm text-red-600 hidden"></p><div class="flex justify-end pt-4"><button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Login</button></div><p class="text-xs text-gray-500 text-center pt-2">First time? Use this form to create your account. Your login details will be saved securely.</p></form></div></div>
     <div id="box-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="box-modal-title" class="text-2xl font-bold">Add New Box</h2><button onclick="closeBoxModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="box-form" class="space-y-4"><input type="hidden" id="box-id"><div><label for="box-number" class="block text-sm font-medium">Box Number</label><input type="text" id="box-number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="box-room-area" class="block text-sm font-medium">Room / Area</label><input type="text" id="box-room-area" list="room-suggestions" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label class="block text-sm font-medium">Dimensions (cm)</label><div class="grid grid-cols-3 gap-2 mt-1"><input type="number" id="box-height" placeholder="H" class="block w-full border-gray-300 rounded-md shadow-sm"><input type="number" id="box-width" placeholder="W" class="block w-full border-gray-300 rounded-md shadow-sm"><input type="number" id="box-length" placeholder="L" class="block w-full border-gray-300 rounded-md shadow-sm"></div></div><div><p class="text-sm text-gray-600">Calculated Volume: <span id="box-volume" class="font-bold text-indigo-600">0.000 m³</span></p></div><div id="qr-code-section" class="pt-4 border-t mt-4 text-center hidden"><div id="qr-code-container" class="mx-auto w-40 h-40 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-500 p-2">QR Code will appear here</div><div class="mt-4 flex justify-center space-x-2"><button type="button" onclick="generateQRCodeForBox()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700"><i class="fas fa-qrcode mr-2"></i>Generate QR</button><button type="button" id="print-qr-btn" onclick="printQRCode()" class="hidden bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"><i class="fas fa-print mr-2"></i>Print</button></div><p id="qr-new-box-note" class="text-xs text-gray-500 mt-2">Save the box first to generate a QR code.</p></div><div class="flex justify-end space-x-4 pt-4 border-t"><button type="button" onclick="closeBoxModal()" class="bg-gray-200 px-6 py-2 rounded-lg">Cancel</button><button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg">Save Box</button></div></form></div></div>
     <div id="item-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-2/3 lg:w-1/2 xl:w-2/5 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="item-modal-title" class="text-2xl font-bold">Add New Item</h2><button onclick="closeItemModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="item-form" class="space-y-4"><input type="hidden" id="item-id"><div><label for="item-box-select" class="block text-sm font-medium">Assign to Box</label><select id="item-box-select" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select></div><hr><h3 class="text-lg font-semibold">Item Details</h3><div><label for="item-name" class="block text-sm font-medium">Item Name</label><input type="text" id="item-name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="estimated-value" class="block text-sm font-medium">Estimated Current Value ($)</label><input type="number" step="0.01" id="estimated-value" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="is-new-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="is-new-checkbox" class="font-medium text-gray-700">Is this item 12 months or newer?</label></div></div><div id="new-item-details" class="hidden space-y-4 pt-2 border-t mt-4"><div><label for="purchase-date" class="block text-sm font-medium">Purchase Date</label><input type="date" id="purchase-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="item-cost" class="block text-sm font-medium">Cost ($)</label><input type="number" step="0.01" id="item-cost" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div></div><div class="space-y-2 pt-2 border-t mt-4"><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="has-wood-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="has-wood-checkbox" class="font-medium text-gray-700">Does this item have any wood?</label></div></div><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="is-treated-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="is-treated-checkbox" class="font-medium text-gray-700">Is it sealed / treated?</label></div></div></div><textarea id="item-notes" rows="2" placeholder="Notes (e.g., fragile, parts, etc.)" class="block w-full border-gray-300 rounded-md shadow-sm"></textarea><div><label class="block text-sm font-medium">Photo</label><div class="mt-1 flex items-center gap-4"><img id="photo-preview" class="hidden h-20 w-20 rounded-md object-cover border"><input type="file" id="item-photo-input" accept="image/*" capture="environment" class="hidden"><label for="item-photo-input" class="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md"><span><i class="fas fa-camera mr-2"></i>Take/Upload</span></label><button type="button" id="remove-photo-btn" class="hidden text-red-600">Remove</button></div></div><div class="flex justify-end space-x-4 pt-4"><button type="button" onclick="closeItemModal()" class="bg-gray-200 px-6 py-2 rounded-lg">Cancel</button><button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg">Save Item</button></div></form></div></div>
     <div id="photo-modal" class="modal-backdrop"><div class="relative animate-fade-in"><button onclick="closePhotoModal()" class="absolute -top-4 -right-4 text-white bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center text-2xl">&times;</button><img id="full-photo" src="" class="max-h-[85vh] max-w-[90vw] rounded-lg shadow-xl"></div></div>
@@ -142,7 +128,7 @@
     <script type="module">
         // --- Firebase SDK Imports ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, doc, addDoc, setDoc, deleteDoc, query, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- GLOBAL STATE ---
@@ -153,18 +139,33 @@
         let photoDataUrlCache = null;
 
         // Firebase state
-        let db, auth, userId;
+        let db, auth;
+        let isLoggedIn = false;
         let unsubscribeBoxes = () => {};
         let unsubscribeItems = () => {};
+        
+        // --- !! IMPORTANT !! ---
+        // AFTER you create your account for the first time in the app, find your
+        // User ID (UID) in the Firebase Console > Authentication, and paste it here.
+        const OWNER_USER_ID = "PASTE_YOUR_FIREBASE_USER_ID_HERE";
+        // -----------------------
 
         // --- DOM ELEMENTS ---
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const addBoxBtn = document.getElementById('add-box-btn');
+        const addItemBtn = document.getElementById('add-item-btn');
+        const loginModal = document.getElementById('login-modal');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const inventoryListEl = document.getElementById('inventory-list');
         const boxModal = document.getElementById('box-modal');
         const itemModal = document.getElementById('item-modal');
         const photoModal = document.getElementById('photo-modal');
         const confirmModal = document.getElementById('confirm-modal');
         const infoModal = document.getElementById('info-modal');
         const exportModal = document.getElementById('export-modal');
-        const inventoryListEl = document.getElementById('inventory-list');
         const searchInput = document.getElementById('search-input');
         const roomFilter = document.getElementById('room-filter');
         const photoInput = document.getElementById('item-photo-input');
@@ -178,28 +179,39 @@
         const qrCodeSection = document.getElementById('qr-code-section');
         const qrNewBoxNote = document.getElementById('qr-new-box-note');
         
+        function updateUIForLoginState(user) {
+            isLoggedIn = !!user;
+            loginBtn.classList.toggle('hidden', isLoggedIn);
+            logoutBtn.classList.toggle('hidden', !isLoggedIn);
+            addBoxBtn.classList.toggle('hidden', !isLoggedIn);
+            addItemBtn.classList.toggle('hidden', !isLoggedIn);
+            
+            if (isLoggedIn) {
+                userIdDisplay.textContent = `Logged in: ${user.email}`;
+                document.getElementById('empty-state-subtext').textContent = 'You are logged in! Start adding boxes and items.';
+            } else {
+                userIdDisplay.textContent = 'Public Read-Only View';
+                 document.getElementById('empty-state-subtext').textContent = 'Login as an admin to start adding boxes and items.';
+            }
+            render(); // Re-render to show/hide edit/delete buttons
+        }
+
         // --- RENDER ---
         function render() {
             inventoryListEl.innerHTML = '';
             const searchTerm = searchInput.value.toLowerCase();
             const selectedRoom = roomFilter.value;
-            
-            const itemsToShow = items.filter(item => 
-                (item.name.toLowerCase().includes(searchTerm) || (item.notes && item.notes.toLowerCase().includes(searchTerm)))
-            );
+            const itemsToShow = items.filter(item => (item.name.toLowerCase().includes(searchTerm) || (item.notes && item.notes.toLowerCase().includes(searchTerm))));
             const boxIdsToShow = new Set(itemsToShow.map(item => item.boxId));
-            
             const filteredBoxes = boxes.filter(box => {
                 const matchesRoom = selectedRoom === 'all' || box.room === selectedRoom;
                 const hasSearchedItem = searchTerm ? boxIdsToShow.has(box.id) : true;
                 return matchesRoom && hasSearchedItem;
             });
-
-            if (boxes.length === 0) {
-                 document.getElementById('empty-state').style.display = 'block';
-            } else {
+            if (boxes.length === 0) { document.getElementById('empty-state').style.display = 'block'; } 
+            else {
                 document.getElementById('empty-state').style.display = 'none';
-                filteredBoxes.sort((a,b) => parseInt(a.number) - parseInt(b.number)).forEach(box => {
+                filteredBoxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).forEach(box => {
                     const boxItems = items.filter(item => item.boxId === box.id && (searchTerm ? itemsToShow.some(i => i.id === item.id) : true));
                     inventoryListEl.appendChild(createBoxEl(box, boxItems));
                 });
@@ -212,19 +224,8 @@
             const boxEl = document.createElement('div');
             boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden';
             const itemsHTML = boxItems.map(createItemHTML).join('');
-            boxEl.innerHTML = `
-                <div class="bg-gray-50 p-4 border-b flex justify-between items-center">
-                    <div>
-                        <h3 class="text-xl font-bold text-indigo-700">Box ${box.number}</h3>
-                        <p class="text-sm text-gray-500">${box.room} <span class="mx-2 text-gray-300">|</span> ${box.volume.toFixed(3)} m³</p>
-                    </div>
-                    <div class="space-x-2 flex items-center">
-                        <button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>
-                        <button onclick="editBox('${box.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
-                        <button onclick="confirmDelete('box', '${box.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                </div>
-                <div class="divide-y divide-gray-200">${itemsHTML || '<p class="p-4 text-gray-500 text-sm">No items in this box yet.</p>'}</div>`;
+            const adminButtons = `<button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button><button onclick="editBox('${box.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button><button onclick="confirmDelete('box', '${box.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
+            boxEl.innerHTML = `<div class="bg-gray-50 p-4 border-b flex justify-between items-center"><div><h3 class="text-xl font-bold text-indigo-700">Box ${box.number}</h3><p class="text-sm text-gray-500">${box.room} <span class="mx-2 text-gray-300">|</span> ${box.volume.toFixed(3)} m³</p></div><div class="space-x-2 flex items-center">${isLoggedIn ? adminButtons : `<button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>`}</div></div><div class="divide-y divide-gray-200">${itemsHTML || '<p class="p-4 text-gray-500 text-sm">No items in this box yet.</p>'}</div>`;
             return boxEl;
         }
 
@@ -232,174 +233,29 @@
             const photoThumb = item.photoDataUrl ? `<img src="${item.photoDataUrl}" class="h-12 w-12 rounded-md object-cover cursor-pointer" onclick="openPhotoModal('${item.photoDataUrl}')">` : `<div class="h-12 w-12 rounded-md bg-gray-200 flex items-center justify-center"><i class="fas fa-camera text-gray-400"></i></div>`;
             const newTag = item.isNew ? '<span class="ml-2 text-xs font-semibold bg-green-100 text-green-800 px-2 py-0.5 rounded-full">NEW</span>' : '';
             let woodInfo = item.hasWood ? `<p class="text-xs text-amber-700 mt-1"><i class="fas fa-tree mr-1"></i> Wood ${item.isTreated ? '(Treated)' : '(Untreated)'}</p>` : '';
-            return `<div class="p-4 grid grid-cols-6 gap-4 items-center"><div class="col-span-1">${photoThumb}</div><div class="col-span-6 sm:col-span-3"><p class="font-semibold flex items-center">${item.name} ${newTag}</p><p class="text-sm text-gray-500">${item.notes || ''}</p>${woodInfo}</div><div class="col-span-3 sm:col-span-1 text-right sm:text-left"><p class="font-semibold text-green-600">$${formatCurrency(item.value)}</p></div><div class="col-span-3 sm:col-span-1 flex items-center justify-end space-x-2"><button onclick="editItem('${item.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button><button onclick="confirmDelete('item', '${item.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button></div></div>`;
+            const adminButtons = `<button onclick="editItem('${item.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button><button onclick="confirmDelete('item', '${item.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
+            return `<div class="p-4 grid grid-cols-6 gap-4 items-center"><div class="col-span-1">${photoThumb}</div><div class="col-span-6 sm:col-span-3"><p class="font-semibold flex items-center">${item.name} ${newTag}</p><p class="text-sm text-gray-500">${item.notes || ''}</p>${woodInfo}</div><div class="col-span-3 sm:col-span-1 text-right sm:text-left"><p class="font-semibold text-green-600">$${formatCurrency(item.value)}</p></div><div class="col-span-3 sm:col-span-1 flex items-center justify-end space-x-2">${isLoggedIn ? adminButtons : ''}</div></div>`;
         }
         
-        // --- MODALS ---
-        window.showInfoModal = (message, title = 'Heads Up!') => { document.getElementById('info-modal-title').textContent = title; document.getElementById('info-modal-text').textContent = message; infoModal.style.display = 'flex'; }
-        window.closeInfoModal = () => { infoModal.style.display = 'none'; }
-        window.openExportModal = () => { exportModal.style.display = 'flex'; }
-        window.closeExportModal = () => { exportModal.style.display = 'none'; }
-
-        // --- SUMMARY & FILTERS ---
-        function updateSummary() {
-            document.getElementById('total-boxes').textContent = boxes.length;
-            document.getElementById('total-items').textContent = items.length;
-            const totalValue = items.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
-            document.getElementById('total-value').textContent = `$${formatCurrency(totalValue)}`;
-        }
-        function updateRoomFilter() {
-            const rooms = [...new Set(boxes.map(box => box.room))].sort();
-            const currentVal = roomFilter.value;
-            roomFilter.innerHTML = '<option value="all">All Rooms</option>';
-            rooms.forEach(room => roomFilter.add(new Option(room, room)));
-            roomFilter.value = currentVal;
-        }
-
-        // --- BOX MODAL ---
-        window.openBoxModal = () => {
-            document.getElementById('box-form').reset();
-            document.getElementById('box-id').value = '';
-            document.getElementById('box-modal-title').textContent = 'Add New Box';
-            qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>';
-            printQrBtn.classList.add('hidden');
-            qrNewBoxNote.classList.remove('hidden');
-            qrCodeSection.classList.remove('hidden');
-            boxModal.style.display = 'flex';
-            calculateVolume();
-        }
-        window.closeBoxModal = () => { boxModal.style.display = 'none'; }
-        document.getElementById('box-form').addEventListener('submit', async (e) => {
+        // --- Login Modal & Auth Logic ---
+        window.openLoginModal = () => loginModal.style.display = 'flex';
+        window.closeLoginModal = () => { loginModal.style.display = 'none'; loginError.classList.add('hidden'); loginForm.reset(); };
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const id = document.getElementById('box-id').value;
-            const boxData = { number: document.getElementById('box-number').value, room: document.getElementById('box-room-area').value, height: parseFloat(document.getElementById('box-height').value) || 0, width: parseFloat(document.getElementById('box-width').value) || 0, length: parseFloat(document.getElementById('box-length').value) || 0, };
-            boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000;
-            try {
-                if (id) { await setDoc(doc(db, "users", userId, "boxes", id), boxData); } 
-                else { await addDoc(collection(db, "users", userId, "boxes"), boxData); }
-                closeBoxModal();
-            } catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); }
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            loginError.classList.add('hidden');
+            try { await signInWithEmailAndPassword(auth, email, password); closeLoginModal(); } 
+            catch (error) {
+                if (error.code === 'auth/user-not-found') {
+                    try { await createUserWithEmailAndPassword(auth, email, password); closeLoginModal(); } 
+                    catch (createError) { loginError.textContent = createError.message; loginError.classList.remove('hidden'); }
+                } else { loginError.textContent = error.message; loginError.classList.remove('hidden'); }
+            }
         });
-        window.editBox = (id) => {
-            const box = boxes.find(b => b.id === id);
-            if (!box) return;
-            document.getElementById('box-id').value = box.id; document.getElementById('box-number').value = box.number; document.getElementById('box-room-area').value = box.room; document.getElementById('box-height').value = box.height; document.getElementById('box-width').value = box.width; document.getElementById('box-length').value = box.length;
-            document.getElementById('box-modal-title').textContent = 'Edit Box';
-            qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>';
-            printQrBtn.classList.add('hidden');
-            qrNewBoxNote.classList.add('hidden');
-            qrCodeSection.classList.remove('hidden');
-            boxModal.style.display = 'flex'; calculateVolume();
-        }
-        function calculateVolume() {
-            const h = parseFloat(document.getElementById('box-height').value) || 0, w = parseFloat(document.getElementById('box-width').value) || 0, l = parseFloat(document.getElementById('box-length').value) || 0;
-            document.getElementById('box-volume').textContent = `${((h * w * l) / 1000000).toFixed(3)} m³`;
-        }
-        boxDimensionInputs.forEach(input => input.addEventListener('input', calculateVolume));
+        window.logout = async () => { await signOut(auth); };
 
-        // --- ITEM MODAL ---
-        isNewCheckbox.addEventListener('change', () => { newItemDetails.classList.toggle('hidden', !isNewCheckbox.checked); });
-        window.openItemModal = () => {
-            if (boxes.length === 0) { showInfoModal('Please create a box first before adding an item.'); return; }
-            document.getElementById('item-form').reset(); document.getElementById('item-id').value = ''; document.getElementById('item-modal-title').textContent = 'Add New Item';
-            updateBoxSelector(); resetPhotoPreview(); newItemDetails.classList.add('hidden'); itemModal.style.display = 'flex';
-        }
-        window.closeItemModal = () => { itemModal.style.display = 'none'; }
-        document.getElementById('item-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('item-id').value;
-            const isNew = isNewCheckbox.checked;
-            const itemData = { boxId: document.getElementById('item-box-select').value, name: document.getElementById('item-name').value, value: parseFloat(document.getElementById('estimated-value').value) || 0, notes: document.getElementById('item-notes').value, photoDataUrl: photoDataUrlCache, isNew: isNew, purchaseDate: isNew ? document.getElementById('purchase-date').value : '', cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0, hasWood: document.getElementById('has-wood-checkbox').checked, isTreated: document.getElementById('is-treated-checkbox').checked, };
-            try {
-                if (id) { await setDoc(doc(db, "users", userId, "items", id), itemData); } 
-                else { await addDoc(collection(db, "users", userId, "items"), itemData); }
-                closeItemModal();
-            } catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); }
-        });
-        window.editItem = (id) => {
-            const item = items.find(i => i.id === id);
-            if (!item) return;
-            updateBoxSelector(item.boxId); document.getElementById('item-id').value = item.id; document.getElementById('item-name').value = item.name; document.getElementById('estimated-value').value = item.value; document.getElementById('item-notes').value = item.notes;
-            isNewCheckbox.checked = item.isNew; newItemDetails.classList.toggle('hidden', !item.isNew); document.getElementById('purchase-date').value = item.purchaseDate; document.getElementById('item-cost').value = item.cost;
-            document.getElementById('has-wood-checkbox').checked = item.hasWood; document.getElementById('is-treated-checkbox').checked = item.isTreated;
-            photoDataUrlCache = item.photoDataUrl; updatePhotoPreview(); document.getElementById('item-modal-title').textContent = 'Edit Item'; itemModal.style.display = 'flex';
-        }
-        function updateBoxSelector(selectedId) {
-            const select = document.getElementById('item-box-select'); select.innerHTML = '';
-            boxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).forEach(box => select.add(new Option(`Box ${box.number} (${box.room})`, box.id)));
-            if (selectedId) select.value = selectedId;
-        }
-
-        // --- QR CODE ---
-        window.generateQRCodeForBox = () => {
-            const boxId = document.getElementById('box-id').value;
-            if (!boxId) { showInfoModal('Please save the box before generating a QR code.'); return; }
-            const box = boxes.find(b => b.id === boxId);
-            if (!box) { showInfoModal('Could not find box details.'); return; }
-            qrCodeContainer.innerHTML = ''; new QRCode(qrCodeContainer, { text: JSON.stringify({type: "MoveMasterBox", id: box.id, number: box.number, room: box.room }), width: 160, height: 160, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
-            printQrBtn.classList.remove('hidden');
-        }
-        window.showQRCodeForBox = (boxId) => { editBox(boxId); setTimeout(() => generateQRCodeForBox(), 100); }
-        window.printQRCode = () => {
-            const qrCodeImage = qrCodeContainer.querySelector('img').src; const boxNumber = document.getElementById('box-number').value; const room = document.getElementById('box-room-area').value;
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`<html><head><title>Print QR Code</title><style>body { font-family: sans-serif; text-align: center; margin-top: 50px; } img { width: 300px; height: 300px; } h2 { font-size: 2em; margin: 0; } p { font-size: 1.2em; }</style></head><body><h2>Box ${boxNumber}</h2><p>${room}</p><img src="${qrCodeImage}"><script>window.onload = function() { window.print(); window.onafterprint = function() { window.close(); }; }<\/script></body></html>`);
-            printWindow.document.close();
-        }
-
-        // --- PHOTO HANDLING ---
-        photoInput.addEventListener('change', (e) => { const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = (event) => { photoDataUrlCache = event.target.result; updatePhotoPreview(); }; reader.readAsDataURL(file); } });
-        removePhotoBtn.addEventListener('click', () => resetPhotoPreview());
-        function updatePhotoPreview() { if (photoDataUrlCache) { photoPreview.src = photoDataUrlCache; photoPreview.classList.remove('hidden'); removePhotoBtn.classList.remove('hidden'); } else { resetPhotoPreview(); } }
-        function resetPhotoPreview() { photoDataUrlCache = null; photoPreview.src = ''; photoPreview.classList.add('hidden'); removePhotoBtn.classList.add('hidden'); photoInput.value = ''; }
-        window.openPhotoModal = (url) => { document.getElementById('full-photo').src = url; photoModal.style.display = 'flex'; }
-        window.closePhotoModal = () => { photoModal.style.display = 'none'; }
-
-        // --- DELETE ---
-        window.confirmDelete = (type, id) => { if (type === 'item') { itemToDelete = id; boxToDelete = null; } if (type === 'box') { boxToDelete = id; itemToDelete = null; } confirmModal.style.display = 'flex'; }
-        async function executeDelete() {
-            try {
-                if (itemToDelete) { await deleteDoc(doc(db, "users", userId, "items", itemToDelete)); }
-                if (boxToDelete) {
-                    const itemsInBoxQuery = query(collection(db, "users", userId, "items"), where("boxId", "==", boxToDelete));
-                    const itemsInBoxSnapshot = await getDocs(itemsInBoxQuery);
-                    const batch = writeBatch(db);
-                    itemsInBoxSnapshot.forEach(doc => batch.delete(doc.ref));
-                    batch.delete(doc(db, "users", userId, "boxes", boxToDelete));
-                    await batch.commit();
-                }
-            } catch (error) { console.error("Error deleting document: ", error); showInfoModal("Failed to delete. Please try again."); }
-            closeConfirmModal();
-        }
-        function closeConfirmModal() { itemToDelete = null; boxToDelete = null; confirmModal.style.display = 'none'; }
-        document.getElementById('confirm-delete-btn').addEventListener('click', executeDelete);
-        document.getElementById('cancel-delete').addEventListener('click', closeConfirmModal);
-
-        // --- CSV EXPORT ---
-        window.exportToCSV = () => { if (items.length === 0) { showInfoModal("No items to export."); return; } const sortBy = document.getElementById('sort-by-select').value; generateCSV(items, "move_master_inventory.csv", sortBy); closeExportModal(); }
-        function generateCSV(data, filename, sortBy) {
-            const headers = ['Box Number', 'Room', 'Item Name', 'Current Value', 'Newer than 12 months?', 'Purchase Date', 'Cost', 'Has Wood?', 'Is Sealed/Treated?', 'Notes'];
-            const sortedData = [...data];
-            sortedData.sort((a, b) => { const boxA = boxes.find(box => box.id === a.boxId) || {}; const boxB = boxes.find(box => box.id === b.boxId) || {}; const boxNumA = parseInt(boxA.number) || 0; const boxNumB = parseInt(boxB.number) || 0; switch(sortBy) { case 'wood-first': if (a.hasWood !== b.hasWood) return b.hasWood - a.hasWood; if (boxNumA !== boxNumB) return boxNumA - boxNumB; return a.name.localeCompare(b.name); case 'box-number': if (boxNumA !== boxNumB) return boxNumA - boxNumB; return a.name.localeCompare(b.name); case 'item-name': return a.name.localeCompare(b.name); default: return 0; } });
-            const rows = sortedData.map(item => { const box = boxes.find(b => b.id === item.boxId) || {}; return [box.number, box.room, item.name, item.value, item.isNew ? 'Yes' : 'No', item.isNew ? item.purchaseDate : '', item.isNew ? item.cost : '', item.hasWood ? 'Yes' : 'No', item.isTreated ? 'Yes' : 'No', item.notes].map(formatCSVCell).join(','); });
-            const csvContent = headers.join(',') + '\n' + rows.join('\n'); const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); const url = URL.createObjectURL(blob); link.setAttribute("href", url); link.setAttribute("download", filename); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        }
-        function formatCSVCell(cell) { let str = String(cell ?? ''); if (str.search(/("|,|\n)/g) >= 0) str = `"${str.replace(/"/g, '""')}"`; return str; }
-
-        // --- UTILS & INIT ---
-        function formatCurrency(num) { return (parseFloat(num) || 0).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); }
-        window.resetFilters = () => { searchInput.value = ''; roomFilter.value = 'all'; render(); }
-        searchInput.addEventListener('input', render);
-        roomFilter.addEventListener('change', render);
-        window.addEventListener('click', (e) => { if (e.target == itemModal) closeItemModal(); if (e.target == boxModal) closeBoxModal(); if (e.target == photoModal) closePhotoModal(); if (e.target == confirmModal) closeConfirmModal(); if (e.target == infoModal) closeInfoModal(); if (e.target == exportModal) closeExportModal(); });
-        
         // --- FIREBASE INITIALIZATION ---
-        // --- USER ACTION REQUIRED: PASTE YOUR FIREBASE CONFIGURATION HERE ---
-        // 1. Go to https://firebase.google.com/ and create a new project.
-        // 2. In your project, go to Project Settings (gear icon) > General.
-        // 3. In the "Your apps" card, click the Web icon (</>) to create a web app.
-        // 4. Firebase will give you a firebaseConfig object. Copy it and paste it below,
-        //    replacing this placeholder object.
         const firebaseConfig = {
           apiKey: "AIzaSyCVWdQVQbPWvfxUl0VSjkOGzuC0mm_CuSU",
           authDomain: "my-move-master.firebaseapp.com",
@@ -409,55 +265,88 @@
           appId: "1:642424710686:web:119de596a4826a68b1f00f",
           measurementId: "G-R1X3RKVQES"
         };
-        // --------------------------------------------------------------------
-
+        
         async function initFirebase() {
             try {
-                if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-                    document.getElementById('loading-overlay').innerHTML = '<p class="text-red-600 font-semibold text-center p-4">SETUP REQUIRED<br><span class="font-normal text-sm text-gray-600">Please paste your Firebase configuration into the HTML file to connect.</span></p>';
-                    return;
-                }
+                 if (OWNER_USER_ID === "PASTE_YOUR_FIREBASE_USER_ID_HERE") { document.getElementById('loading-overlay').innerHTML = '<p class="text-red-600 font-semibold text-center p-4">SETUP REQUIRED<br><span class="font-normal text-sm text-gray-600">Please paste the Owner User ID into the HTML file to connect to the correct data.</span></p>'; return; }
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-
-                onAuthStateChanged(auth, user => {
-                    if (user) {
-                        userId = user.uid;
-                        document.getElementById('user-id-display').textContent = `Syncing with User ID: ${userId}`;
-                        attachFirestoreListeners();
-                    }
-                });
-
-                await signInAnonymously(auth);
+                onAuthStateChanged(auth, user => { updateUIForLoginState(user); });
+                attachFirestoreListeners();
             } catch (error) {
                 console.error("Firebase initialization failed:", error);
-                document.getElementById('loading-overlay').innerHTML = '<p class="text-red-600 font-semibold">Connection failed. Please check your Firebase config and security rules.</p>';
+                document.getElementById('loading-overlay').innerHTML = '<p class="text-red-600 font-semibold">Connection failed. Please check your Firebase config.</p>';
             }
         }
 
         function attachFirestoreListeners() {
             unsubscribeBoxes();
-            const boxesCollection = collection(db, "users", userId, "boxes");
-            unsubscribeBoxes = onSnapshot(boxesCollection, (snapshot) => {
-                boxes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                render();
-            }, (error) => {
-                console.error("Error listening to boxes collection:", error);
-            });
-
+            const boxesCollection = collection(db, "users", OWNER_USER_ID, "boxes");
+            unsubscribeBoxes = onSnapshot(boxesCollection, (snapshot) => { boxes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); render(); }, (error) => console.error("Error listening to boxes:", error));
             unsubscribeItems();
-            const itemsCollection = collection(db, "users", userId, "items");
-            unsubscribeItems = onSnapshot(itemsCollection, (snapshot) => {
-                items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                document.getElementById('loading-overlay').style.display = 'none';
-                render();
-            }, (error) => {
-                console.error("Error listening to items collection:", error);
-                document.getElementById('loading-overlay').style.display = 'none';
-            });
+            const itemsCollection = collection(db, "users", OWNER_USER_ID, "items");
+            unsubscribeItems = onSnapshot(itemsCollection, (snapshot) => { items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); document.getElementById('loading-overlay').style.display = 'none'; render(); }, (error) => { console.error("Error listening to items:", error); document.getElementById('loading-overlay').style.display = 'none'; });
         }
+        
+        // --- MODALS AND FORMS (Full Implementation) ---
+        window.showInfoModal = (message, title = 'Heads Up!') => { document.getElementById('info-modal-title').textContent = title; document.getElementById('info-modal-text').textContent = message; infoModal.style.display = 'flex'; }
+        window.closeInfoModal = () => { infoModal.style.display = 'none'; }
+        window.openExportModal = () => { exportModal.style.display = 'flex'; }
+        window.closeExportModal = () => { exportModal.style.display = 'none'; }
+        window.openBoxModal = () => { document.getElementById('box-form').reset(); document.getElementById('box-id').value = ''; document.getElementById('box-modal-title').textContent = 'Add New Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.remove('hidden'); qrCodeSection.classList.remove('hidden'); boxModal.style.display = 'flex'; calculateVolume(); }
+        window.closeBoxModal = () => { boxModal.style.display = 'none'; }
+        window.openItemModal = () => { if (boxes.length === 0) { showInfoModal('Please create a box first before adding an item.'); return; } document.getElementById('item-form').reset(); document.getElementById('item-id').value = ''; document.getElementById('item-modal-title').textContent = 'Add New Item'; updateBoxSelector(); resetPhotoPreview(); newItemDetails.classList.add('hidden'); itemModal.style.display = 'flex'; }
+        window.closeItemModal = () => { itemModal.style.display = 'none'; }
 
+        // --- EVENT LISTENERS FOR FORMS ---
+        document.getElementById('box-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); if (!isLoggedIn) { showInfoModal("You must be logged in to save changes."); return; }
+            const id = document.getElementById('box-id').value;
+            const boxData = { number: document.getElementById('box-number').value, room: document.getElementById('box-room-area').value, height: parseFloat(document.getElementById('box-height').value) || 0, width: parseFloat(document.getElementById('box-width').value) || 0, length: parseFloat(document.getElementById('box-length').value) || 0, };
+            boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000;
+            try { if (id) { await setDoc(doc(db, "users", OWNER_USER_ID, "boxes", id), boxData); } else { await addDoc(collection(db, "users", OWNER_USER_ID, "boxes"), boxData); } closeBoxModal(); } 
+            catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); }
+        });
+        document.getElementById('item-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); if (!isLoggedIn) { showInfoModal("You must be logged in to save changes."); return; }
+            const id = document.getElementById('item-id').value; const isNew = isNewCheckbox.checked;
+            const itemData = { boxId: document.getElementById('item-box-select').value, name: document.getElementById('item-name').value, value: parseFloat(document.getElementById('estimated-value').value) || 0, notes: document.getElementById('item-notes').value, photoDataUrl: photoDataUrlCache, isNew: isNew, purchaseDate: isNew ? document.getElementById('purchase-date').value : '', cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0, hasWood: document.getElementById('has-wood-checkbox').checked, isTreated: document.getElementById('is-treated-checkbox').checked, };
+            try { if (id) { await setDoc(doc(db, "users", OWNER_USER_ID, "items", id), itemData); } else { await addDoc(collection(db, "users", OWNER_USER_ID, "items"), itemData); } closeItemModal(); } 
+            catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); }
+        });
+
+        // --- FULL FUNCTION IMPLEMENTATIONS ---
+        function updateSummary() { document.getElementById('total-boxes').textContent = boxes.length; document.getElementById('total-items').textContent = items.length; const totalValue = items.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0); document.getElementById('total-value').textContent = `$${formatCurrency(totalValue)}`; }
+        function updateRoomFilter() { const rooms = [...new Set(boxes.map(box => box.room))].sort(); const currentVal = roomFilter.value; roomFilter.innerHTML = '<option value="all">All Rooms</option>'; rooms.forEach(room => roomFilter.add(new Option(room, room))); roomFilter.value = currentVal; }
+        window.editBox = (id) => { const box = boxes.find(b => b.id === id); if (!box) return; document.getElementById('box-id').value = box.id; document.getElementById('box-number').value = box.number; document.getElementById('box-room-area').value = box.room; document.getElementById('box-height').value = box.height; document.getElementById('box-width').value = box.width; document.getElementById('box-length').value = box.length; document.getElementById('box-modal-title').textContent = 'Edit Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.add('hidden'); qrCodeSection.classList.remove('hidden'); boxModal.style.display = 'flex'; calculateVolume(); }
+        function calculateVolume() { const h = parseFloat(document.getElementById('box-height').value) || 0, w = parseFloat(document.getElementById('box-width').value) || 0, l = parseFloat(document.getElementById('box-length').value) || 0; document.getElementById('box-volume').textContent = `${((h * w * l) / 1000000).toFixed(3)} m³`; }
+        boxDimensionInputs.forEach(input => input.addEventListener('input', calculateVolume));
+        isNewCheckbox.addEventListener('change', () => { newItemDetails.classList.toggle('hidden', !isNewCheckbox.checked); });
+        window.editItem = (id) => { const item = items.find(i => i.id === id); if (!item) return; updateBoxSelector(item.boxId); document.getElementById('item-id').value = item.id; document.getElementById('item-name').value = item.name; document.getElementById('estimated-value').value = item.value; document.getElementById('item-notes').value = item.notes; isNewCheckbox.checked = item.isNew; newItemDetails.classList.toggle('hidden', !item.isNew); document.getElementById('purchase-date').value = item.purchaseDate; document.getElementById('item-cost').value = item.cost; document.getElementById('has-wood-checkbox').checked = item.hasWood; document.getElementById('is-treated-checkbox').checked = item.isTreated; photoDataUrlCache = item.photoDataUrl; updatePhotoPreview(); document.getElementById('item-modal-title').textContent = 'Edit Item'; itemModal.style.display = 'flex'; }
+        function updateBoxSelector(selectedId) { const select = document.getElementById('item-box-select'); select.innerHTML = ''; boxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).forEach(box => select.add(new Option(`Box ${box.number} (${box.room})`, box.id))); if (selectedId) select.value = selectedId; }
+        window.generateQRCodeForBox = () => { const boxId = document.getElementById('box-id').value; if (!boxId) { showInfoModal('Please save the box before generating a QR code.'); return; } const box = boxes.find(b => b.id === boxId); if (!box) { showInfoModal('Could not find box details.'); return; } qrCodeContainer.innerHTML = ''; new QRCode(qrCodeContainer, { text: JSON.stringify({type: "MoveMasterBox", id: box.id, number: box.number, room: box.room }), width: 160, height: 160, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H }); printQrBtn.classList.remove('hidden'); }
+        window.showQRCodeForBox = (boxId) => { editBox(boxId); setTimeout(() => generateQRCodeForBox(), 100); }
+        window.printQRCode = () => { const qrCodeImage = qrCodeContainer.querySelector('img').src; const boxNumber = document.getElementById('box-number').value; const room = document.getElementById('box-room-area').value; const printWindow = window.open('', '_blank'); printWindow.document.write(`<html><head><title>Print QR Code</title><style>body { font-family: sans-serif; text-align: center; margin-top: 50px; } img { width: 300px; height: 300px; } h2 { font-size: 2em; margin: 0; } p { font-size: 1.2em; }</style></head><body><h2>Box ${boxNumber}</h2><p>${room}</p><img src="${qrCodeImage}"><script>window.onload = function() { window.print(); window.onafterprint = function() { window.close(); }; }<\/script></body></html>`); printWindow.document.close(); }
+        photoInput.addEventListener('change', (e) => { const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = (event) => { photoDataUrlCache = event.target.result; updatePhotoPreview(); }; reader.readAsDataURL(file); } });
+        removePhotoBtn.addEventListener('click', () => resetPhotoPreview());
+        function updatePhotoPreview() { if (photoDataUrlCache) { photoPreview.src = photoDataUrlCache; photoPreview.classList.remove('hidden'); removePhotoBtn.classList.remove('hidden'); } else { resetPhotoPreview(); } }
+        function resetPhotoPreview() { photoDataUrlCache = null; photoPreview.src = ''; photoPreview.classList.add('hidden'); removePhotoBtn.classList.add('hidden'); photoInput.value = ''; }
+        window.openPhotoModal = (url) => { document.getElementById('full-photo').src = url; photoModal.style.display = 'flex'; }
+        window.closePhotoModal = () => { photoModal.style.display = 'none'; }
+        window.confirmDelete = (type, id) => { if (!isLoggedIn) { showInfoModal("You must be logged in to delete items."); return; } if (type === 'item') { itemToDelete = id; boxToDelete = null; } if (type === 'box') { boxToDelete = id; itemToDelete = null; } confirmModal.style.display = 'flex'; }
+        async function executeDelete() { try { if (itemToDelete) { await deleteDoc(doc(db, "users", OWNER_USER_ID, "items", itemToDelete)); } if (boxToDelete) { const itemsInBoxQuery = query(collection(db, "users", OWNER_USER_ID, "items"), where("boxId", "==", boxToDelete)); const itemsInBoxSnapshot = await getDocs(itemsInBoxQuery); const batch = writeBatch(db); itemsInBoxSnapshot.forEach(doc => batch.delete(doc.ref)); batch.delete(doc(db, "users", OWNER_USER_ID, "boxes", boxToDelete)); await batch.commit(); } } catch (error) { console.error("Error deleting document: ", error); showInfoModal("Failed to delete. Please try again."); } closeConfirmModal(); }
+        function closeConfirmModal() { itemToDelete = null; boxToDelete = null; confirmModal.style.display = 'none'; }
+        document.getElementById('confirm-delete-btn').addEventListener('click', executeDelete);
+        document.getElementById('cancel-delete').addEventListener('click', closeConfirmModal);
+        window.exportToCSV = () => { if (items.length === 0) { showInfoModal("No items to export."); return; } const sortBy = document.getElementById('sort-by-select').value; generateCSV(items, "move_master_inventory.csv", sortBy); closeExportModal(); }
+        function generateCSV(data, filename, sortBy) { const headers = ['Box Number', 'Room', 'Item Name', 'Current Value', 'Newer than 12 months?', 'Purchase Date', 'Cost', 'Has Wood?', 'Is Sealed/Treated?', 'Notes']; const sortedData = [...data]; sortedData.sort((a, b) => { const boxA = boxes.find(box => box.id === a.boxId) || {}; const boxB = boxes.find(box => box.id === b.boxId) || {}; const boxNumA = parseInt(boxA.number) || 0; const boxNumB = parseInt(boxB.number) || 0; switch(sortBy) { case 'wood-first': if (a.hasWood !== b.hasWood) return b.hasWood - a.hasWood; if (boxNumA !== boxNumB) return boxNumA - boxNumB; return a.name.localeCompare(b.name); case 'box-number': if (boxNumA !== boxNumB) return boxNumA - boxNumB; return a.name.localeCompare(b.name); case 'item-name': return a.name.localeCompare(b.name); default: return 0; } }); const rows = sortedData.map(item => { const box = boxes.find(b => b.id === item.boxId) || {}; return [box.number, box.room, item.name, item.value, item.isNew ? 'Yes' : 'No', item.isNew ? item.purchaseDate : '', item.isNew ? item.cost : '', item.hasWood ? 'Yes' : 'No', item.isTreated ? 'Yes' : 'No', item.notes].map(formatCSVCell).join(','); }); const csvContent = headers.join(',') + '\n' + rows.join('\n'); const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); const url = URL.createObjectURL(blob); link.setAttribute("href", url); link.setAttribute("download", filename); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link); }
+        function formatCSVCell(cell) { let str = String(cell ?? ''); if (str.search(/("|,|\n)/g) >= 0) str = `"${str.replace(/"/g, '""')}"`; return str; }
+        window.formatCurrency = (num) => (parseFloat(num) || 0).toFixed(2);
+        window.resetFilters = () => { searchInput.value = ''; roomFilter.value = 'all'; render(); }
+        searchInput.addEventListener('input', render);
+        roomFilter.addEventListener('change', render);
+        window.addEventListener('click', (e) => { if (e.target == itemModal) closeItemModal(); if (e.target == boxModal) closeBoxModal(); if (e.target == photoModal) closePhotoModal(); if (e.target == confirmModal) closeConfirmModal(); if (e.target == infoModal) closeInfoModal(); if (e.target == exportModal) closeExportModal(); });
         document.addEventListener('DOMContentLoaded', initFirebase);
     </script>
 </body>
