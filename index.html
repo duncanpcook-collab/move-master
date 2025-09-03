@@ -35,38 +35,35 @@
         <p class="mt-4 text-gray-600 font-semibold">Connecting to your inventory...</p>
     </div>
 
-   <header class="header-gradient text-white shadow-lg sticky top-0 z-30">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex flex-col sm:flex-row justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
-                <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Public Read-Only View</p>
-            </div>
-            <div class="mt-4 sm:mt-0 flex items-center space-x-2 sm:space-x-4">
-                <button onclick="openExportModal()" class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
-                    <i class="fas fa-file-csv mr-2"></i>Export CSV
-                </button>
-                
-                <button id="add-box-btn" onclick="openBoxModal()" class="hidden bg-cyan-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-cyan-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
-                    <i class="fas fa-box mr-2"></i>Add Box
-                </button>
-                
-                <button id="add-item-btn" onclick="openItemModal()" class="hidden bg-amber-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-amber-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
-                    <i class="fas fa-plus-circle mr-2"></i>Add Item
-                </button>
-
-                <div id="auth-container">
-                     <button id="login-btn" onclick="openLoginModal()" class="bg-white text-indigo-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-50 transition-transform transform hover:scale-105 text-sm sm:text-base">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Admin Login
+    <header class="header-gradient text-white shadow-lg sticky top-0 z-30">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
+                    <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Public Read-Only View</p>
+                </div>
+                <div class="mt-4 sm:mt-0 flex items-center space-x-2 sm:space-x-4">
+                    <button onclick="openExportModal()" class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                        <i class="fas fa-file-csv mr-2"></i>Export CSV
                     </button>
-                    <button id="logout-btn" onclick="logout()" class="hidden bg-red-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    <button id="add-box-btn" onclick="openBoxModal()" class="hidden bg-cyan-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-cyan-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                        <i class="fas fa-box mr-2"></i>Add Box
                     </button>
+                    <button id="add-item-btn" onclick="openItemModal()" class="hidden bg-amber-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-amber-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                        <i class="fas fa-plus-circle mr-2"></i>Add Item
+                    </button>
+                    <div id="auth-container">
+                         <button id="login-btn" onclick="openLoginModal()" class="bg-white text-indigo-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-50 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Admin Login
+                        </button>
+                        <button id="logout-btn" onclick="logout()" class="hidden bg-red-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
     <main class="container mx-auto p-4 sm:p-6 lg:p-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -108,10 +105,8 @@
         let items = [];
         let itemToDelete = null;
         let boxToDelete = null;
-        // NEW FEATURE: Caches for box and item photos
         let boxPhotoDataUrlCache = null;
-        let itemPhotosCache = []; // Now an array for multiple photos
-        // NEW FEATURE: State for gallery viewer
+        let itemPhotosCache = []; 
         let currentPhotoGallery = [];
         let currentPhotoIndex = 0;
 
@@ -148,7 +143,6 @@
         const printQrBtn = document.getElementById('print-qr-btn');
         const qrCodeSection = document.getElementById('qr-code-section');
         const qrNewBoxNote = document.getElementById('qr-new-box-note');
-        // NEW FEATURE: DOM elements for new photo features
         const boxPhotoInput = document.getElementById('box-photo-input');
         const boxPhotoPreview = document.getElementById('box-photo-preview');
         const boxRemovePhotoBtn = document.getElementById('box-remove-photo-btn');
@@ -209,14 +203,20 @@
             const boxEl = document.createElement('div');
             boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden';
             const itemsHTML = boxItems.map(createItemHTML).join('');
-            const adminButtons = `<button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button><button onclick="editBox('${box.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button><button onclick="confirmDelete('box', '${box.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
-            // NEW FEATURE: Add box photo to the header
+            const adminButtons = `
+                <div class="flex items-center space-x-2" onclick="event.stopPropagation()">
+                    <button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>
+                    <button onclick="editBox('${box.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
+                    <button onclick="confirmDelete('box', '${box.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>
+                </div>`;
+            const guestButtons = `<div onclick="event.stopPropagation()"><button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button></div>`;
+            
             const boxPhotoThumb = box.photoDataUrl 
-                ? `<img src="${box.photoDataUrl}" class="h-12 w-12 rounded-md object-cover cursor-pointer" onclick="openPhotoModal(['${box.photoDataUrl}'], 0)">` 
+                ? `<img src="${box.photoDataUrl}" class="h-12 w-12 rounded-md object-cover cursor-pointer" onclick="event.stopPropagation(); openPhotoModal(['${box.photoDataUrl}'], 0)">` 
                 : '';
 
             boxEl.innerHTML = `
-                <div class="bg-gray-50 p-4 border-b flex justify-between items-center">
+                <div class="bg-gray-100 p-4 border-b flex justify-between items-center cursor-pointer" onclick="toggleBoxItems('${box.id}')">
                     <div class="flex items-center gap-4">
                         ${boxPhotoThumb}
                         <div>
@@ -224,16 +224,18 @@
                             <p class="text-sm text-gray-500">${box.room} <span class="mx-2 text-gray-300">|</span> ${box.volume ? box.volume.toFixed(3) : '0.000'} m³</p>
                         </div>
                     </div>
-                    <div class="space-x-2 flex items-center">
-                        ${isOwnerLoggedIn ? adminButtons : `<button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>`}
+                    <div class="flex items-center">
+                        ${isOwnerLoggedIn ? adminButtons : guestButtons}
+                        <i id="chevron-for-box-${box.id}" class="fas fa-chevron-down text-gray-500 transition-transform duration-300 ml-4"></i>
                     </div>
                 </div>
-                <div class="divide-y divide-gray-200">${itemsHTML || '<p class="p-4 text-gray-500 text-sm">No items in this box yet.</p>'}</div>`;
+                <div id="items-of-box-${box.id}" class="divide-y divide-gray-200 hidden">
+                    ${itemsHTML || '<p class="p-4 text-gray-500 text-sm">No items in this box yet.</p>'}
+                </div>`;
             return boxEl;
         }
 
         function createItemHTML(item) {
-            // NEW FEATURE: Logic for multi-photo display
             const hasPhotos = item.photoDataUrls && item.photoDataUrls.length > 0;
             const photoThumb = hasPhotos
                 ? `<div class="relative cursor-pointer" onclick="openPhotoModal(JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(item.photoDataUrls))}')) , 0)">
@@ -335,7 +337,7 @@
                 height: parseFloat(document.getElementById('box-height').value) || 0, 
                 width: parseFloat(document.getElementById('box-width').value) || 0, 
                 length: parseFloat(document.getElementById('box-length').value) || 0,
-                photoDataUrl: boxPhotoDataUrlCache // NEW FEATURE: Add photo to box data
+                photoDataUrl: boxPhotoDataUrlCache
             };
             boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000;
             try { if (id) { await setDoc(doc(db, "users", OWNER_USER_ID, "boxes", id), boxData); } else { await addDoc(collection(db, "users", OWNER_USER_ID, "boxes"), boxData); } closeBoxModal(); } 
@@ -356,7 +358,7 @@
                 name: document.getElementById('item-name').value, 
                 value: parseFloat(document.getElementById('estimated-value').value) || 0, 
                 notes: document.getElementById('item-notes').value, 
-                photoDataUrls: itemPhotosCache, // NEW FEATURE: Save array of photos
+                photoDataUrls: itemPhotosCache, 
                 isNew: isNew, 
                 purchaseDate: isNew ? document.getElementById('purchase-date').value : '', 
                 cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0, 
@@ -369,10 +371,23 @@
         });
 
         // --- OTHER FUNCTIONS ---
+        window.toggleBoxItems = (boxId) => {
+            const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
+            const chevronIcon = document.getElementById(`chevron-for-box-${boxId}`);
+            if (itemsContainer && chevronIcon) {
+                const isHidden = itemsContainer.classList.contains('hidden');
+                if (isHidden) {
+                    itemsContainer.classList.remove('hidden');
+                    chevronIcon.classList.add('rotate-180');
+                } else {
+                    itemsContainer.classList.add('hidden');
+                    chevronIcon.classList.remove('rotate-180');
+                }
+            }
+        };
         function updateSummary() { document.getElementById('total-boxes').textContent = boxes.length; document.getElementById('total-items').textContent = items.length; const totalValue = items.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0); document.getElementById('total-value').textContent = `$${formatCurrency(totalValue)}`; }
         function updateRoomFilter() { const rooms = [...new Set(boxes.map(box => box.room))].sort(); const currentVal = roomFilter.value; roomFilter.innerHTML = '<option value="all">All Rooms</option>'; rooms.forEach(room => roomFilter.add(new Option(room, room))); roomFilter.value = currentVal; }
         window.editBox = (id) => { const box = boxes.find(b => b.id === id); if (!box) return; document.getElementById('box-id').value = box.id; document.getElementById('box-number').value = box.number; document.getElementById('box-room-area').value = box.room; document.getElementById('box-height').value = box.height; document.getElementById('box-width').value = box.width; document.getElementById('box-length').value = box.length; document.getElementById('box-modal-title').textContent = 'Edit Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.add('hidden'); qrCodeSection.classList.remove('hidden'); 
-            // NEW FEATURE: Load existing box photo
             boxPhotoDataUrlCache = box.photoDataUrl;
             updateBoxPhotoPreview();
             boxModal.style.display = 'flex'; calculateVolume(); }
@@ -380,8 +395,7 @@
         boxDimensionInputs.forEach(input => input.addEventListener('input', calculateVolume));
         isNewCheckbox.addEventListener('change', () => { newItemDetails.classList.toggle('hidden', !isNewCheckbox.checked); });
         window.editItem = (id) => { const item = items.find(i => i.id === id); if (!item) return; updateBoxSelector(item.boxId); document.getElementById('item-id').value = item.id; document.getElementById('item-name').value = item.name; document.getElementById('estimated-value').value = item.value; document.getElementById('item-notes').value = item.notes; isNewCheckbox.checked = item.isNew; newItemDetails.classList.toggle('hidden', !item.isNew); document.getElementById('purchase-date').value = item.purchaseDate; document.getElementById('item-cost').value = item.cost; document.getElementById('has-wood-checkbox').checked = item.hasWood; document.getElementById('is-treated-checkbox').checked = item.isTreated; 
-            // NEW FEATURE: Handle item photo array
-            itemPhotosCache = Array.isArray(item.photoDataUrls) ? [...item.photoDataUrls] : []; // Handle legacy single photo if needed
+            itemPhotosCache = Array.isArray(item.photoDataUrls) ? [...item.photoDataUrls] : [];
             if (!Array.isArray(item.photoDataUrls) && item.photoDataUrl) { itemPhotosCache = [item.photoDataUrl]; }
             renderItemPhotoPreviews(); 
             document.getElementById('item-modal-title').textContent = 'Edit Item'; itemModal.style.display = 'flex'; }
