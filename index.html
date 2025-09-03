@@ -66,9 +66,10 @@
     </header>
 
     <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-blue-100 text-blue-600 p-4 rounded-full"><i class="fas fa-box-open text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Boxes</p><p id="total-boxes" class="text-2xl font-bold">0</p></div></div>
             <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div></div>
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-purple-100 text-purple-600 p-4 rounded-full"><i class="fas fa-cube text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Volume</p><p id="total-volume" class="text-2xl font-bold">0 m³</p></div></div>
             <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
         </div>
         <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-4"><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></div><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><select id="room-filter" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"><option value="all">All Rooms</option></select></div><button onclick="resetFilters()" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">Reset</button></div>
@@ -385,7 +386,19 @@
                 }
             }
         };
-        function updateSummary() { document.getElementById('total-boxes').textContent = boxes.length; document.getElementById('total-items').textContent = items.length; const totalValue = items.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0); document.getElementById('total-value').textContent = `$${formatCurrency(totalValue)}`; }
+
+        // UPDATED: updateSummary function now calculates and displays total volume
+        function updateSummary() { 
+            document.getElementById('total-boxes').textContent = boxes.length;
+            document.getElementById('total-items').textContent = items.length;
+            
+            const totalValue = items.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
+            document.getElementById('total-value').textContent = `$${formatCurrency(totalValue)}`;
+            
+            const totalVolume = boxes.reduce((sum, box) => sum + (parseFloat(box.volume) || 0), 0);
+            document.getElementById('total-volume').textContent = `${totalVolume.toFixed(3)} m³`;
+        }
+
         function updateRoomFilter() { const rooms = [...new Set(boxes.map(box => box.room))].sort(); const currentVal = roomFilter.value; roomFilter.innerHTML = '<option value="all">All Rooms</option>'; rooms.forEach(room => roomFilter.add(new Option(room, room))); roomFilter.value = currentVal; }
         window.editBox = (id) => { const box = boxes.find(b => b.id === id); if (!box) return; document.getElementById('box-id').value = box.id; document.getElementById('box-number').value = box.number; document.getElementById('box-room-area').value = box.room; document.getElementById('box-height').value = box.height; document.getElementById('box-width').value = box.width; document.getElementById('box-length').value = box.length; document.getElementById('box-modal-title').textContent = 'Edit Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.add('hidden'); qrCodeSection.classList.remove('hidden'); 
             boxPhotoDataUrlCache = box.photoDataUrl;
