@@ -153,6 +153,7 @@
         const galleryPrevBtn = document.getElementById('gallery-prev-btn');
         const galleryNextBtn = document.getElementById('gallery-next-btn');
         const fullPhoto = document.getElementById('full-photo');
+        const loadingOverlay = document.getElementById('loading-overlay');
         
         function updateUIForLoginState(user) {
             isOwnerLoggedIn = user && user.uid === OWNER_USER_ID;
@@ -173,6 +174,7 @@
                 userIdDisplay.textContent = 'Public Read-Only View';
                  document.getElementById('empty-state-subtext').textContent = 'Login as an admin to start adding boxes and items.';
             }
+            // Calling render here ensures the admin buttons are updated immediately
             render();
         }
 
@@ -188,13 +190,19 @@
                 const hasSearchedItem = searchTerm ? boxIdsToShow.has(box.id) : true;
                 return matchesRoom && hasSearchedItem;
             });
-            if (boxes.length === 0) { document.getElementById('empty-state').style.display = 'block'; } 
-            else {
+
+            // Show empty state if there are no boxes AND the user is logged in. Otherwise, it should always be empty.
+            if (boxes.length === 0 && isOwnerLoggedIn) { 
+                document.getElementById('empty-state').style.display = 'block'; 
+            } else if (boxes.length > 0 && isOwnerLoggedIn) {
                 document.getElementById('empty-state').style.display = 'none';
                 filteredBoxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).forEach(box => {
                     const boxItems = items.filter(item => item.boxId === box.id && (searchTerm ? itemsToShow.some(i => i.id === item.id) : true));
                     inventoryListEl.appendChild(createBoxEl(box, boxItems));
                 });
+            } else {
+                // Default to empty state if not logged in
+                document.getElementById('empty-state').style.display = 'block';
             }
             updateSummary();
             updateRoomFilter();
@@ -280,7 +288,7 @@
         });
         window.logout = async () => { await signOut(auth); };
 
-        // --- FIREBASE INITIALIZATION ---
+        // --- FIREBASE INITIALIZATION & AUTH HANDLING ---
         const firebaseConfig = {
           apiKey: "AIzaSyCVWdQVQbPWvfxUl0VSjkOGzuC0mm_CuSU",
           authDomain: "my-move-master.firebaseapp.com",
@@ -293,25 +301,59 @@
         
         async function initFirebase() {
             try {
-                 if (OWNER_USER_ID === "PASTE_YOUR_FIREBASE_USER_ID_HERE") { document.getElementById('loading-overlay').innerHTML = '<p class="text-red-600 font-semibold text-center p-4">SETUP REQUIRED<br><span class="font-normal text-sm text-gray-600">Please paste the Owner User ID into the HTML file to connect to the correct data.</span></p>'; return; }
+                if (OWNER_USER_ID === "PASTE_YOUR_FIREBASE_USER_ID_HERE") { 
+                    loadingOverlay.innerHTML = '<p class="text-red-600 font-semibold text-center p-4">SETUP REQUIRED<br><span class="font-normal text-sm text-gray-600">Please paste the Owner User ID into the HTML file to connect to the correct data.</span></p>'; 
+                    return; 
+                }
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-                onAuthStateChanged(auth, user => { updateUIForLoginState(user); });
-                attachFirestoreListeners();
+                
+                // AUTH STATE CHANGE is now the single point of control for data visibility
+                onAuthStateChanged(auth, user => {
+                    updateUIForLoginState(user);
+
+                    const ownerIsLoggedIn = user && user.uid === OWNER_USER_ID;
+
+                    if (ownerIsLoggedIn) {
+                        // If the owner is logged in, connect to the database.
+                        attachFirestoreListeners();
+                    } else {
+                        // If anyone else or no one is logged in, disconnect and clear data.
+                        unsubscribeBoxes();
+                        unsubscribeItems();
+                        boxes = [];
+                        items = [];
+                        render(); // Re-render to show the empty state.
+                        loadingOverlay.style.display = 'none'; // Ensure loading is hidden
+                    }
+                });
+
             } catch (error) {
                 console.error("Firebase initialization failed:", error);
-                document.getElementById('loading-overlay').innerHTML = '<p class="text-red-600 font-semibold">Connection failed. Please check your Firebase config.</p>';
+                loadingOverlay.innerHTML = '<p class="text-red-600 font-semibold">Connection failed. Please check your Firebase config.</p>';
             }
         }
 
         function attachFirestoreListeners() {
+            loadingOverlay.style.display = 'flex';
             unsubscribeBoxes();
             const boxesCollection = collection(db, "users", OWNER_USER_ID, "boxes");
-            unsubscribeBoxes = onSnapshot(boxesCollection, (snapshot) => { boxes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); render(); }, (error) => console.error("Error listening to boxes:", error));
+            unsubscribeBoxes = onSnapshot(boxesCollection, (snapshot) => { 
+                boxes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
+                render(); 
+            }, (error) => console.error("Error listening to boxes:", error));
+            
             unsubscribeItems();
             const itemsCollection = collection(db, "users", OWNER_USER_ID, "items");
-            unsubscribeItems = onSnapshot(itemsCollection, (snapshot) => { items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); document.getElementById('loading-overlay').style.display = 'none'; render(); }, (error) => { console.error("Error listening to items:", error); document.getElementById('loading-overlay').style.display = 'none'; });
+            unsubscribeItems = onSnapshot(itemsCollection, (snapshot) => { 
+                items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
+                loadingOverlay.style.display = 'none'; 
+                render(); 
+            }, (error) => { 
+                console.error("Error listening to items:", error); 
+                loadingOverlay.style.display = 'none'; 
+            });
         }
         
         // --- MODALS AND FORMS ---
@@ -387,7 +429,6 @@
             }
         };
 
-        // UPDATED: updateSummary function now calculates and displays total volume
         function updateSummary() { 
             document.getElementById('total-boxes').textContent = boxes.length;
             document.getElementById('total-items').textContent = items.length;
