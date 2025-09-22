@@ -270,6 +270,7 @@
                         boxes = [];
                         items = [];
                         render();
+                        loadingOverlay.style.display = 'none'; // Added this line to hide overlay when not logged in
                     }
                     updateUIForLoginState(user);
                 });
@@ -514,4 +515,3 @@
     </script>
 </body>
 </html>
-
