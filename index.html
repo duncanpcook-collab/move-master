@@ -97,9 +97,9 @@
     <div id="custom-dimensions-container" class="hidden">
         <label class="block text-sm font-medium">Custom Dimensions (cm)</label>
         <div class="grid grid-cols-3 gap-2 mt-1">
-            <input type="number" step="1" id="box-height" placeholder="H" class="block w-full border-gray-300 rounded-md shadow-sm">
-            <input type="number" step="1" id="box-width" placeholder="W" class="block w-full border-gray-300 rounded-md shadow-sm">
-            <input type="number" step="1" id="box-length" placeholder="L" class="block w-full border-gray-300 rounded-md shadow-sm">
+            <input type="number" step="any" id="box-height" placeholder="H" class="block w-full border-gray-300 rounded-md shadow-sm">
+            <input type="number" step="any" id="box-width" placeholder="W" class="block w-full border-gray-300 rounded-md shadow-sm">
+            <input type="number" step="any" id="box-length" placeholder="L" class="block w-full border-gray-300 rounded-md shadow-sm">
         </div>
     </div>
     <div><p class="text-sm text-gray-600">Calculated Volume: <span id="box-volume" class="font-bold text-indigo-600">0.000 m³</span></p></div>
@@ -246,7 +246,7 @@
         
         async function initFirebase() {
             try {
-                const firebaseConfig = {
+                 const firebaseConfig = {
                     apiKey: "AIzaSyCVWdQVQbPWvfxUl0VSjkOGzuC0mm_CuSU",
                     authDomain: "my-move-master.firebaseapp.com",
                     projectId: "my-move-master",
