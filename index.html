@@ -159,9 +159,9 @@
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Assign DOM elements now that the document is loaded
             assignDOMElements();
             addEventListeners();
+            attachFunctionsToWindow();
             initFirebase();
         });
 
@@ -223,9 +223,33 @@
             window.addEventListener('click', (e) => { if (e.target.classList.contains('modal-backdrop')) { closeAllModals(); } });
         }
         
+        function attachFunctionsToWindow() {
+            window.openLoginModal = openLoginModal;
+            window.closeLoginModal = closeLoginModal;
+            window.openBoxModal = openBoxModal;
+            window.closeBoxModal = closeBoxModal;
+            window.openItemModal = openItemModal;
+            window.closeItemModal = closeItemModal;
+            window.logout = async () => { await signOut(auth); };
+            window.exportListWithImages = exportListWithImages;
+            window.resetFilters = resetFilters;
+            window.toggleBoxItems = toggleBoxItems;
+            window.showQRCodeForBox = showQRCodeForBox;
+            window.editBox = editBox;
+            window.confirmDelete = confirmDelete;
+            window.openPhotoModal = openPhotoModal;
+            window.closePhotoModal = closePhotoModal;
+            window.editItem = editItem;
+            window.removeItemPhoto = removeItemPhoto;
+            window.generateQRCodeForBox = generateQRCodeForBox;
+            window.printQRCode = printQRCode;
+            window.closeInfoModal = closeInfoModal;
+            window.formatCurrency = formatCurrency;
+        }
+
         async function initFirebase() {
             try {
-                if (OWNER_USER_ID === "PASTE_YOUR_UNIQUE_ID_FROM_FIREBASE_HERE") { 
+                if (OWNER_USER_ID === "FzazuoOmr8ZVyM6r2EOGZEg1LqB3") { 
                     loadingOverlay.innerHTML = '<p class="text-red-600 font-semibold text-center p-4">SETUP REQUIRED<br><span class="font-normal text-sm text-gray-600">Please replace the placeholder Owner User ID in the HTML file to connect to your data.</span></p>'; 
                     return; 
                 }
@@ -305,7 +329,7 @@
         }
 
         function render() {
-            if (!inventoryListEl) return; // Guard against race condition on initial load
+            if (!inventoryListEl) return;
             inventoryListEl.innerHTML = '';
             const searchTerm = searchInput.value.toLowerCase();
             const selectedRoom = roomFilter.value;
@@ -405,8 +429,7 @@
                 }
             }
         }
-        window.logout = async () => { await signOut(auth); };
-
+        
         async function handleSaveBox(e) {
             e.preventDefault();
             if (!isOwnerLoggedIn) { showInfoModal("You must be logged in as admin to save changes."); return; }
@@ -453,7 +476,7 @@
             finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; }
         }
 
-        window.toggleBoxItems = (boxId) => {
+        function toggleBoxItems(boxId) {
             const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
             const chevronIcon = document.getElementById(`chevron-for-box-${boxId}`);
             if (itemsContainer && chevronIcon) {
@@ -491,9 +514,9 @@
             document.getElementById('box-breakdown').textContent = breakdownParts.join(' / ');
         }
 
-        function updateRoomFilter() { const rooms = [...new Set(boxes.map(box => box.room))].sort(); const currentVal = roomFilter.value; roomFilter.innerHTML = '<option value="all">All Rooms</option>'; rooms.forEach(room => roomFilter.add(new Option(room, room))); roomFilter.value = currentVal; }
+        function updateRoomFilter() { const rooms = [...new Set(boxes.map(box => box.room))].sort(); const currentVal = roomFilter.value; roomFilter.innerHTML = '<option value="all">All Rooms</option>'; rooms.forEach(room => roomFilter.add(new Option(room, room))); if (rooms.includes(currentVal)) roomFilter.value = currentVal; }
         
-        window.editBox = (id) => { 
+        function editBox(id) { 
             const box = boxes.find(b => b.id === id); 
             if (!box) return; 
             document.getElementById('box-form').reset();
@@ -507,7 +530,7 @@
             qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; 
             printQrBtn.classList.add('hidden'); 
             qrNewBoxNote.classList.remove('hidden'); 
-            qrCodeSection.classList.remove('hidden'); 
+            qrCodeSection.classList.add('hidden'); 
             boxPhotoDataUrlCache = box.photoDataUrl;
             updateBoxPhotoPreview();
             populateBoxTypeSelect(box);
@@ -517,7 +540,7 @@
 
         function calculateVolume() { const h = parseFloat(boxDimensionInputs[0].value) || 0, w = parseFloat(boxDimensionInputs[1].value) || 0, l = parseFloat(boxDimensionInputs[2].value) || 0; document.getElementById('box-volume').textContent = `${((h * w * l) / 1000000).toFixed(3)} m³`; }
         
-        window.editItem = (id) => { 
+        function editItem(id) { 
             const item = items.find(i => i.id === id); 
             if (!item) return; 
             document.getElementById('item-form').reset();
@@ -540,9 +563,9 @@
 
         function updateBoxSelector(selectedId) { const select = document.getElementById('item-box-select'); select.innerHTML = ''; boxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).forEach(box => select.add(new Option(`Box ${box.number} (${box.room})`, box.id))); if (selectedId) select.value = selectedId; }
         
-        window.generateQRCodeForBox = () => { const boxId = document.getElementById('box-id').value; if (!boxId) { showInfoModal('Please save the box before generating a QR code.'); return; } const box = boxes.find(b => b.id === boxId); if (!box) { showInfoModal('Could not find box details.'); return; } qrCodeContainer.innerHTML = ''; new QRCode(qrCodeContainer, { text: JSON.stringify({type: "MoveMasterBox", id: box.id, number: box.number, room: box.room }), width: 160, height: 160, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H }); printQrBtn.classList.remove('hidden'); }
-        window.showQRCodeForBox = (boxId) => { window.editBox(boxId); setTimeout(() => window.generateQRCodeForBox(), 100); }
-        window.printQRCode = () => { const qrCodeImage = qrCodeContainer.querySelector('img').src; const boxNumber = document.getElementById('box-number').value; const room = document.getElementById('box-room-area').value; const printWindow = window.open('', '_blank'); printWindow.document.write(`<html><head><title>Print QR Code</title><style>body { font-family: sans-serif; text-align: center; margin-top: 50px; } img { width: 300px; height: 300px; } h2 { font-size: 2em; margin: 0; } p { font-size: 1.2em; }</style></head><body><h2>Box ${boxNumber}</h2><p>${room}</p><img src="${qrCodeImage}"><script>window.onload = function() { window.print(); window.onafterprint = function() { window.close(); }; }<\/script></body></html>`); printWindow.document.close(); }
+        function generateQRCodeForBox() { const boxId = document.getElementById('box-id').value; if (!boxId) { showInfoModal('Please save the box before generating a QR code.'); return; } const box = boxes.find(b => b.id === boxId); if (!box) { showInfoModal('Could not find box details.'); return; } qrCodeContainer.innerHTML = ''; new QRCode(qrCodeContainer, { text: JSON.stringify({type: "MoveMasterBox", id: box.id, number: box.number, room: box.room }), width: 160, height: 160, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H }); printQrBtn.classList.remove('hidden'); qrCodeSection.classList.remove('hidden'); qrNewBoxNote.classList.add('hidden'); }
+        function showQRCodeForBox(boxId) { editBox(boxId); setTimeout(() => generateQRCodeForBox(), 100); }
+        function printQRCode() { const qrCodeImage = qrCodeContainer.querySelector('img').src; const boxNumber = document.getElementById('box-number').value; const room = document.getElementById('box-room-area').value; const printWindow = window.open('', '_blank'); printWindow.document.write(`<html><head><title>Print QR Code</title><style>body { font-family: sans-serif; text-align: center; margin-top: 50px; } img { width: 300px; height: 300px; } h2 { font-size: 2em; margin: 0; } p { font-size: 1.2em; }</style></head><body><h2>Box ${boxNumber}</h2><p>${room}</p><img src="${qrCodeImage}"><script>window.onload = function() { window.print(); window.onafterprint = function() { window.close(); }; }<\/script></body></html>`); printWindow.document.close(); }
         
         function populateBoxTypeSelect(box = null) {
             boxTypeSelect.innerHTML = '';
@@ -580,7 +603,7 @@
             calculateVolume();
         }
 
-        window.exportListWithImages = () => {
+        function exportListWithImages() {
             if (items.length === 0) { showInfoModal("No items to export."); return; }
             const sortedData = [...items].sort((a, b) => {
                 const boxA = boxes.find(box => box.id === a.boxId) || {};
@@ -642,14 +665,14 @@
             itemPhotoInput.value = '';
         }
 
-        window.removeItemPhoto = (index) => { itemPhotosCache.splice(index, 1); renderItemPhotoPreviews(); }
+        function removeItemPhoto(index) { itemPhotosCache.splice(index, 1); renderItemPhotoPreviews(); }
         function resetItemPhotoPreviews() { itemPhotosCache = []; renderItemPhotoPreviews(); }
 
-        window.openPhotoModal = (urls, index) => { currentPhotoGallery = urls; currentPhotoIndex = index; photoModal.style.display = 'flex'; showGalleryPhoto(); };
+        function openPhotoModal(urls, index) { currentPhotoGallery = urls; currentPhotoIndex = index; photoModal.style.display = 'flex'; showGalleryPhoto(); };
         function showGalleryPhoto() { fullPhoto.src = currentPhotoGallery[currentPhotoIndex]; galleryPrevBtn.classList.toggle('hidden', currentPhotoGallery.length <= 1 || currentPhotoIndex === 0); galleryNextBtn.classList.toggle('hidden', currentPhotoGallery.length <= 1 || currentPhotoIndex >= currentPhotoGallery.length - 1); }
-        window.closePhotoModal = () => { photoModal.style.display = 'none'; currentPhotoGallery = []; }
+        function closePhotoModal() { photoModal.style.display = 'none'; currentPhotoGallery = []; }
 
-        window.confirmDelete = (type, id) => { if (!isOwnerLoggedIn) return; if (type === 'item') {itemToDelete=id; boxToDelete=null;} if (type === 'box') {boxToDelete=id; itemToDelete=null;} confirmModal.style.display = 'flex'; }
+        function confirmDelete(type, id) { if (!isOwnerLoggedIn) return; if (type === 'item') {itemToDelete=id; boxToDelete=null;} if (type === 'box') {boxToDelete=id; itemToDelete=null;} confirmModal.style.display = 'flex'; }
         async function executeDelete() { try { if (itemToDelete) { await deleteDoc(doc(db, "users", OWNER_USER_ID, "items", itemToDelete)); } if (boxToDelete) { const itemsInBoxQuery = query(collection(db, "users", OWNER_USER_ID, "items"), where("boxId", "==", boxToDelete)); const itemsInBoxSnapshot = await getDocs(itemsInBoxQuery); const batch = writeBatch(db); itemsInBoxSnapshot.forEach(doc => batch.delete(doc.ref)); batch.delete(doc(db, "users", OWNER_USER_ID, "boxes", boxToDelete)); await batch.commit(); } } catch (error) { console.error("Error deleting document: ", error); showInfoModal("Failed to delete. Please try again."); } closeConfirmModal(); }
         
         function closeAllModals() {
@@ -665,14 +688,26 @@
         function closeItemModal() { itemModal.style.display = 'none'; }
         function closeConfirmModal() { itemToDelete = null; boxToDelete = null; confirmModal.style.display = 'none'; }
         
-        window.openLoginModal = () => loginModal.style.display = 'flex';
-        window.openBoxModal = () => { document.getElementById('box-form').reset(); document.getElementById('box-id').value = ''; document.getElementById('box-modal-title').textContent = 'Add New Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.remove('hidden'); qrCodeSection.classList.add('hidden'); resetBoxPhotoPreview(); populateBoxTypeSelect(); boxModal.style.display = 'flex'; calculateVolume(); }
-        window.openItemModal = () => { if (boxes.length === 0) { showInfoModal('Please create a box first before adding an item.'); return; } document.getElementById('item-form').reset(); document.getElementById('item-id').value = ''; document.getElementById('item-modal-title').textContent = 'Add New Item'; updateBoxSelector(); resetItemPhotoPreviews(); newItemDetails.classList.add('hidden'); itemModal.style.display = 'flex'; }
-        window.showInfoModal = (message, title = 'Heads Up!') => { document.getElementById('info-modal-title').textContent = title; document.getElementById('info-modal-text').textContent = message; infoModal.style.display = 'flex'; }
-        window.closeInfoModal = () => infoModal.style.display = 'none';
+        function openLoginModal() { loginModal.style.display = 'flex'; }
+        function openBoxModal() { document.getElementById('box-form').reset(); document.getElementById('box-id').value = ''; document.getElementById('box-modal-title').textContent = 'Add New Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.remove('hidden'); qrCodeSection.classList.add('hidden'); resetBoxPhotoPreview(); populateBoxTypeSelect(); boxModal.style.display = 'flex'; calculateVolume(); }
+        function openItemModal() { if (boxes.length === 0) { showInfoModal('Please create a box first before adding an item.'); return; } document.getElementById('item-form').reset(); document.getElementById('item-id').value = ''; document.getElementById('item-modal-title').textContent = 'Add New Item'; updateBoxSelector(); resetItemPhotoPreviews(); newItemDetails.classList.add('hidden'); itemModal.style.display = 'flex'; }
+        function showInfoModal(message, title = 'Heads Up!') { document.getElementById('info-modal-title').textContent = title; document.getElementById('info-modal-text').textContent = message; infoModal.style.display = 'flex'; }
+        function closeInfoModal() { infoModal.style.display = 'none'; }
 
-        window.formatCurrency = (num) => (parseFloat(num) || 0).toFixed(2);
-        window.resetFilters = () => { searchInput.value = ''; roomFilter.value = 'all'; render(); }
+        function formatCurrency(num) { return (parseFloat(num) || 0).toFixed(2); }
+        function resetFilters() { searchInput.value = ''; roomFilter.value = 'all'; render(); }
     </script>
 </body>
 </html>
+```
+
+### Final Instructions
+
+4.  **Crucial Final Step:** In the code you just pasted, find the `OWNER_USER_ID` line again and put **your real User ID** there.
+    ```javascript
+    // PASTE YOUR UNIQUE FIREBASE USER ID HERE
+    const OWNER_USER_ID = "FzazuoOmr8ZVyM6r2EOGZEg1LqB3"; 
+    
+    // I have put your correct Firebase project details in the firebaseConfig object already.
+    
+
