@@ -249,7 +249,7 @@
 
         async function initFirebase() {
             try {
-                if (OWNER_USER_ID === "FzazuoOmr8ZVyM6r2EOGZEg1LqB3") { 
+                if (OWNER_USER_ID === "PASTE_YOUR_UNIQUE_ID_FROM_FIREBASE_HERE") { 
                     loadingOverlay.innerHTML = '<p class="text-red-600 font-semibold text-center p-4">SETUP REQUIRED<br><span class="font-normal text-sm text-gray-600">Please replace the placeholder Owner User ID in the HTML file to connect to your data.</span></p>'; 
                     return; 
                 }
@@ -699,15 +699,4 @@
     </script>
 </body>
 </html>
-```
-
-### Final Instructions
-
-4.  **Crucial Final Step:** In the code you just pasted, find the `OWNER_USER_ID` line again and put **your real User ID** there.
-    ```javascript
-    // PASTE YOUR UNIQUE FIREBASE USER ID HERE
-    const OWNER_USER_ID = "FzazuoOmr8ZVyM6r2EOGZEg1LqB3"; 
-    
-    // I have put your correct Firebase project details in the firebaseConfig object already.
-    
 
