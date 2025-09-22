@@ -117,7 +117,7 @@
     <div id="info-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-6 w-11/12 sm:w-1/3 animate-fade-in"><h3 id="info-modal-title" class="text-lg font-bold">Heads Up!</h3><p id="info-modal-text" class="text-gray-600 my-4">Modal message goes here.</p><div class="flex justify-end space-x-4"><button onclick="closeInfoModal()" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">OK</button></div></div></div>
     <datalist id="room-suggestions"><option value="Living Room"><option value="Dining Room"><option value="Kitchen"><option value="Bedroom 1"><option value="Bedroom 2"><option value="Office"><option value="Garage"><option value="Bathroom"><option value="Storage"></option></datalist>
 
-  <script type="module">
+<script type="module">
         // --- Firebase SDK Imports ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -132,8 +132,6 @@
         let itemPhotosCache = []; 
         let currentPhotoGallery = [];
         let currentPhotoIndex = 0;
-
-        // Firebase state
         let db, auth;
         let isOwnerLoggedIn = false;
         let unsubscribeBoxes = () => {};
@@ -151,44 +149,132 @@
             { id: 'jumbo', name: 'Jumbo Box Heavy Duty (104L)', w: 43.1, l: 40.6, h: 59.6, imgSrc: JUMBO_BOX_IMG_URL },
         ];
         
-        // --- DOM ELEMENTS ---
-        const loginBtn = document.getElementById('login-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-        const addBoxBtn = document.getElementById('add-box-btn');
-        const addItemBtn = document.getElementById('add-item-btn');
-        const loginModal = document.getElementById('login-modal');
-        const loginForm = document.getElementById('login-form');
-        const loginError = document.getElementById('login-error');
-        const userIdDisplay = document.getElementById('user-id-display');
-        const inventoryListEl = document.getElementById('inventory-list');
-        const boxModal = document.getElementById('box-modal');
-        const itemModal = document.getElementById('item-modal');
-        const photoModal = document.getElementById('photo-modal');
-        const confirmModal = document.getElementById('confirm-modal');
-        const infoModal = document.getElementById('info-modal');
-        const searchInput = document.getElementById('search-input');
-        const roomFilter = document.getElementById('room-filter');
-        const boxDimensionInputs = ['box-height', 'box-width', 'box-length'].map(id => document.getElementById(id));
-        const isNewCheckbox = document.getElementById('is-new-checkbox');
-        const newItemDetails = document.getElementById('new-item-details');
-        const qrCodeContainer = document.getElementById('qr-code-container');
-        const printQrBtn = document.getElementById('print-qr-btn');
-        const qrCodeSection = document.getElementById('qr-code-section');
-        const qrNewBoxNote = document.getElementById('qr-new-box-note');
-        const boxPhotoInput = document.getElementById('box-photo-input');
-        const boxPhotoPreview = document.getElementById('box-photo-preview');
-        const boxRemovePhotoBtn = document.getElementById('box-remove-photo-btn');
-        const itemPhotoInput = document.getElementById('item-photo-input');
-        const itemPhotosContainer = document.getElementById('item-photos-container');
-        const itemAddPhotoLabel = document.getElementById('item-add-photo-label');
-        const galleryPrevBtn = document.getElementById('gallery-prev-btn');
-        const galleryNextBtn = document.getElementById('gallery-next-btn');
-        const fullPhoto = document.getElementById('full-photo');
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const boxTypeSelect = document.getElementById('box-type-select');
-        const boxTypeThumbnail = document.getElementById('box-type-thumbnail');
-        const customDimensionsContainer = document.getElementById('custom-dimensions-container');
-        
+        // --- DOM ELEMENT VARIABLES ---
+        // These will be assigned after the DOM is loaded
+        let loginBtn, logoutBtn, addBoxBtn, addItemBtn, loginModal, loginForm, loginError, userIdDisplay,
+            inventoryListEl, boxModal, itemModal, photoModal, confirmModal, infoModal, searchInput,
+            roomFilter, boxDimensionInputs, isNewCheckbox, newItemDetails, qrCodeContainer, printQrBtn,
+            qrCodeSection, qrNewBoxNote, boxPhotoInput, boxPhotoPreview, boxRemovePhotoBtn, itemPhotoInput,
+            itemPhotosContainer, itemAddPhotoLabel, galleryPrevBtn, galleryNextBtn, fullPhoto, loadingOverlay,
+            boxTypeSelect, boxTypeThumbnail, customDimensionsContainer;
+
+        // --- FIREBASE INITIALIZATION & AUTH HANDLING ---
+        async function initFirebase() {
+            // Assign DOM elements now that the document is loaded
+            loginBtn = document.getElementById('login-btn');
+            logoutBtn = document.getElementById('logout-btn');
+            addBoxBtn = document.getElementById('add-box-btn');
+            addItemBtn = document.getElementById('add-item-btn');
+            loginModal = document.getElementById('login-modal');
+            loginForm = document.getElementById('login-form');
+            loginError = document.getElementById('login-error');
+            userIdDisplay = document.getElementById('user-id-display');
+            inventoryListEl = document.getElementById('inventory-list');
+            boxModal = document.getElementById('box-modal');
+            itemModal = document.getElementById('item-modal');
+            photoModal = document.getElementById('photo-modal');
+            confirmModal = document.getElementById('confirm-modal');
+            infoModal = document.getElementById('info-modal');
+            searchInput = document.getElementById('search-input');
+            roomFilter = document.getElementById('room-filter');
+            boxDimensionInputs = ['box-height', 'box-width', 'box-length'].map(id => document.getElementById(id));
+            isNewCheckbox = document.getElementById('is-new-checkbox');
+            newItemDetails = document.getElementById('new-item-details');
+            qrCodeContainer = document.getElementById('qr-code-container');
+            printQrBtn = document.getElementById('print-qr-btn');
+            qrCodeSection = document.getElementById('qr-code-section');
+            qrNewBoxNote = document.getElementById('qr-new-box-note');
+            boxPhotoInput = document.getElementById('box-photo-input');
+            boxPhotoPreview = document.getElementById('box-photo-preview');
+            boxRemovePhotoBtn = document.getElementById('box-remove-photo-btn');
+            itemPhotoInput = document.getElementById('item-photo-input');
+            itemPhotosContainer = document.getElementById('item-photos-container');
+            itemAddPhotoLabel = document.getElementById('item-add-photo-label');
+            galleryPrevBtn = document.getElementById('gallery-prev-btn');
+            galleryNextBtn = document.getElementById('gallery-next-btn');
+            fullPhoto = document.getElementById('full-photo');
+            loadingOverlay = document.getElementById('loading-overlay');
+            boxTypeSelect = document.getElementById('box-type-select');
+            boxTypeThumbnail = document.getElementById('box-type-thumbnail');
+            customDimensionsContainer = document.getElementById('custom-dimensions-container');
+            
+            // Add event listeners that depend on the elements
+            loginForm.addEventListener('submit', handleLogin);
+            document.getElementById('box-form').addEventListener('submit', handleSaveBox);
+            document.getElementById('item-form').addEventListener('submit', handleSaveItem);
+            boxDimensionInputs.forEach(input => input.addEventListener('input', calculateVolume));
+            isNewCheckbox.addEventListener('change', () => newItemDetails.classList.toggle('hidden', !isNewCheckbox.checked));
+            boxTypeSelect.addEventListener('change', handleBoxTypeChange);
+            boxPhotoInput.addEventListener('change', handleBoxPhotoUpload);
+            boxRemovePhotoBtn.addEventListener('click', resetBoxPhotoPreview);
+            itemPhotoInput.addEventListener('change', handleItemPhotoUpload);
+            galleryPrevBtn.addEventListener('click', () => { if (currentPhotoIndex > 0) { currentPhotoIndex--; showGalleryPhoto(); } });
+            galleryNextBtn.addEventListener('click', () => { if (currentPhotoIndex < currentPhotoGallery.length - 1) { currentPhotoIndex++; showGalleryPhoto(); } });
+            document.getElementById('confirm-delete-btn').addEventListener('click', executeDelete);
+            document.getElementById('cancel-delete').addEventListener('click', closeConfirmModal);
+            searchInput.addEventListener('input', render);
+            roomFilter.addEventListener('change', render);
+            window.addEventListener('click', (e) => { if (e.target.classList.contains('modal-backdrop')) { closeAllModals(); } });
+
+            // Now proceed with Firebase setup
+            try {
+                if (OWNER_USER_ID === "FzazuoOmr8ZVyM6r2EOGZEg1LqB3") { 
+                    loadingOverlay.innerHTML = '<p class="text-red-600 font-semibold text-center p-4">SETUP REQUIRED<br><span class="font-normal text-sm text-gray-600">Please replace the placeholder Owner User ID in the HTML file to connect to your data.</span></p>'; 
+                    return; 
+                }
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCVWdQVQbPWvfxUl0VSjkOGzuC0mm_CuSU",
+                    authDomain: "my-move-master.firebaseapp.com",
+                    projectId: "my-move-master",
+                    storageBucket: "my-move-master.appspot.com",
+                    messagingSenderId: "642424710686",
+                    appId: "1:642424710686:web:119de596a4826a68b1f00f",
+                    measurementId: "G-R1X3RKVQES"
+                };
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                onAuthStateChanged(auth, user => {
+                    updateUIForLoginState(user);
+                    const ownerIsLoggedIn = user && user.uid === OWNER_USER_ID;
+                    if (ownerIsLoggedIn) {
+                        attachFirestoreListeners();
+                    } else {
+                        unsubscribeBoxes();
+                        unsubscribeItems();
+                        boxes = [];
+                        items = [];
+                        render(); 
+                        loadingOverlay.style.display = 'none';
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                loadingOverlay.innerHTML = '<p class="text-red-600 font-semibold">Connection failed. Please check your Firebase config.</p>';
+            }
+        }
+
+        function attachFirestoreListeners() {
+            loadingOverlay.style.display = 'flex';
+            const boxesCollection = collection(db, "users", OWNER_USER_ID, "boxes");
+            unsubscribeBoxes = onSnapshot(boxesCollection, (snapshot) => { 
+                boxes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
+                render(); 
+            }, (error) => console.error("Error listening to boxes:", error));
+            
+            const itemsCollection = collection(db, "users", OWNER_USER_ID, "items");
+            unsubscribeItems = onSnapshot(itemsCollection, (snapshot) => { 
+                items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
+                loadingOverlay.style.display = 'none'; 
+                render(); 
+            }, (error) => { 
+                console.error("Error listening to items:", error); 
+                loadingOverlay.style.display = 'none'; 
+            });
+        }
+
         function updateUIForLoginState(user) {
             isOwnerLoggedIn = user && user.uid === OWNER_USER_ID;
             loginBtn.classList.toggle('hidden', isOwnerLoggedIn);
@@ -211,7 +297,6 @@
             render();
         }
 
-        // --- RENDER ---
         function render() {
             inventoryListEl.innerHTML = '';
             const searchTerm = searchInput.value.toLowerCase();
@@ -243,18 +328,18 @@
             const itemsHTML = boxItems.map(createItemHTML).join('');
             const adminButtons = `
                 <div class="flex items-center space-x-2" onclick="event.stopPropagation()">
-                    <button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>
-                    <button onclick="editBox('${box.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
-                    <button onclick="confirmDelete('box', '${box.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>
+                    <button onclick="window.showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>
+                    <button onclick="window.editBox('${box.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
+                    <button onclick="window.confirmDelete('box', '${box.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>
                 </div>`;
-            const guestButtons = `<div onclick="event.stopPropagation()"><button onclick="showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button></div>`;
+            const guestButtons = `<div onclick="event.stopPropagation()"><button onclick="window.showQRCodeForBox('${box.id}')" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button></div>`;
             
             const boxPhotoThumb = box.photoDataUrl 
-                ? `<img src="${box.photoDataUrl}" class="h-12 w-12 rounded-md object-cover cursor-pointer" onclick="event.stopPropagation(); openPhotoModal(['${box.photoDataUrl}'], 0)">` 
+                ? `<img src="${box.photoDataUrl}" class="h-12 w-12 rounded-md object-cover cursor-pointer" onclick="event.stopPropagation(); window.openPhotoModal(['${box.photoDataUrl}'], 0)">` 
                 : '';
 
             boxEl.innerHTML = `
-                <div class="bg-gray-100 p-4 border-b flex justify-between items-center cursor-pointer" onclick="toggleBoxItems('${box.id}')">
+                <div class="bg-gray-100 p-4 border-b flex justify-between items-center cursor-pointer" onclick="window.toggleBoxItems('${box.id}')">
                     <div class="flex items-center gap-4">
                         ${boxPhotoThumb}
                         <div>
@@ -276,7 +361,7 @@
         function createItemHTML(item) {
             const hasPhotos = item.photoDataUrls && item.photoDataUrls.length > 0;
             const photoThumb = hasPhotos
-                ? `<div class="relative cursor-pointer" onclick="openPhotoModal(JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(item.photoDataUrls))}')) , 0)">
+                ? `<div class="relative cursor-pointer" onclick="window.openPhotoModal(JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(item.photoDataUrls))}')) , 0)">
                       <img src="${item.photoDataUrls[0]}" class="h-12 w-12 rounded-md object-cover">
                       ${item.photoDataUrls.length > 1 ? `<div class="photo-count-badge">+${item.photoDataUrls.length - 1}</div>` : ''}
                    </div>`
@@ -284,14 +369,11 @@
 
             const newTag = item.isNew ? '<span class="ml-2 text-xs font-semibold bg-green-100 text-green-800 px-2 py-0.5 rounded-full">NEW</span>' : '';
             let woodInfo = item.hasWood ? `<p class="text-xs text-amber-700 mt-1"><i class="fas fa-tree mr-1"></i> Wood ${item.isTreated ? '(Treated)' : '(Untreated)'}</p>` : '';
-            const adminButtons = `<button onclick="editItem('${item.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button><button onclick="confirmDelete('item', '${item.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
-            return `<div class="p-4 grid grid-cols-6 gap-4 items-center"><div class="col-span-1">${photoThumb}</div><div class="col-span-6 sm:col-span-3"><p class="font-semibold flex items-center">${item.name} ${newTag}</p><p class="text-sm text-gray-500">${item.notes || ''}</p>${woodInfo}</div><div class="col-span-3 sm:col-span-1 text-right sm:text-left"><p class="font-semibold text-green-600">$${formatCurrency(item.value)}</p></div><div class="col-span-3 sm:col-span-1 flex items-center justify-end space-x-2">${isOwnerLoggedIn ? adminButtons : ''}</div></div>`;
+            const adminButtons = `<button onclick="window.editItem('${item.id}')" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button><button onclick="window.confirmDelete('item', '${item.id}')" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
+            return `<div class="p-4 grid grid-cols-6 gap-4 items-center"><div class="col-span-1">${photoThumb}</div><div class="col-span-6 sm:col-span-3"><p class="font-semibold flex items-center">${item.name} ${newTag}</p><p class="text-sm text-gray-500">${item.notes || ''}</p>${woodInfo}</div><div class="col-span-3 sm:col-span-1 text-right sm:text-left"><p class="font-semibold text-green-600">$${window.formatCurrency(item.value)}</p></div><div class="col-span-3 sm:col-span-1 flex items-center justify-end space-x-2">${isOwnerLoggedIn ? adminButtons : ''}</div></div>`;
         }
         
-        // --- Login Modal & Auth Logic ---
-        window.openLoginModal = () => loginModal.style.display = 'flex';
-        window.closeLoginModal = () => { loginModal.style.display = 'none'; loginError.classList.add('hidden'); loginForm.reset(); };
-        loginForm.addEventListener('submit', async (e) => {
+        async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -314,81 +396,10 @@
                     loginError.classList.remove('hidden');
                 }
             }
-        });
+        }
         window.logout = async () => { await signOut(auth); };
 
-        // --- FIREBASE INITIALIZATION & AUTH HANDLING ---
-        const firebaseConfig = {
-         apiKey: "AIzaSyCVWdQVQbPWvfxUl0VSjkOGzuC0mm_CuSU",
-         authDomain: "my-move-master.firebaseapp.com",
-         projectId: "my-move-master",
-         storageBucket: "my-move-master.appspot.com",
-         messagingSenderId: "642424710686",
-         appId: "1:642424710686:web:119de596a4826a68b1f00f",
-         measurementId: "G-R1X3RKVQES"
-        };
-        
-        async function initFirebase() {
-            try {
-                if (OWNER_USER_ID === "PASTE_YOUR_UNIQUE_ID_FROM_FIREBASE_HERE") { 
-                    loadingOverlay.innerHTML = '<p class="text-red-600 font-semibold text-center p-4">SETUP REQUIRED<br><span class="font-normal text-sm text-gray-600">Please replace the placeholder Owner User ID in the HTML file to connect to your data.</span></p>'; 
-                    return; 
-                }
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                
-                onAuthStateChanged(auth, user => {
-                    updateUIForLoginState(user);
-                    const ownerIsLoggedIn = user && user.uid === OWNER_USER_ID;
-                    if (ownerIsLoggedIn) {
-                        attachFirestoreListeners();
-                    } else {
-                        unsubscribeBoxes();
-                        unsubscribeItems();
-                        boxes = [];
-                        items = [];
-                        render(); 
-                        loadingOverlay.style.display = 'none';
-                    }
-                });
-
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                loadingOverlay.innerHTML = '<p class="text-red-600 font-semibold">Connection failed. Please check your Firebase config.</p>';
-            }
-        }
-
-        function attachFirestoreListeners() {
-            loadingOverlay.style.display = 'flex';
-            
-            const boxesCollection = collection(db, "users", OWNER_USER_ID, "boxes");
-            unsubscribeBoxes = onSnapshot(boxesCollection, (snapshot) => { 
-                boxes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
-                render(); 
-            }, (error) => console.error("Error listening to boxes:", error));
-            
-            const itemsCollection = collection(db, "users", OWNER_USER_ID, "items");
-            unsubscribeItems = onSnapshot(itemsCollection, (snapshot) => { 
-                items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
-                loadingOverlay.style.display = 'none'; 
-                render(); 
-            }, (error) => { 
-                console.error("Error listening to items:", error); 
-                loadingOverlay.style.display = 'none'; 
-            });
-        }
-        
-        // --- MODALS AND FORMS ---
-        window.showInfoModal = (message, title = 'Heads Up!') => { document.getElementById('info-modal-title').textContent = title; document.getElementById('info-modal-text').textContent = message; infoModal.style.display = 'flex'; }
-        window.closeInfoModal = () => { infoModal.style.display = 'none'; }
-        window.openBoxModal = () => { document.getElementById('box-form').reset(); document.getElementById('box-id').value = ''; document.getElementById('box-modal-title').textContent = 'Add New Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.add('hidden'); qrCodeSection.classList.remove('hidden'); resetBoxPhotoPreview(); populateBoxTypeSelect(); boxModal.style.display = 'flex'; calculateVolume(); }
-        window.closeBoxModal = () => { boxModal.style.display = 'none'; }
-        window.openItemModal = () => { if (boxes.length === 0) { showInfoModal('Please create a box first before adding an item.'); return; } document.getElementById('item-form').reset(); document.getElementById('item-id').value = ''; document.getElementById('item-modal-title').textContent = 'Add New Item'; updateBoxSelector(); resetItemPhotoPreviews(); newItemDetails.classList.add('hidden'); itemModal.style.display = 'flex'; }
-        window.closeItemModal = () => { itemModal.style.display = 'none'; }
-
-        // --- EVENT LISTENERS FOR FORMS ---
-        document.getElementById('box-form').addEventListener('submit', async (e) => {
+        async function handleSaveBox(e) {
             e.preventDefault();
             if (!isOwnerLoggedIn) { showInfoModal("You must be logged in as admin to save changes."); return; }
             const saveBtn = document.getElementById('save-box-btn');
@@ -407,9 +418,9 @@
             try { if (id) { await setDoc(doc(db, "users", OWNER_USER_ID, "boxes", id), boxData); } else { await addDoc(collection(db, "users", OWNER_USER_ID, "boxes"), boxData); } closeBoxModal(); } 
             catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); } 
             finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Box'; }
-        });
+        }
 
-        document.getElementById('item-form').addEventListener('submit', async (e) => {
+        async function handleSaveItem(e) {
             e.preventDefault();
             if (!isOwnerLoggedIn) { showInfoModal("You must be logged in as admin to save changes."); return; }
             const saveBtn = document.getElementById('save-item-btn');
@@ -432,9 +443,8 @@
             try { if (id) { await setDoc(doc(db, "users", OWNER_USER_ID, "items", id), itemData); } else { await addDoc(collection(db, "users", OWNER_USER_ID, "items"), itemData); } closeItemModal(); } 
             catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); } 
             finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; }
-        });
+        }
 
-        // --- OTHER FUNCTIONS ---
         window.toggleBoxItems = (boxId) => {
             const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
             const chevronIcon = document.getElementById(`chevron-for-box-${boxId}`);
@@ -450,7 +460,7 @@
             document.getElementById('total-items').textContent = items.length;
             
             const totalValue = items.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
-            document.getElementById('total-value').textContent = `$${formatCurrency(totalValue)}`;
+            document.getElementById('total-value').textContent = `$${window.formatCurrency(totalValue)}`;
             
             const totalVolume = boxes.reduce((sum, box) => sum + (parseFloat(box.volume) || 0), 0);
             document.getElementById('total-volume').textContent = `${totalVolume.toFixed(3)} m³`;
@@ -496,9 +506,7 @@
             calculateVolume(); 
         }
 
-        function calculateVolume() { const h = parseFloat(document.getElementById('box-height').value) || 0, w = parseFloat(document.getElementById('box-width').value) || 0, l = parseFloat(document.getElementById('box-length').value) || 0; document.getElementById('box-volume').textContent = `${((h * w * l) / 1000000).toFixed(3)} m³`; }
-        boxDimensionInputs.forEach(input => input.addEventListener('input', calculateVolume));
-        isNewCheckbox.addEventListener('change', () => { newItemDetails.classList.toggle('hidden', !isNewCheckbox.checked); });
+        function calculateVolume() { const h = parseFloat(boxDimensionInputs[0].value) || 0, w = parseFloat(boxDimensionInputs[1].value) || 0, l = parseFloat(boxDimensionInputs[2].value) || 0; document.getElementById('box-volume').textContent = `${((h * w * l) / 1000000).toFixed(3)} m³`; }
         
         window.editItem = (id) => { 
             const item = items.find(i => i.id === id); 
@@ -523,10 +531,9 @@
         function updateBoxSelector(selectedId) { const select = document.getElementById('item-box-select'); select.innerHTML = ''; boxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).forEach(box => select.add(new Option(`Box ${box.number} (${box.room})`, box.id))); if (selectedId) select.value = selectedId; }
         
         window.generateQRCodeForBox = () => { const boxId = document.getElementById('box-id').value; if (!boxId) { showInfoModal('Please save the box before generating a QR code.'); return; } const box = boxes.find(b => b.id === boxId); if (!box) { showInfoModal('Could not find box details.'); return; } qrCodeContainer.innerHTML = ''; new QRCode(qrCodeContainer, { text: JSON.stringify({type: "MoveMasterBox", id: box.id, number: box.number, room: box.room }), width: 160, height: 160, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H }); printQrBtn.classList.remove('hidden'); }
-        window.showQRCodeForBox = (boxId) => { editBox(boxId); setTimeout(() => generateQRCodeForBox(), 100); }
+        window.showQRCodeForBox = (boxId) => { editBox(boxId); setTimeout(() => window.generateQRCodeForBox(), 100); }
         window.printQRCode = () => { const qrCodeImage = qrCodeContainer.querySelector('img').src; const boxNumber = document.getElementById('box-number').value; const room = document.getElementById('box-room-area').value; const printWindow = window.open('', '_blank'); printWindow.document.write(`<html><head><title>Print QR Code</title><style>body { font-family: sans-serif; text-align: center; margin-top: 50px; } img { width: 300px; height: 300px; } h2 { font-size: 2em; margin: 0; } p { font-size: 1.2em; }</style></head><body><h2>Box ${boxNumber}</h2><p>${room}</p><img src="${qrCodeImage}"><script>window.onload = function() { window.print(); window.onafterprint = function() { window.close(); }; }<\/script></body></html>`); printWindow.document.close(); }
         
-        // --- Box Type Dropdown Logic ---
         function populateBoxTypeSelect(box = null) {
             boxTypeSelect.innerHTML = '';
             BOX_PRESETS.forEach(preset => {
@@ -557,24 +564,18 @@
                 customDimensionsContainer.classList.add('hidden');
                 boxTypeThumbnail.src = preset.imgSrc;
                 boxTypeThumbnail.classList.remove('hidden');
-                document.getElementById('box-height').value = preset.h;
-                document.getElementById('box-width').value = preset.w;
-                document.getElementById('box-length').value = preset.l;
+                boxDimensionInputs[0].value = preset.h;
+                boxDimensionInputs[1].value = preset.w;
+                boxDimensionInputs[2].value = preset.l;
             } else { // Custom
                 customDimensionsContainer.classList.remove('hidden');
                 boxTypeThumbnail.classList.add('hidden');
             }
             calculateVolume();
         }
-        boxTypeSelect.addEventListener('change', handleBoxTypeChange);
 
-        // --- NEW Export Function ---
         window.exportListWithImages = () => {
-            if (items.length === 0) {
-                showInfoModal("No items to export.");
-                return;
-            }
-
+            if (items.length === 0) { showInfoModal("No items to export."); return; }
             const sortedData = [...items].sort((a, b) => {
                 const boxA = boxes.find(box => box.id === a.boxId) || {};
                 const boxB = boxes.find(box => box.id === b.boxId) || {};
@@ -584,44 +585,19 @@
                 return a.name.localeCompare(b.name);
             });
 
-            let htmlContent = `
-                <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title>
-                <style>
-                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 2em; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
-                    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; }
-                    th { background-color: #f2f2f2; font-weight: bold; }
-                    img { max-height: 70px; max-width: 70px; object-fit: cover; border-radius: 4px; }
-                    h1 { font-size: 24px; }
-                    @media print { body { font-size: 10pt; margin: 1em; } img { max-height: 50px; max-width: 50px; } }
-                </style></head><body>
-                <h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>
-                <table><thead><tr>
-                    <th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th>
-                </tr></thead><tbody>`;
-
+            let htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:2em}table{width:100%;border-collapse:collapse;margin-top:20px;font-size:12px}th,td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle}th{background-color:#f2f2f2;font-weight:bold}img{max-height:70px;max-width:70px;object-fit:cover;border-radius:4px}h1{font-size:24px}@media print{body{font-size:10pt;margin:1em}img{max-height:50px;max-width:50px}}</style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p><table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`;
             sortedData.forEach(item => {
                 const box = boxes.find(b => b.id === item.boxId) || { number: 'N/A', room: 'N/A' };
                 const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
                 const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '';
-                htmlContent += `
-                    <tr>
-                        <td>${imageTag}</td>
-                        <td>${box.number}</td>
-                        <td>${box.room}</td>
-                        <td>${item.name || ''}</td>
-                        <td>$${formatCurrency(item.value)}</td>
-                        <td>${item.notes || ''}</td>
-                    </tr>`;
+                htmlContent += `<tr><td>${imageTag}</td><td>${box.number}</td><td>${box.room}</td><td>${item.name || ''}</td><td>$${window.formatCurrency(item.value)}</td><td>${item.notes || ''}</td></tr>`;
             });
             htmlContent += `</tbody></table></body></html>`;
-
             const exportWindow = window.open('', '_blank');
             exportWindow.document.write(htmlContent);
             exportWindow.document.close();
         };
 
-        // --- Photo Logic ---
         function resizeAndProcessImage(file, callback) {
             const MAX_WIDTH = 800; const MAX_HEIGHT = 800; const MIME_TYPE = "image/jpeg"; const QUALITY = 0.8;
             const blobURL = URL.createObjectURL(file);
@@ -643,28 +619,23 @@
             };
         }
 
-        boxPhotoInput.addEventListener('change', (e) => {
+        function handleBoxPhotoUpload(e) {
             const file = e.target.files[0];
             if (file) { resizeAndProcessImage(file, (dataUrl) => { boxPhotoDataUrlCache = dataUrl; updateBoxPhotoPreview(); }); }
-        });
-        boxRemovePhotoBtn.addEventListener('click', () => resetBoxPhotoPreview());
+        }
         function updateBoxPhotoPreview() { if (boxPhotoDataUrlCache) { boxPhotoPreview.src = boxPhotoDataUrlCache; boxPhotoPreview.classList.remove('hidden'); boxRemovePhotoBtn.classList.remove('hidden'); } else { resetBoxPhotoPreview(); } }
         function resetBoxPhotoPreview() { boxPhotoDataUrlCache = null; boxPhotoPreview.src = ''; boxPhotoPreview.classList.add('hidden'); boxRemovePhotoBtn.classList.add('hidden'); boxPhotoInput.value = ''; }
 
-        itemPhotoInput.addEventListener('change', (e) => {
+        function handleItemPhotoUpload(e) {
             const file = e.target.files[0];
             if (file && itemPhotosCache.length < 3) { resizeAndProcessImage(file, (dataUrl) => { itemPhotosCache.push(dataUrl); renderItemPhotoPreviews(); }); }
-        });
-
+        }
         function renderItemPhotoPreviews() {
             itemPhotosContainer.innerHTML = '';
             itemPhotosCache.forEach((dataUrl, index) => {
                 const previewWrapper = document.createElement('div');
                 previewWrapper.className = 'relative';
-                previewWrapper.innerHTML = `
-                    <img src="${dataUrl}" class="photo-preview-thumb">
-                    <button type="button" onclick="removeItemPhoto(${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">&times;</button>
-                `;
+                previewWrapper.innerHTML = `<img src="${dataUrl}" class="photo-preview-thumb"><button type="button" onclick="window.removeItemPhoto(${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">&times;</button>`;
                 itemPhotosContainer.appendChild(previewWrapper);
             });
             itemAddPhotoLabel.classList.toggle('hidden', itemPhotosCache.length >= 3);
@@ -686,25 +657,32 @@
             galleryPrevBtn.classList.toggle('hidden', currentPhotoGallery.length <= 1 || currentPhotoIndex === 0);
             galleryNextBtn.classList.toggle('hidden', currentPhotoGallery.length <= 1 || currentPhotoIndex >= currentPhotoGallery.length - 1);
         }
-
-        galleryPrevBtn.addEventListener('click', () => { if (currentPhotoIndex > 0) { currentPhotoIndex--; showGalleryPhoto(); } });
-        galleryNextBtn.addEventListener('click', () => { if (currentPhotoIndex < currentPhotoGallery.length - 1) { currentPhotoIndex++; showGalleryPhoto(); } });
         window.closePhotoModal = () => { photoModal.style.display = 'none'; currentPhotoGallery = []; }
 
-        // --- Deletion Logic ---
-        window.confirmDelete = (type, id) => { if (!isOwnerLoggedIn) { showInfoModal("You must be logged in as admin to delete items."); return; } if (type === 'item') { itemToDelete = id; boxToDelete = null; } if (type === 'box') { boxToDelete = id; itemToDelete = null; } confirmModal.style.display = 'flex'; }
+        window.confirmDelete = (type, id) => { if (!isOwnerLoggedIn) return; if (type === 'item') itemToDelete = id; if (type === 'box') boxToDelete = id; confirmModal.style.display = 'flex'; }
         async function executeDelete() { try { if (itemToDelete) { await deleteDoc(doc(db, "users", OWNER_USER_ID, "items", itemToDelete)); } if (boxToDelete) { const itemsInBoxQuery = query(collection(db, "users", OWNER_USER_ID, "items"), where("boxId", "==", boxToDelete)); const itemsInBoxSnapshot = await getDocs(itemsInBoxQuery); const batch = writeBatch(db); itemsInBoxSnapshot.forEach(doc => batch.delete(doc.ref)); batch.delete(doc(db, "users", OWNER_USER_ID, "boxes", boxToDelete)); await batch.commit(); } } catch (error) { console.error("Error deleting document: ", error); showInfoModal("Failed to delete. Please try again."); } closeConfirmModal(); }
         function closeConfirmModal() { itemToDelete = null; boxToDelete = null; confirmModal.style.display = 'none'; }
-        document.getElementById('confirm-delete-btn').addEventListener('click', executeDelete);
-        document.getElementById('cancel-delete').addEventListener('click', closeConfirmModal);
-
-        // --- Utility and Final Listeners ---
+        
+        // --- Modal Controls ---
+        window.openLoginModal = () => loginModal.style.display = 'flex';
+        function closeLoginModal() { loginModal.style.display = 'none'; loginError.classList.add('hidden'); loginForm.reset(); };
+        function closeBoxModal() { boxModal.style.display = 'none'; }
+        function closeItemModal() { itemModal.style.display = 'none'; }
+        function closeAllModals() {
+            closeLoginModal();
+            closeBoxModal();
+            closeItemModal();
+            closePhotoModal();
+            closeConfirmModal();
+            closeInfoModal();
+        }
+        
+        // --- Utility Functions ---
         window.formatCurrency = (num) => (parseFloat(num) || 0).toFixed(2);
         window.resetFilters = () => { searchInput.value = ''; roomFilter.value = 'all'; render(); }
-        searchInput.addEventListener('input', render);
-        roomFilter.addEventListener('change', render);
-        window.addEventListener('click', (e) => { if (e.target.classList.contains('modal-backdrop')) { closeItemModal(); closeBoxModal(); closePhotoModal(); closeConfirmModal(); closeInfoModal(); } });
+        
+        // --- Event Listener Registration ---
         document.addEventListener('DOMContentLoaded', initFirebase);
     </script>
 </body>
-</html> 
+</html>
