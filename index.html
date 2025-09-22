@@ -43,20 +43,20 @@
                     <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Public Read-Only View</p>
                 </div>
                 <div class="mt-4 sm:mt-0 flex items-center space-x-2 sm:space-x-4">
-                    <button onclick="exportListWithImages()" class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                    <button onclick="window.exportListWithImages()" class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
                         <i class="fas fa-print mr-2"></i>Print / Export
                     </button>
-                    <button id="add-box-btn" onclick="openBoxModal()" class="hidden bg-cyan-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-cyan-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                    <button id="add-box-btn" onclick="window.openBoxModal()" class="hidden bg-cyan-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-cyan-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
                         <i class="fas fa-box mr-2"></i>Add Box
                     </button>
-                    <button id="add-item-btn" onclick="openItemModal()" class="hidden bg-amber-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-amber-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                    <button id="add-item-btn" onclick="window.openItemModal()" class="hidden bg-amber-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-amber-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
                         <i class="fas fa-plus-circle mr-2"></i>Add Item
                     </button>
                     <div id="auth-container">
-                         <button id="login-btn" onclick="openLoginModal()" class="bg-white text-indigo-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-50 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                         <button id="login-btn" onclick="window.openLoginModal()" class="bg-white text-indigo-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-50 transition-transform transform hover:scale-105 text-sm sm:text-base">
                             <i class="fas fa-sign-in-alt mr-2"></i>Admin Login
                         </button>
-                        <button id="logout-btn" onclick="logout()" class="hidden bg-red-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
+                        <button id="logout-btn" onclick="window.logout()" class="hidden bg-red-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 transition-transform transform hover:scale-105 text-sm sm:text-base">
                             <i class="fas fa-sign-out-alt mr-2"></i>Logout
                         </button>
                     </div>
@@ -79,14 +79,14 @@
             <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-purple-100 text-purple-600 p-4 rounded-full"><i class="fas fa-cube text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Volume</p><p id="total-volume" class="text-2xl font-bold">0 m³</p></div></div>
             <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
         </div>
-        <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-4"><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></div><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><select id="room-filter" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"><option value="all">All Rooms</option></select></div><button onclick="resetFilters()" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">Reset</button></div>
+        <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-4"><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></div><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><select id="room-filter" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"><option value="all">All Rooms</option></select></div><button onclick="window.resetFilters()" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">Reset</button></div>
         <div id="inventory-list" class="space-y-6"></div>
         <div id="empty-state" class="text-center py-16 hidden"><img src="https://placehold.co/300x200/E9D5FF/4C1D95?text=Start+Packing!" alt="Empty state illustration" class="mx-auto mb-6 rounded-lg"><h2 class="text-2xl font-semibold text-gray-700">The inventory is empty!</h2><p id="empty-state-subtext" class="text-gray-500 mt-2">Login as an admin to start adding boxes and items.</p></div>
     </main>
 
-    <div id="login-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-8 w-11/12 sm:w-96 animate-fade-in"><div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold">Admin Login</h3><button onclick="closeLoginModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="space-y-4"><div><label for="email" class="block text-sm font-medium text-gray-700">Email</label><input type="email" id="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><div><label for="password" class="block text-sm font-medium text-gray-700">Password</label><input type="password" id="password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><p id="login-error" class="text-sm text-red-600 hidden"></p><div class="flex justify-end pt-4"><button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Login</button></div><p class="text-xs text-gray-500 text-center pt-2">Enter your admin credentials to log in. Account creation is handled by the administrator.</p></form></div></div>
+    <div id="login-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-8 w-11/12 sm:w-96 animate-fade-in"><div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold">Admin Login</h3><button onclick="window.closeLoginModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="space-y-4"><div><label for="email" class="block text-sm font-medium text-gray-700">Email</label><input type="email" id="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><div><label for="password" class="block text-sm font-medium text-gray-700">Password</label><input type="password" id="password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><p id="login-error" class="text-sm text-red-600 hidden"></p><div class="flex justify-end pt-4"><button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Login</button></div><p class="text-xs text-gray-500 text-center pt-2">Enter your admin credentials to log in. Account creation is handled by the administrator.</p></form></div></div>
     
-    <div id="box-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="box-modal-title" class="text-2xl font-bold">Add New Box</h2><button onclick="closeBoxModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="box-form" class="space-y-4"><input type="hidden" id="box-id"><div><label for="box-number" class="block text-sm font-medium">Box Number</label><input type="text" id="box-number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="box-room-area" class="block text-sm font-medium">Room / Area</label><input type="text" id="box-room-area" list="room-suggestions" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
+    <div id="box-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="box-modal-title" class="text-2xl font-bold">Add New Box</h2><button onclick="window.closeBoxModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="box-form" class="space-y-4"><input type="hidden" id="box-id"><div><label for="box-number" class="block text-sm font-medium">Box Number</label><input type="text" id="box-number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="box-room-area" class="block text-sm font-medium">Room / Area</label><input type="text" id="box-room-area" list="room-suggestions" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
     <div>
         <label for="box-type-select" class="block text-sm font-medium">Box Type</label>
         <div class="flex items-center gap-4 mt-1">
@@ -104,20 +104,20 @@
     </div>
     <div><p class="text-sm text-gray-600">Calculated Volume: <span id="box-volume" class="font-bold text-indigo-600">0.000 m³</span></p></div>
     <div><label class="block text-sm font-medium">Photo of Box</label><div class="mt-1 flex items-center gap-4"><img id="box-photo-preview" class="hidden photo-preview-thumb"><input type="file" id="box-photo-input" accept="image/*" class="hidden"><label for="box-photo-input" class="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md"><span><i class="fas fa-camera mr-2"></i>Take/Upload</span></label><button type="button" id="box-remove-photo-btn" class="hidden text-red-600">Remove</button></div></div>
-    <div id="qr-code-section" class="pt-4 border-t mt-4 text-center hidden"><div id="qr-code-container" class="mx-auto w-40 h-40 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-500 p-2">QR Code will appear here</div><div class="mt-4 flex justify-center space-x-2"><button type="button" onclick="generateQRCodeForBox()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700"><i class="fas fa-qrcode mr-2"></i>Generate QR</button><button type="button" id="print-qr-btn" onclick="printQRCode()" class="hidden bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"><i class="fas fa-print mr-2"></i>Print</button></div><p id="qr-new-box-note" class="text-xs text-gray-500 mt-2">Save the box first to generate a QR code.</p></div><div class="flex justify-end space-x-4 pt-4 border-t"><button type="button" onclick="closeBoxModal()" class="bg-gray-200 px-6 py-2 rounded-lg">Cancel</button><button type="submit" id="save-box-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg">Save Box</button></div></form></div></div>
+    <div id="qr-code-section" class="pt-4 border-t mt-4 text-center hidden"><div id="qr-code-container" class="mx-auto w-40 h-40 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-500 p-2">QR Code will appear here</div><div class="mt-4 flex justify-center space-x-2"><button type="button" onclick="window.generateQRCodeForBox()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700"><i class="fas fa-qrcode mr-2"></i>Generate QR</button><button type="button" id="print-qr-btn" onclick="window.printQRCode()" class="hidden bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"><i class="fas fa-print mr-2"></i>Print</button></div><p id="qr-new-box-note" class="text-xs text-gray-500 mt-2">Save the box first to generate a QR code.</p></div><div class="flex justify-end space-x-4 pt-4 border-t"><button type="button" onclick="window.closeBoxModal()" class="bg-gray-200 px-6 py-2 rounded-lg">Cancel</button><button type="submit" id="save-box-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg">Save Box</button></div></form></div></div>
     
-    <div id="item-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-2/3 lg:w-1/2 xl:w-2/5 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="item-modal-title" class="text-2xl font-bold">Add New Item</h2><button onclick="closeItemModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="item-form" class="space-y-4"><input type="hidden" id="item-id"><div><label for="item-box-select" class="block text-sm font-medium">Assign to Box</label><select id="item-box-select" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select></div><hr><h3 class="text-lg font-semibold">Item Details</h3><div><label for="item-name" class="block text-sm font-medium">Item Name</label><input type="text" id="item-name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="estimated-value" class="block text-sm font-medium">Estimated Current Value ($)</label><input type="number" step="0.01" id="estimated-value" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="is-new-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="is-new-checkbox" class="font-medium text-gray-700">Is this item 12 months or newer?</label></div></div><div id="new-item-details" class="hidden space-y-4 pt-2 border-t mt-4"><div><label for="purchase-date" class="block text-sm font-medium">Purchase Date</label><input type="date" id="purchase-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="item-cost" class="block text-sm font-medium">Cost ($)</label><input type="number" step="0.01" id="item-cost" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div></div><div class="space-y-2 pt-2 border-t mt-4"><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="has-wood-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="has-wood-checkbox" class="font-medium text-gray-700">Does this item have any wood?</label></div></div><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="is-treated-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="is-treated-checkbox" class="font-medium text-gray-700">Is it sealed / treated?</label></div></div></div><textarea id="item-notes" rows="2" placeholder="Notes (e.g., fragile, parts, etc.)" class="block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+    <div id="item-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-2/3 lg:w-1/2 xl:w-2/5 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="item-modal-title" class="text-2xl font-bold">Add New Item</h2><button onclick="window.closeItemModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="item-form" class="space-y-4"><input type="hidden" id="item-id"><div><label for="item-box-select" class="block text-sm font-medium">Assign to Box</label><select id="item-box-select" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select></div><hr><h3 class="text-lg font-semibold">Item Details</h3><div><label for="item-name" class="block text-sm font-medium">Item Name</label><input type="text" id="item-name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="estimated-value" class="block text-sm font-medium">Estimated Current Value ($)</label><input type="number" step="0.01" id="estimated-value" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="is-new-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="is-new-checkbox" class="font-medium text-gray-700">Is this item 12 months or newer?</label></div></div><div id="new-item-details" class="hidden space-y-4 pt-2 border-t mt-4"><div><label for="purchase-date" class="block text-sm font-medium">Purchase Date</label><input type="date" id="purchase-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="item-cost" class="block text-sm font-medium">Cost ($)</label><input type="number" step="0.01" id="item-cost" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div></div><div class="space-y-2 pt-2 border-t mt-4"><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="has-wood-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="has-wood-checkbox" class="font-medium text-gray-700">Does this item have any wood?</label></div></div><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="is-treated-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="is-treated-checkbox" class="font-medium text-gray-700">Is it sealed / treated?</label></div></div></div><textarea id="item-notes" rows="2" placeholder="Notes (e.g., fragile, parts, etc.)" class="block w-full border-gray-300 rounded-md shadow-sm"></textarea>
     <div><label class="block text-sm font-medium">Photos (up to 3)</label><div class="mt-1 flex items-center gap-4"><div id="item-photos-container" class="flex gap-2"></div><input type="file" id="item-photo-input" accept="image/*" class="hidden"><label id="item-add-photo-label" for="item-photo-input" class="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md"><span><i class="fas fa-plus mr-2"></i>Add Photo</span></label></div></div>
-    <div class="flex justify-end space-x-4 pt-4"><button type="button" onclick="closeItemModal()" class="bg-gray-200 px-6 py-2 rounded-lg">Cancel</button><button type="submit" id="save-item-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg">Save Item</button></div></form></div></div>
+    <div class="flex justify-end space-x-4 pt-4"><button type="button" onclick="window.closeItemModal()" class="bg-gray-200 px-6 py-2 rounded-lg">Cancel</button><button type="submit" id="save-item-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg">Save Item</button></div></form></div></div>
     
-    <div id="photo-modal" class="modal-backdrop"><div class="relative animate-fade-in"><button onclick="closePhotoModal()" class="absolute -top-4 -right-4 text-white bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center text-2xl z-10">&times;</button><img id="full-photo" src="" class="max-h-[85vh] max-w-[90vw] rounded-lg shadow-xl">
+    <div id="photo-modal" class="modal-backdrop"><div class="relative animate-fade-in"><button onclick="window.closePhotoModal()" class="absolute -top-4 -right-4 text-white bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center text-2xl z-10">&times;</button><img id="full-photo" src="" class="max-h-[85vh] max-w-[90vw] rounded-lg shadow-xl">
     <button id="gallery-prev-btn" class="gallery-nav prev hidden">&lsaquo;</button><button id="gallery-next-btn" class="gallery-nav next hidden">&rsaquo;</button></div></div>
 
     <div id="confirm-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-6 w-11/12 sm:w-1/3 animate-fade-in"><h3 class="text-lg font-bold">Confirm Deletion</h3><p class="text-gray-600 my-4">Are you sure? This action cannot be undone.</p><div class="flex justify-end space-x-4"><button id="cancel-delete" class="bg-gray-200 px-4 py-2 rounded-lg">Cancel</button><button id="confirm-delete-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg">Delete</button></div></div></div>
-    <div id="info-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-6 w-11/12 sm:w-1/3 animate-fade-in"><h3 id="info-modal-title" class="text-lg font-bold">Heads Up!</h3><p id="info-modal-text" class="text-gray-600 my-4">Modal message goes here.</p><div class="flex justify-end space-x-4"><button onclick="closeInfoModal()" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">OK</button></div></div></div>
+    <div id="info-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-6 w-11/12 sm:w-1/3 animate-fade-in"><h3 id="info-modal-title" class="text-lg font-bold">Heads Up!</h3><p id="info-modal-text" class="text-gray-600 my-4">Modal message goes here.</p><div class="flex justify-end space-x-4"><button onclick="window.closeInfoModal()" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">OK</button></div></div></div>
     <datalist id="room-suggestions"><option value="Living Room"><option value="Dining Room"><option value="Kitchen"><option value="Bedroom 1"><option value="Bedroom 2"><option value="Office"><option value="Garage"><option value="Bathroom"><option value="Storage"></option></datalist>
 
-<script type="module">
+    <script type="module">
         // --- Firebase SDK Imports ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -137,7 +137,7 @@
         let unsubscribeBoxes = () => {};
         let unsubscribeItems = () => {};
         
-        // YOU MUST CHANGE THIS VALUE TO YOUR OWN UNIQUE FIREBASE USER ID
+        // PASTE YOUR UNIQUE FIREBASE USER ID HERE
         const OWNER_USER_ID = "FzazuoOmr8ZVyM6r2EOGZEg1LqB3"; 
 
         // --- Box Presets (Simplified with URLs) ---
@@ -155,11 +155,17 @@
             roomFilter, boxDimensionInputs, isNewCheckbox, newItemDetails, qrCodeContainer, printQrBtn,
             qrCodeSection, qrNewBoxNote, boxPhotoInput, boxPhotoPreview, boxRemovePhotoBtn, itemPhotoInput,
             itemPhotosContainer, itemAddPhotoLabel, galleryPrevBtn, galleryNextBtn, fullPhoto, loadingOverlay,
-            boxTypeSelect, boxTypeThumbnail, customDimensionsContainer, saveBoxBtn, saveItemBtn;
+            boxTypeSelect, boxTypeThumbnail, customDimensionsContainer;
 
-        // --- FIREBASE INITIALIZATION & AUTH HANDLING ---
-        async function initFirebase() {
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
             // Assign DOM elements now that the document is loaded
+            assignDOMElements();
+            addEventListeners();
+            initFirebase();
+        });
+
+        function assignDOMElements() {
             loginBtn = document.getElementById('login-btn');
             logoutBtn = document.getElementById('logout-btn');
             addBoxBtn = document.getElementById('add-box-btn');
@@ -196,10 +202,9 @@
             boxTypeSelect = document.getElementById('box-type-select');
             boxTypeThumbnail = document.getElementById('box-type-thumbnail');
             customDimensionsContainer = document.getElementById('custom-dimensions-container');
-            saveBoxBtn = document.getElementById('save-box-btn');
-            saveItemBtn = document.getElementById('save-item-btn');
-            
-            // Add event listeners that depend on the elements
+        }
+
+        function addEventListeners() {
             loginForm.addEventListener('submit', handleLogin);
             document.getElementById('box-form').addEventListener('submit', handleSaveBox);
             document.getElementById('item-form').addEventListener('submit', handleSaveItem);
@@ -216,8 +221,9 @@
             searchInput.addEventListener('input', render);
             roomFilter.addEventListener('change', render);
             window.addEventListener('click', (e) => { if (e.target.classList.contains('modal-backdrop')) { closeAllModals(); } });
-
-            // Now proceed with Firebase setup
+        }
+        
+        async function initFirebase() {
             try {
                 if (OWNER_USER_ID === "PASTE_YOUR_UNIQUE_ID_FROM_FIREBASE_HERE") { 
                     loadingOverlay.innerHTML = '<p class="text-red-600 font-semibold text-center p-4">SETUP REQUIRED<br><span class="font-normal text-sm text-gray-600">Please replace the placeholder Owner User ID in the HTML file to connect to your data.</span></p>'; 
@@ -299,6 +305,7 @@
         }
 
         function render() {
+            if (!inventoryListEl) return; // Guard against race condition on initial load
             inventoryListEl.innerHTML = '';
             const searchTerm = searchInput.value.toLowerCase();
             const selectedRoom = roomFilter.value;
@@ -403,8 +410,9 @@
         async function handleSaveBox(e) {
             e.preventDefault();
             if (!isOwnerLoggedIn) { showInfoModal("You must be logged in as admin to save changes."); return; }
-            saveBoxBtn.disabled = true;
-            saveBoxBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
+            const saveBtn = document.getElementById('save-box-btn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
             const id = document.getElementById('box-id').value;
             const boxData = { 
                 number: document.getElementById('box-number').value, 
@@ -417,14 +425,15 @@
             boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000;
             try { if (id) { await setDoc(doc(db, "users", OWNER_USER_ID, "boxes", id), boxData); } else { await addDoc(collection(db, "users", OWNER_USER_ID, "boxes"), boxData); } closeBoxModal(); } 
             catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); } 
-            finally { saveBoxBtn.disabled = false; saveBoxBtn.innerHTML = 'Save Box'; }
+            finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Box'; }
         }
 
         async function handleSaveItem(e) {
             e.preventDefault();
             if (!isOwnerLoggedIn) { showInfoModal("You must be logged in as admin to save changes."); return; }
-            saveItemBtn.disabled = true;
-            saveItemBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
+            const saveBtn = document.getElementById('save-item-btn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
             const id = document.getElementById('item-id').value;
             const isNew = isNewCheckbox.checked;
             const itemData = { 
@@ -441,7 +450,7 @@
             };
             try { if (id) { await setDoc(doc(db, "users", OWNER_USER_ID, "items", id), itemData); } else { await addDoc(collection(db, "users", OWNER_USER_ID, "items"), itemData); } closeItemModal(); } 
             catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); } 
-            finally { saveItemBtn.disabled = false; saveItemBtn.innerHTML = 'Save Item'; }
+            finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; }
         }
 
         window.toggleBoxItems = (boxId) => {
@@ -657,13 +666,13 @@
         function closeConfirmModal() { itemToDelete = null; boxToDelete = null; confirmModal.style.display = 'none'; }
         
         window.openLoginModal = () => loginModal.style.display = 'flex';
+        window.openBoxModal = () => { document.getElementById('box-form').reset(); document.getElementById('box-id').value = ''; document.getElementById('box-modal-title').textContent = 'Add New Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.remove('hidden'); qrCodeSection.classList.add('hidden'); resetBoxPhotoPreview(); populateBoxTypeSelect(); boxModal.style.display = 'flex'; calculateVolume(); }
+        window.openItemModal = () => { if (boxes.length === 0) { showInfoModal('Please create a box first before adding an item.'); return; } document.getElementById('item-form').reset(); document.getElementById('item-id').value = ''; document.getElementById('item-modal-title').textContent = 'Add New Item'; updateBoxSelector(); resetItemPhotoPreviews(); newItemDetails.classList.add('hidden'); itemModal.style.display = 'flex'; }
         window.showInfoModal = (message, title = 'Heads Up!') => { document.getElementById('info-modal-title').textContent = title; document.getElementById('info-modal-text').textContent = message; infoModal.style.display = 'flex'; }
         window.closeInfoModal = () => infoModal.style.display = 'none';
 
         window.formatCurrency = (num) => (parseFloat(num) || 0).toFixed(2);
         window.resetFilters = () => { searchInput.value = ''; roomFilter.value = 'all'; render(); }
-        
-        document.addEventListener('DOMContentLoaded', initFirebase);
     </script>
 </body>
 </html>
