@@ -150,13 +150,12 @@
         ];
         
         // --- DOM ELEMENT VARIABLES ---
-        // These will be assigned after the DOM is loaded
         let loginBtn, logoutBtn, addBoxBtn, addItemBtn, loginModal, loginForm, loginError, userIdDisplay,
             inventoryListEl, boxModal, itemModal, photoModal, confirmModal, infoModal, searchInput,
             roomFilter, boxDimensionInputs, isNewCheckbox, newItemDetails, qrCodeContainer, printQrBtn,
             qrCodeSection, qrNewBoxNote, boxPhotoInput, boxPhotoPreview, boxRemovePhotoBtn, itemPhotoInput,
             itemPhotosContainer, itemAddPhotoLabel, galleryPrevBtn, galleryNextBtn, fullPhoto, loadingOverlay,
-            boxTypeSelect, boxTypeThumbnail, customDimensionsContainer;
+            boxTypeSelect, boxTypeThumbnail, customDimensionsContainer, saveBoxBtn, saveItemBtn;
 
         // --- FIREBASE INITIALIZATION & AUTH HANDLING ---
         async function initFirebase() {
@@ -197,6 +196,8 @@
             boxTypeSelect = document.getElementById('box-type-select');
             boxTypeThumbnail = document.getElementById('box-type-thumbnail');
             customDimensionsContainer = document.getElementById('custom-dimensions-container');
+            saveBoxBtn = document.getElementById('save-box-btn');
+            saveItemBtn = document.getElementById('save-item-btn');
             
             // Add event listeners that depend on the elements
             loginForm.addEventListener('submit', handleLogin);
@@ -218,7 +219,7 @@
 
             // Now proceed with Firebase setup
             try {
-                if (OWNER_USER_ID === "FzazuoOmr8ZVyM6r2EOGZEg1LqB3") { 
+                if (OWNER_USER_ID === "PASTE_YOUR_UNIQUE_ID_FROM_FIREBASE_HERE") { 
                     loadingOverlay.innerHTML = '<p class="text-red-600 font-semibold text-center p-4">SETUP REQUIRED<br><span class="font-normal text-sm text-gray-600">Please replace the placeholder Owner User ID in the HTML file to connect to your data.</span></p>'; 
                     return; 
                 }
@@ -402,9 +403,8 @@
         async function handleSaveBox(e) {
             e.preventDefault();
             if (!isOwnerLoggedIn) { showInfoModal("You must be logged in as admin to save changes."); return; }
-            const saveBtn = document.getElementById('save-box-btn');
-            saveBtn.disabled = true;
-            saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
+            saveBoxBtn.disabled = true;
+            saveBoxBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
             const id = document.getElementById('box-id').value;
             const boxData = { 
                 number: document.getElementById('box-number').value, 
@@ -417,15 +417,14 @@
             boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000;
             try { if (id) { await setDoc(doc(db, "users", OWNER_USER_ID, "boxes", id), boxData); } else { await addDoc(collection(db, "users", OWNER_USER_ID, "boxes"), boxData); } closeBoxModal(); } 
             catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); } 
-            finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Box'; }
+            finally { saveBoxBtn.disabled = false; saveBoxBtn.innerHTML = 'Save Box'; }
         }
 
         async function handleSaveItem(e) {
             e.preventDefault();
             if (!isOwnerLoggedIn) { showInfoModal("You must be logged in as admin to save changes."); return; }
-            const saveBtn = document.getElementById('save-item-btn');
-            saveBtn.disabled = true;
-            saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
+            saveItemBtn.disabled = true;
+            saveItemBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
             const id = document.getElementById('item-id').value;
             const isNew = isNewCheckbox.checked;
             const itemData = { 
@@ -442,7 +441,7 @@
             };
             try { if (id) { await setDoc(doc(db, "users", OWNER_USER_ID, "items", id), itemData); } else { await addDoc(collection(db, "users", OWNER_USER_ID, "items"), itemData); } closeItemModal(); } 
             catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); } 
-            finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; }
+            finally { saveItemBtn.disabled = false; saveItemBtn.innerHTML = 'Save Item'; }
         }
 
         window.toggleBoxItems = (boxId) => {
@@ -488,6 +487,7 @@
         window.editBox = (id) => { 
             const box = boxes.find(b => b.id === id); 
             if (!box) return; 
+            document.getElementById('box-form').reset();
             document.getElementById('box-id').value = box.id; 
             document.getElementById('box-number').value = box.number; 
             document.getElementById('box-room-area').value = box.room; 
@@ -497,7 +497,7 @@
             document.getElementById('box-modal-title').textContent = 'Edit Box'; 
             qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; 
             printQrBtn.classList.add('hidden'); 
-            qrNewBoxNote.classList.add('hidden'); 
+            qrNewBoxNote.classList.remove('hidden'); 
             qrCodeSection.classList.remove('hidden'); 
             boxPhotoDataUrlCache = box.photoDataUrl;
             updateBoxPhotoPreview();
@@ -511,6 +511,7 @@
         window.editItem = (id) => { 
             const item = items.find(i => i.id === id); 
             if (!item) return; 
+            document.getElementById('item-form').reset();
             updateBoxSelector(item.boxId); 
             document.getElementById('item-id').value = item.id; 
             document.getElementById('item-name').value = item.name; 
@@ -531,24 +532,20 @@
         function updateBoxSelector(selectedId) { const select = document.getElementById('item-box-select'); select.innerHTML = ''; boxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).forEach(box => select.add(new Option(`Box ${box.number} (${box.room})`, box.id))); if (selectedId) select.value = selectedId; }
         
         window.generateQRCodeForBox = () => { const boxId = document.getElementById('box-id').value; if (!boxId) { showInfoModal('Please save the box before generating a QR code.'); return; } const box = boxes.find(b => b.id === boxId); if (!box) { showInfoModal('Could not find box details.'); return; } qrCodeContainer.innerHTML = ''; new QRCode(qrCodeContainer, { text: JSON.stringify({type: "MoveMasterBox", id: box.id, number: box.number, room: box.room }), width: 160, height: 160, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H }); printQrBtn.classList.remove('hidden'); }
-        window.showQRCodeForBox = (boxId) => { editBox(boxId); setTimeout(() => window.generateQRCodeForBox(), 100); }
+        window.showQRCodeForBox = (boxId) => { window.editBox(boxId); setTimeout(() => window.generateQRCodeForBox(), 100); }
         window.printQRCode = () => { const qrCodeImage = qrCodeContainer.querySelector('img').src; const boxNumber = document.getElementById('box-number').value; const room = document.getElementById('box-room-area').value; const printWindow = window.open('', '_blank'); printWindow.document.write(`<html><head><title>Print QR Code</title><style>body { font-family: sans-serif; text-align: center; margin-top: 50px; } img { width: 300px; height: 300px; } h2 { font-size: 2em; margin: 0; } p { font-size: 1.2em; }</style></head><body><h2>Box ${boxNumber}</h2><p>${room}</p><img src="${qrCodeImage}"><script>window.onload = function() { window.print(); window.onafterprint = function() { window.close(); }; }<\/script></body></html>`); printWindow.document.close(); }
         
         function populateBoxTypeSelect(box = null) {
             boxTypeSelect.innerHTML = '';
-            BOX_PRESETS.forEach(preset => {
-                const option = new Option(preset.name, preset.id);
-                boxTypeSelect.add(option);
-            });
+            BOX_PRESETS.forEach(preset => boxTypeSelect.add(new Option(preset.name, preset.id)));
             boxTypeSelect.add(new Option('Custom Dimensions', 'custom'));
 
             let selectedType = 'medium';
             if (box) {
-                const mediumPreset = BOX_PRESETS.find(p => p.id === 'medium');
-                const jumboPreset = BOX_PRESETS.find(p => p.id === 'jumbo');
-                const isMedium = mediumPreset && Math.abs(box.height - mediumPreset.h) < 0.01 && Math.abs(box.width - mediumPreset.w) < 0.01 && Math.abs(box.length - mediumPreset.l) < 0.01;
-                const isJumbo = jumboPreset && Math.abs(box.height - jumboPreset.h) < 0.01 && Math.abs(box.width - jumboPreset.w) < 0.01 && Math.abs(box.length - jumboPreset.l) < 0.01;
-                
+                const mediumPreset = BOX_PRESETS[0];
+                const jumboPreset = BOX_PRESETS[1];
+                const isMedium = Math.abs(box.height - mediumPreset.h) < 0.01 && Math.abs(box.width - mediumPreset.w) < 0.01 && Math.abs(box.length - mediumPreset.l) < 0.01;
+                const isJumbo = Math.abs(box.height - jumboPreset.h) < 0.01 && Math.abs(box.width - jumboPreset.w) < 0.01 && Math.abs(box.length - jumboPreset.l) < 0.01;
                 if (isJumbo) selectedType = 'jumbo';
                 else if (isMedium) selectedType = 'medium';
                 else selectedType = 'custom';
@@ -619,17 +616,11 @@
             };
         }
 
-        function handleBoxPhotoUpload(e) {
-            const file = e.target.files[0];
-            if (file) { resizeAndProcessImage(file, (dataUrl) => { boxPhotoDataUrlCache = dataUrl; updateBoxPhotoPreview(); }); }
-        }
+        function handleBoxPhotoUpload(e) { const file = e.target.files[0]; if (file) { resizeAndProcessImage(file, (dataUrl) => { boxPhotoDataUrlCache = dataUrl; updateBoxPhotoPreview(); }); } }
         function updateBoxPhotoPreview() { if (boxPhotoDataUrlCache) { boxPhotoPreview.src = boxPhotoDataUrlCache; boxPhotoPreview.classList.remove('hidden'); boxRemovePhotoBtn.classList.remove('hidden'); } else { resetBoxPhotoPreview(); } }
         function resetBoxPhotoPreview() { boxPhotoDataUrlCache = null; boxPhotoPreview.src = ''; boxPhotoPreview.classList.add('hidden'); boxRemovePhotoBtn.classList.add('hidden'); boxPhotoInput.value = ''; }
-
-        function handleItemPhotoUpload(e) {
-            const file = e.target.files[0];
-            if (file && itemPhotosCache.length < 3) { resizeAndProcessImage(file, (dataUrl) => { itemPhotosCache.push(dataUrl); renderItemPhotoPreviews(); }); }
-        }
+        function handleItemPhotoUpload(e) { const file = e.target.files[0]; if (file && itemPhotosCache.length < 3) { resizeAndProcessImage(file, (dataUrl) => { itemPhotosCache.push(dataUrl); renderItemPhotoPreviews(); }); } }
+        
         function renderItemPhotoPreviews() {
             itemPhotosContainer.innerHTML = '';
             itemPhotosCache.forEach((dataUrl, index) => {
@@ -645,43 +636,33 @@
         window.removeItemPhoto = (index) => { itemPhotosCache.splice(index, 1); renderItemPhotoPreviews(); }
         function resetItemPhotoPreviews() { itemPhotosCache = []; renderItemPhotoPreviews(); }
 
-        window.openPhotoModal = (urls, index) => {
-            currentPhotoGallery = urls;
-            currentPhotoIndex = index;
-            photoModal.style.display = 'flex';
-            showGalleryPhoto();
-        };
-
-        function showGalleryPhoto() {
-            fullPhoto.src = currentPhotoGallery[currentPhotoIndex];
-            galleryPrevBtn.classList.toggle('hidden', currentPhotoGallery.length <= 1 || currentPhotoIndex === 0);
-            galleryNextBtn.classList.toggle('hidden', currentPhotoGallery.length <= 1 || currentPhotoIndex >= currentPhotoGallery.length - 1);
-        }
+        window.openPhotoModal = (urls, index) => { currentPhotoGallery = urls; currentPhotoIndex = index; photoModal.style.display = 'flex'; showGalleryPhoto(); };
+        function showGalleryPhoto() { fullPhoto.src = currentPhotoGallery[currentPhotoIndex]; galleryPrevBtn.classList.toggle('hidden', currentPhotoGallery.length <= 1 || currentPhotoIndex === 0); galleryNextBtn.classList.toggle('hidden', currentPhotoGallery.length <= 1 || currentPhotoIndex >= currentPhotoGallery.length - 1); }
         window.closePhotoModal = () => { photoModal.style.display = 'none'; currentPhotoGallery = []; }
 
-        window.confirmDelete = (type, id) => { if (!isOwnerLoggedIn) return; if (type === 'item') itemToDelete = id; if (type === 'box') boxToDelete = id; confirmModal.style.display = 'flex'; }
+        window.confirmDelete = (type, id) => { if (!isOwnerLoggedIn) return; if (type === 'item') {itemToDelete=id; boxToDelete=null;} if (type === 'box') {boxToDelete=id; itemToDelete=null;} confirmModal.style.display = 'flex'; }
         async function executeDelete() { try { if (itemToDelete) { await deleteDoc(doc(db, "users", OWNER_USER_ID, "items", itemToDelete)); } if (boxToDelete) { const itemsInBoxQuery = query(collection(db, "users", OWNER_USER_ID, "items"), where("boxId", "==", boxToDelete)); const itemsInBoxSnapshot = await getDocs(itemsInBoxQuery); const batch = writeBatch(db); itemsInBoxSnapshot.forEach(doc => batch.delete(doc.ref)); batch.delete(doc(db, "users", OWNER_USER_ID, "boxes", boxToDelete)); await batch.commit(); } } catch (error) { console.error("Error deleting document: ", error); showInfoModal("Failed to delete. Please try again."); } closeConfirmModal(); }
-        function closeConfirmModal() { itemToDelete = null; boxToDelete = null; confirmModal.style.display = 'none'; }
         
-        // --- Modal Controls ---
-        window.openLoginModal = () => loginModal.style.display = 'flex';
-        function closeLoginModal() { loginModal.style.display = 'none'; loginError.classList.add('hidden'); loginForm.reset(); };
+        function closeAllModals() {
+            if (loginModal) loginModal.style.display = 'none';
+            if (boxModal) boxModal.style.display = 'none';
+            if (itemModal) itemModal.style.display = 'none';
+            if (photoModal) photoModal.style.display = 'none';
+            if (confirmModal) confirmModal.style.display = 'none';
+            if (infoModal) infoModal.style.display = 'none';
+        }
+        function closeLoginModal() { loginModal.style.display = 'none'; if(loginForm) loginForm.reset(); if(loginError) loginError.classList.add('hidden'); };
         function closeBoxModal() { boxModal.style.display = 'none'; }
         function closeItemModal() { itemModal.style.display = 'none'; }
-        function closeAllModals() {
-            closeLoginModal();
-            closeBoxModal();
-            closeItemModal();
-            closePhotoModal();
-            closeConfirmModal();
-            closeInfoModal();
-        }
+        function closeConfirmModal() { itemToDelete = null; boxToDelete = null; confirmModal.style.display = 'none'; }
         
-        // --- Utility Functions ---
+        window.openLoginModal = () => loginModal.style.display = 'flex';
+        window.showInfoModal = (message, title = 'Heads Up!') => { document.getElementById('info-modal-title').textContent = title; document.getElementById('info-modal-text').textContent = message; infoModal.style.display = 'flex'; }
+        window.closeInfoModal = () => infoModal.style.display = 'none';
+
         window.formatCurrency = (num) => (parseFloat(num) || 0).toFixed(2);
         window.resetFilters = () => { searchInput.value = ''; roomFilter.value = 'all'; render(); }
         
-        // --- Event Listener Registration ---
         document.addEventListener('DOMContentLoaded', initFirebase);
     </script>
 </body>
