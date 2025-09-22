@@ -38,26 +38,26 @@
     <header class="header-gradient text-white shadow-lg sticky top-0 z-30">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col sm:flex-row justify-between items-center">
-                <div>
+                <div class="text-center sm:text-left">
                     <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
                     <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
                 </div>
-                <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:flex sm:items-center sm:space-x-2">
-                    <button id="export-btn" class="flex w-full items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-green-600 sm:text-base">
-                        <i class="fas fa-print mr-2"></i><span>Print/Export</span>
+                <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
+                    <button id="export-btn" class="flex w-full items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-green-600 sm:w-auto sm:text-base">
+                        <i class="fas fa-print mr-2"></i><span class="whitespace-nowrap">Print / Export</span>
                     </button>
-                    <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600 sm:text-base">
-                        <i class="fas fa-box mr-2"></i><span>Add Box</span>
+                    <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600 sm:w-auto sm:text-base">
+                        <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
                     </button>
-                    <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600 sm:text-base">
-                        <i class="fas fa-plus-circle mr-2"></i><span>Add Item</span>
+                    <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600 sm:w-auto sm:text-base">
+                        <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
                     </button>
                     <div id="auth-container" class="contents">
-                        <button id="login-btn" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50 sm:text-base">
-                            <i class="fas fa-sign-in-alt mr-2"></i><span>Login</span>
+                        <button id="login-btn" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50 sm:w-auto sm:text-base">
+                            <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
                         </button>
-                        <button id="logout-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600 sm:text-base">
-                            <i class="fas fa-sign-out-alt mr-2"></i><span>Logout</span>
+                        <button id="logout-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600 sm:w-auto sm:text-base">
+                            <i class="fas fa-sign-out-alt mr-2"></i><span class="whitespace-nowrap">Logout</span>
                         </button>
                     </div>
                 </div>
@@ -270,7 +270,7 @@
                         boxes = [];
                         items = [];
                         render();
-                        loadingOverlay.style.display = 'none'; // Added this line to hide overlay when not logged in
+                        loadingOverlay.style.display = 'none';
                     }
                     updateUIForLoginState(user);
                 });
@@ -287,7 +287,10 @@
             unsubscribeBoxes = onSnapshot(boxesCollection, (snapshot) => { 
                 boxes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
                 render(); 
-            }, (error) => console.error("Error listening to boxes:", error));
+            }, (error) => {
+                console.error("Error listening to boxes:", error);
+                loadingOverlay.style.display = 'none';
+            });
             
             const itemsCollection = collection(db, "users", userId, "items");
             unsubscribeItems = onSnapshot(itemsCollection, (snapshot) => { 
@@ -515,3 +518,4 @@
     </script>
 </body>
 </html>
+
