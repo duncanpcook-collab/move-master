@@ -54,7 +54,7 @@
                             <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
                         </button>
                         <div id="auth-container" class="contents col-span-2 sm:col-span-auto">
-                            <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600 sm:w-auto sm:text-base">
+                             <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600 sm:w-auto sm:text-base">
                                 <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
                             </button>
                             <button id="login-btn" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50 sm:w-auto sm:text-base">
@@ -93,6 +93,7 @@
     <div id="viewer-container" class="hidden container mx-auto p-4 sm:p-6 lg:p-8">
         <h1 id="viewer-title" class="text-3xl font-bold tracking-tight text-gray-800 mb-6"></h1>
         <div id="viewer-item-list" class="space-y-4"></div>
+        <div class="mt-8 text-center"><a href="/" class="text-indigo-600 hover:underline">Back to Main App</a></div>
         <p class="text-center text-gray-500 mt-8 text-sm">Powered by Move Master</p>
     </div>
 
@@ -133,7 +134,7 @@
         // --- Firebase SDK Imports ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, addDoc, setDoc, deleteDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, getDoc, addDoc, setDoc, deleteDoc, query, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- GLOBAL STATE ---
         let boxes = [];
@@ -149,6 +150,8 @@
         let unsubscribeBoxes = () => {};
         let unsubscribeItems = () => {};
         
+        const GUEST_USER_ID = "mZ6imyS71Uc9NYxgpDhDVQZ7Y6m2";
+
         // --- Box Presets (Using whole numbers) ---
         const MEDIUM_BOX_IMG_URL = 'https://placehold.co/100x100/DEB887/333333?text=Medium';
         const JUMBO_BOX_IMG_URL = 'https://placehold.co/100x100/DEB887/333333?text=Jumbo';
@@ -538,6 +541,62 @@
 
         function formatCurrency(num) { return (parseFloat(num) || 0).toFixed(2); }
         function resetFilters() { searchInput.value = ''; roomFilter.value = 'all'; render(); }
+        
+        async function showBoxContents(userId, boxId) {
+            loadingOverlay.style.display = 'flex';
+            appContainer.style.display = 'none';
+            viewerContainer.style.display = 'block';
+            
+            try {
+                const boxRef = doc(db, 'users', userId, 'boxes', boxId);
+                const boxSnap = await getDoc(boxRef);
+
+                if (!boxSnap.exists()) {
+                    document.getElementById('viewer-title').textContent = "Box not found.";
+                    loadingOverlay.style.display = 'none';
+                    return;
+                }
+                const box = boxSnap.data();
+                document.getElementById('viewer-title').textContent = `Contents of Box ${box.number} (${box.room})`;
+
+                const itemsQuery = query(collection(db, 'users', userId, 'items'), where('boxId', '==', boxId));
+                const itemsSnapshot = await getDocs(itemsQuery);
+                const itemListEl = document.getElementById('viewer-item-list');
+                itemListEl.innerHTML = '';
+
+                if (itemsSnapshot.empty) {
+                    itemListEl.innerHTML = '<p class="text-gray-500">This box is empty.</p>';
+                } else {
+                    itemsSnapshot.docs
+                        .sort((a,b) => a.data().name.localeCompare(b.data().name))
+                        .forEach(doc => {
+                            const item = doc.data();
+                            const itemEl = document.createElement('div');
+                            itemEl.className = 'bg-white p-4 rounded-lg shadow-md flex items-center gap-4';
+                            const photoHTML = item.photoDataUrls && item.photoDataUrls.length > 0
+                                ? `<img src="${item.photoDataUrls[0]}" class="w-16 h-16 object-cover rounded-md">`
+                                : `<div class="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center"><i class="fas fa-camera text-gray-400"></i></div>`;
+                            
+                            itemEl.innerHTML = `
+                                ${photoHTML}
+                                <div>
+                                    <p class="font-semibold">${item.name}</p>
+                                    <p class="text-sm text-gray-600">${item.notes || ''}</p>
+                                </div>
+                            `;
+                            itemListEl.appendChild(itemEl);
+                        });
+                }
+            } catch (error) {
+                console.error("Error fetching box contents:", error);
+                document.getElementById('viewer-title').textContent = "Could not load box contents.";
+                 if (error.code === 'permission-denied') {
+                    document.getElementById('viewer-item-list').innerHTML = `<p class="text-red-500 font-semibold text-center">Access Denied. This is a private inventory. Please log in to view.</p><div class="text-center mt-4"><a href="/" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">Go to Login</a></div>`;
+                }
+            } finally {
+                loadingOverlay.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>
