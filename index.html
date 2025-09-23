@@ -93,7 +93,7 @@
     <div id="viewer-container" class="hidden container mx-auto p-4 sm:p-6 lg:p-8">
         <h1 id="viewer-title" class="text-3xl font-bold tracking-tight text-gray-800 mb-6"></h1>
         <div id="viewer-item-list" class="space-y-4"></div>
-        <div class="mt-8 text-center"><a href="/" class="text-indigo-600 hover:underline">Back to Main App</a></div>
+        <div class="mt-8 text-center"><a href="./" class="text-indigo-600 hover:underline">Back to Main App</a></div>
         <p class="text-center text-gray-500 mt-8 text-sm">Powered by Move Master</p>
     </div>
 
@@ -591,7 +591,7 @@
                 console.error("Error fetching box contents:", error);
                 document.getElementById('viewer-title').textContent = "Could not load box contents.";
                  if (error.code === 'permission-denied') {
-                    document.getElementById('viewer-item-list').innerHTML = `<p class="text-red-500 font-semibold text-center">Access Denied. This is a private inventory. Please log in to view.</p><div class="text-center mt-4"><a href="/" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">Go to Login</a></div>`;
+                    document.getElementById('viewer-item-list').innerHTML = `<p class="text-red-500 font-semibold text-center">Access Denied. This is a private inventory. Please log in to view.</p><div class="text-center mt-4"><a href="./" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">Go to Login</a></div>`;
                 }
             } finally {
                 loadingOverlay.style.display = 'none';
