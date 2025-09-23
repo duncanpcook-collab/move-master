@@ -445,7 +445,8 @@
 
         function createBoxEl(box, boxItems) {
             const boxEl = document.createElement('div');
-            boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1';
+            // UPDATED: Added active: classes for mobile touch feedback
+            boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1 active:shadow-2xl active:-translate-y-1';
             
             const itemsContainer = document.createElement('div');
             itemsContainer.id = `items-of-box-${box.id}`;
