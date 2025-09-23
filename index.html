@@ -27,7 +27,6 @@
         .gallery-nav.prev { left: 1rem; }
         .gallery-nav.next { right: 1rem; }
         .photo-count-badge { position: absolute; bottom: 4px; right: 4px; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
-        /* A4 aspect ratio container for the preview */
         #quick-view-content-area { aspect-ratio: 210 / 297; width: 100%; max-width: 800px; }
         #quick-view-content-area iframe { width: 100%; height: 100%; border: 1px solid #ccc; }
     </style>
@@ -195,7 +194,7 @@
         
         const GUEST_USER_ID = "mZ6imyS71Uc9NYxgpDhDVQZ7Y6m2";
 
-        // --- Box Presets (Using whole numbers) ---
+        // --- Box Presets ---
         const MEDIUM_BOX_IMG_URL = 'https://placehold.co/100x100/DEB887/333333?text=Medium';
         const JUMBO_BOX_IMG_URL = 'https://placehold.co/100x100/DEB887/333333?text=Jumbo';
         
@@ -446,7 +445,7 @@
 
         function createBoxEl(box, boxItems) {
             const boxEl = document.createElement('div');
-            boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden';
+            boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1';
             
             const itemsContainer = document.createElement('div');
             itemsContainer.id = `items-of-box-${box.id}`;
@@ -589,7 +588,7 @@
                 const box = boxes.find(b => b.id === item.boxId) || { number: 'N/A', room: 'N/A' };
                 if (item.boxId !== currentBoxId) {
                     if (currentBoxId !== null) {
-                        groupedContent += `</tbody></table></div>`; // Close previous box group
+                        groupedContent += `</tbody></table></div>`;
                     }
                     currentBoxId = item.boxId;
                     groupedContent += `<div class="box-group">
@@ -617,7 +616,7 @@
                     </tr>`;
             });
             if (currentBoxId !== null) {
-                groupedContent += `</tbody></table></div>`; // Close the last box group
+                groupedContent += `</tbody></table></div>`;
             }
 
             return `
@@ -718,7 +717,6 @@
             document.querySelectorAll('.modal-backdrop').forEach(modal => {
                 modal.style.display = 'none';
             }); 
-            // Also clear the iframe content when closing all modals
             const iframe = document.getElementById('quick-view-iframe');
             if(iframe) iframe.srcdoc = '';
         }
