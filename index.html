@@ -454,6 +454,7 @@
 
         function createBoxEl(box, boxItems) {
             const boxEl = document.createElement('div');
+            // This line includes the hover effect for desktop and the active effect for mobile touch
             boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1 active:shadow-2xl active:-translate-y-1';
             
             const itemsContainer = document.createElement('div');
@@ -727,8 +728,8 @@
             }
             document.getElementById('item-form').reset();
             document.getElementById('item-id').value = '';
-            document.getElementById('estimated-value').value = ''; // Clear value fields
-            document.getElementById('item-cost').value = ''; // Clear value fields
+            document.getElementById('estimated-value').value = '';
+            document.getElementById('item-cost').value = '';
             document.getElementById('item-modal-title').textContent = 'Add New Item';
             updateBoxSelector(newestBoxId);
             resetItemPhotoPreviews();
