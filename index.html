@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 40; justify-content: center; align-items: center; transition: opacity 0.3s ease; }
@@ -27,6 +28,29 @@
         .gallery-nav.next { right: 1rem; }
         .photo-count-badge { position: absolute; bottom: 4px; right: 4px; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
     </style>
+    <style id="print-styles">
+        @media print {
+            @page {
+                size: A4;
+                margin: 20mm;
+                /* Adds page numbers to the bottom right of each page */
+                @bottom-right {
+                    content: "Page " counter(page) " of " counter(pages);
+                    font-family: sans-serif;
+                    font-size: 10pt;
+                }
+            }
+            body {
+                font-family: sans-serif;
+                font-size: 10pt;
+            }
+            .box-group {
+                /* This is the key rule: it tells the printer to avoid breaking this element across pages if possible */
+                page-break-inside: avoid;
+                padding-top: 10px;
+            }
+        }
+    </style>
 </head>
 <body class="text-gray-800">
 
@@ -45,7 +69,7 @@
                     </div>
                     <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
                         <button id="export-btn" class="flex w-full items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-green-600 sm:w-auto sm:text-base">
-                            <i class="fas fa-print mr-2"></i><span class="whitespace-nowrap">Print / Export</span>
+                            <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
                         </button>
                         <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600 sm:w-auto sm:text-base">
                             <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
@@ -223,7 +247,8 @@
             logoutBtn.addEventListener('click', () => signOut(auth));
             addBoxBtn.addEventListener('click', openBoxModal);
             addItemBtn.addEventListener('click', openItemModal);
-            document.getElementById('export-btn').addEventListener('click', exportListWithImages);
+            // UPDATED: Button now calls the new PDF generation function
+            document.getElementById('export-btn').addEventListener('click', generatePdf);
             document.getElementById('reset-filters-btn').addEventListener('click', resetFilters);
             guestLoginHeaderBtn.addEventListener('click', handleGuestLogin);
 
@@ -521,11 +546,16 @@
         function populateBoxTypeSelect(box = null) { boxTypeSelect.innerHTML = ''; BOX_PRESETS.forEach(preset => boxTypeSelect.add(new Option(preset.name, preset.id))); boxTypeSelect.add(new Option('Custom Dimensions', 'custom')); let selectedType = 'medium'; if (box) { const mediumPreset = BOX_PRESETS[0]; const jumboPreset = BOX_PRESETS[1]; const isMedium = Math.abs(box.height - mediumPreset.h) < 0.1 && Math.abs(box.width - mediumPreset.w) < 0.1 && Math.abs(box.length - mediumPreset.l) < 0.1; const isJumbo = Math.abs(box.height - jumboPreset.h) < 0.1 && Math.abs(box.width - jumboPreset.w) < 0.1 && Math.abs(box.length - jumboPreset.l) < 0.1; if (isJumbo) selectedType = 'jumbo'; else if (isMedium) selectedType = 'medium'; else selectedType = 'custom'; } boxTypeSelect.value = selectedType; handleBoxTypeChange(); }
         function handleBoxTypeChange() { const selectedId = boxTypeSelect.value; const preset = BOX_PRESETS.find(p => p.id === selectedId); if (preset) { customDimensionsContainer.classList.add('hidden'); boxTypeThumbnail.src = preset.imgSrc; boxTypeThumbnail.classList.remove('hidden'); boxDimensionInputs[0].value = preset.h; boxDimensionInputs[1].value = preset.w; boxDimensionInputs[2].value = preset.l; } else { customDimensionsContainer.classList.remove('hidden'); boxTypeThumbnail.classList.add('hidden'); } calculateVolume(); }
 
-        function exportListWithImages() {
+        // NEW/UPDATED: Function to generate and save a PDF
+        function generatePdf() {
             if (items.length === 0) {
                 showInfoModal("No items to export.");
                 return;
             }
+            // Show loading overlay
+            loadingOverlay.querySelector('p').textContent = 'Generating PDF...';
+            loadingOverlay.style.display = 'flex';
+
             const sortedData = [...items].sort((a, b) => {
                 const boxA = boxes.find(box => box.id === a.boxId) || {};
                 const boxB = boxes.find(box => box.id === b.boxId) || {};
@@ -535,52 +565,111 @@
                 return a.name.localeCompare(b.name);
             });
             
-            // <-- UPDATED: New style for a distinct box header row
-            let htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title><style>
-                body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:2em}
-                table{width:100%;border-collapse:collapse;margin-top:20px;font-size:12px; border: 1px solid #ddd;}
-                th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:middle}
-                th{background-color:#e5e7eb;font-weight:bold}
-                img{max-height:70px;max-width:70px;object-fit:cover;border-radius:4px}
-                h1{font-size:24px}
-                .box-header-row { background-color: #4A5568; color: white; font-weight: bold; }
-                .box-header-row td { text-align: center; }
-                @media print{body{font-size:10pt;margin:1em}img{max-height:50px;max-width:50px}}
-            </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p><table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`;
-
-            // <-- UPDATED: Logic now adds a header row for each new box
-            let previousBoxId = null;
-
+            // Build the HTML content for the PDF
+            const printStyles = document.getElementById('print-styles').innerHTML;
+            let tableContent = '';
             sortedData.forEach(item => {
                 const box = boxes.find(b => b.id === item.boxId) || { number: 'N/A', room: 'N/A' };
-                
-                // If the box ID is new, insert the header row first
-                if (item.boxId !== previousBoxId) {
-                    htmlContent += `<tr class="box-header-row">
-                        <td colspan="6">Box ${box.number} - ${box.room}</td>
-                    </tr>`;
-                    previousBoxId = item.boxId;
-                }
-
                 const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
                 const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '';
-                
-                // Add the standard item row (no more alternating colors)
-                htmlContent += `<tr>
-                    <td>${imageTag}</td>
-                    <td>${box.number}</td>
-                    <td>${box.room}</td>
-                    <td>${item.name || ''}</td>
-                    <td>$${formatCurrency(item.value)}</td>
-                    <td>${item.notes || ''}</td>
-                </tr>`;
+                tableContent += `
+                    <tr>
+                        <td>${imageTag}</td>
+                        <td>${box.number}</td>
+                        <td>${box.room}</td>
+                        <td>${item.name || ''}</td>
+                        <td>$${formatCurrency(item.value)}</td>
+                        <td>${item.notes || ''}</td>
+                    </tr>`;
             });
 
-            htmlContent += `</tbody></table></body></html>`;
-            const exportWindow = window.open('', '_blank');
-            exportWindow.document.write(htmlContent);
-            exportWindow.document.close();
-        };
+            // Group rows by box inside a wrapper to control page breaks
+            let groupedContent = '';
+            let currentBoxId = null;
+            sortedData.forEach(item => {
+                const box = boxes.find(b => b.id === item.boxId) || { number: 'N/A', room: 'N/A' };
+                if (item.boxId !== currentBoxId) {
+                    if (currentBoxId !== null) {
+                        groupedContent += `</tbody></table></div>`; // Close previous box group
+                    }
+                    currentBoxId = item.boxId;
+                    // Start a new box group
+                    groupedContent += `<div class="box-group">
+                        <table>
+                            <thead>
+                                <tr class="box-header-row">
+                                    <th colspan="6">Box ${box.number} - ${box.room}</th>
+                                </tr>
+                                <tr>
+                                    <th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                }
+                const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
+                const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}" style="max-height:50px;max-width:50px;object-fit:cover;border-radius:4px;">` : '';
+                groupedContent += `
+                    <tr>
+                        <td>${imageTag}</td>
+                        <td>${box.number}</td>
+                        <td>${box.room}</td>
+                        <td>${item.name || ''}</td>
+                        <td>$${formatCurrency(item.value)}</td>
+                        <td>${item.notes || ''}</td>
+                    </tr>`;
+            });
+            if (currentBoxId !== null) {
+                groupedContent += `</tbody></table></div>`; // Close the last box group
+            }
+
+            const htmlToExport = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Move Master Inventory</title>
+                    <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10pt; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #ddd; padding: 6px; text-align: left; vertical-align: middle; word-break: break-word; }
+                        th { background-color: #e5e7eb; font-weight: bold; }
+                        h1 { font-size: 22pt; }
+                        .box-group { page-break-inside: avoid !important; margin-top: 15px; }
+                        .box-header-row th { background-color: #4A5568; color: white; text-align: center; font-size: 12pt; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Move Master Inventory List</h1>
+                    <p>Generated on: ${new Date().toLocaleString()}</p>
+                    ${groupedContent}
+                </body>
+                </html>`;
+
+            // Set options for html2pdf.js
+            const options = {
+                margin: [15, 10, 15, 10], // top, left, bottom, right in mm
+                filename: `Move-Master-Inventory-${new Date().toISOString().slice(0,10)}.pdf`,
+                image: { type: 'jpeg', quality: 0.95 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css', 'legacy'] }
+            };
+
+            // Generate and save the PDF
+            html2pdf().from(htmlToExport).set(options).toPdf().get('pdf').then(function (pdf) {
+                var totalPages = pdf.internal.getNumberOfPages();
+                for (var i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(150);
+                    pdf.text('Page ' + i + ' of ' + totalPages, pdf.internal.pageSize.getWidth() - 25, pdf.internal.pageSize.getHeight() - 10);
+                }
+            }).save().then(() => {
+                // Hide loading overlay
+                loadingOverlay.style.display = 'none';
+                loadingOverlay.querySelector('p').textContent = 'Connecting...';
+            });
+        }
+
 
         function resizeAndProcessImage(file, callback) { const MAX_WIDTH = 800; const MAX_HEIGHT = 800; const MIME_TYPE = "image/jpeg"; const QUALITY = 0.8; const blobURL = URL.createObjectURL(file); const img = new Image(); img.src = blobURL; img.onerror = () => { URL.revokeObjectURL(img.src); console.error("Cannot load image"); showInfoModal("Could not load the selected image.", "Image Error"); }; img.onload = () => { URL.revokeObjectURL(img.src); let { width, height } = img; if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } } const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); const dataUrl = canvas.toDataURL(MIME_TYPE, QUALITY); callback(dataUrl); }; }
         function handleBoxPhotoUpload(e) { const file = e.target.files[0]; if (file) { resizeAndProcessImage(file, (dataUrl) => { boxPhotoDataUrlCache = dataUrl; updateBoxPhotoPreview(); }); } }
