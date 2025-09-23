@@ -146,7 +146,7 @@
         let currentPhotoIndex = 0;
         let db, auth;
         let currentUserId = null;
-        let newestBoxId = null; // <-- NEW: To store the ID of the last added box
+        let newestBoxId = null; // To store the ID of the last added box
         let unsubscribeBoxes = () => {};
         let unsubscribeItems = () => {};
         
@@ -502,7 +502,7 @@
         
         async function handleLogin(e) { e.preventDefault(); const email = document.getElementById('email').value; const password = document.getElementById('password').value; loginError.classList.add('hidden'); try { await signInWithEmailAndPassword(auth, email, password); closeLoginModal(); } catch (error) { if (error.code === 'auth/user-not-found') { try { await createUserWithEmailAndPassword(auth, email, password); closeLoginModal(); showInfoModal("Admin account created successfully! You can now find your User ID in the Firebase console to complete the setup.", "Account Created"); } catch (createError) { loginError.textContent = createError.message; loginError.classList.remove('hidden'); } } else { loginError.textContent = "Login failed: Invalid email or password."; loginError.classList.remove('hidden'); } } }
         async function handleGuestLogin() { try { await signInWithEmailAndPassword(auth, 'guest@guest.com', 'guest123'); closeLoginModal(); } catch (error) { showInfoModal("Guest login failed. Please ensure the guest account has been created in Firebase with the password 'guest123'."); } }
-        async function handleSaveBox(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-box-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('box-id').value; const boxData = { number: document.getElementById('box-number').value, room: document.getElementById('box-room-area').value, height: parseFloat(document.getElementById('box-height').value) || 0, width: parseFloat(document.getElementById('box-width').value) || 0, length: parseFloat(document.getElementById('box-length').value) || 0, photoDataUrl: boxPhotoDataUrlCache }; boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000; try { if (id) { await setDoc(doc(db, "users", currentUserId, "boxes", id), boxData); } else { const newBoxRef = await addDoc(collection(db, "users", currentUserId, "boxes"), boxData); newestBoxId = newBoxRef.id; /* <-- UPDATED: Store the new box ID */ } closeBoxModal(); } catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Box'; } }
+        async function handleSaveBox(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-box-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('box-id').value; const boxData = { number: document.getElementById('box-number').value, room: document.getElementById('box-room-area').value, height: parseFloat(document.getElementById('box-height').value) || 0, width: parseFloat(document.getElementById('box-width').value) || 0, length: parseFloat(document.getElementById('box-length').value) || 0, photoDataUrl: boxPhotoDataUrlCache }; boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000; try { if (id) { await setDoc(doc(db, "users", currentUserId, "boxes", id), boxData); } else { const newBoxRef = await addDoc(collection(db, "users", currentUserId, "boxes"), boxData); newestBoxId = newBoxRef.id; } closeBoxModal(); } catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Box'; } }
         async function handleSaveItem(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-item-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('item-id').value; const isNew = isNewCheckbox.checked; const itemData = { boxId: document.getElementById('item-box-select').value, name: document.getElementById('item-name').value, value: parseFloat(document.getElementById('estimated-value').value) || 0, notes: document.getElementById('item-notes').value, photoDataUrls: itemPhotosCache, isNew: isNew, purchaseDate: isNew ? document.getElementById('purchase-date').value : '', cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0, hasWood: document.getElementById('has-wood-checkbox').checked, isTreated: document.getElementById('is-treated-checkbox').checked, }; try { if (id) { await setDoc(doc(db, "users", currentUserId, "items", id), itemData); } else { await addDoc(collection(db, "users", currentUserId, "items"), itemData); } closeItemModal(); } catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; } }
 
         function toggleBoxItems(boxId) { const itemsContainer = document.getElementById(`items-of-box-${boxId}`); const chevronIcon = document.getElementById(`chevron-for-box-${boxId}`); if (itemsContainer && chevronIcon) { const isHidden = itemsContainer.classList.contains('hidden'); itemsContainer.classList.toggle('hidden', !isHidden); chevronIcon.classList.toggle('rotate-180', isHidden); } };
@@ -521,7 +521,66 @@
         function populateBoxTypeSelect(box = null) { boxTypeSelect.innerHTML = ''; BOX_PRESETS.forEach(preset => boxTypeSelect.add(new Option(preset.name, preset.id))); boxTypeSelect.add(new Option('Custom Dimensions', 'custom')); let selectedType = 'medium'; if (box) { const mediumPreset = BOX_PRESETS[0]; const jumboPreset = BOX_PRESETS[1]; const isMedium = Math.abs(box.height - mediumPreset.h) < 0.1 && Math.abs(box.width - mediumPreset.w) < 0.1 && Math.abs(box.length - mediumPreset.l) < 0.1; const isJumbo = Math.abs(box.height - jumboPreset.h) < 0.1 && Math.abs(box.width - jumboPreset.w) < 0.1 && Math.abs(box.length - jumboPreset.l) < 0.1; if (isJumbo) selectedType = 'jumbo'; else if (isMedium) selectedType = 'medium'; else selectedType = 'custom'; } boxTypeSelect.value = selectedType; handleBoxTypeChange(); }
         function handleBoxTypeChange() { const selectedId = boxTypeSelect.value; const preset = BOX_PRESETS.find(p => p.id === selectedId); if (preset) { customDimensionsContainer.classList.add('hidden'); boxTypeThumbnail.src = preset.imgSrc; boxTypeThumbnail.classList.remove('hidden'); boxDimensionInputs[0].value = preset.h; boxDimensionInputs[1].value = preset.w; boxDimensionInputs[2].value = preset.l; } else { customDimensionsContainer.classList.remove('hidden'); boxTypeThumbnail.classList.add('hidden'); } calculateVolume(); }
 
-        function exportListWithImages() { if (items.length === 0) { showInfoModal("No items to export."); return; } const sortedData = [...items].sort((a, b) => { const boxA = boxes.find(box => box.id === a.boxId) || {}; const boxB = boxes.find(box => box.id === b.boxId) || {}; const boxNumA = parseInt(boxA.number) || 0; const boxNumB = parseInt(boxB.number) || 0; if (boxNumA !== boxNumB) return boxNumA - boxNumB; return a.name.localeCompare(b.name); }); let htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:2em}table{width:100%;border-collapse:collapse;margin-top:20px;font-size:12px}th,td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle}th{background-color:#f2f2f2;font-weight:bold}img{max-height:70px;max-width:70px;object-fit:cover;border-radius:4px}h1{font-size:24px}@media print{body{font-size:10pt;margin:1em}img{max-height:50px;max-width:50px}}</style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p><table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`; sortedData.forEach(item => { const box = boxes.find(b => b.id === item.boxId) || { number: 'N/A', room: 'N/A' }; const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : ''; const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : ''; htmlContent += `<tr><td>${imageTag}</td><td>${box.number}</td><td>${box.room}</td><td>${item.name || ''}</td><td>$${formatCurrency(item.value)}</td><td>${item.notes || ''}</td></tr>`; }); htmlContent += `</tbody></table></body></html>`; const exportWindow = window.open('', '_blank'); exportWindow.document.write(htmlContent); exportWindow.document.close(); };
+        function exportListWithImages() {
+            if (items.length === 0) {
+                showInfoModal("No items to export.");
+                return;
+            }
+            const sortedData = [...items].sort((a, b) => {
+                const boxA = boxes.find(box => box.id === a.boxId) || {};
+                const boxB = boxes.find(box => box.id === b.boxId) || {};
+                const boxNumA = parseInt(boxA.number) || 0;
+                const boxNumB = parseInt(boxB.number) || 0;
+                if (boxNumA !== boxNumB) return boxNumA - boxNumB;
+                return a.name.localeCompare(b.name);
+            });
+            
+            // <-- UPDATED: Added new styles for alternating row colors
+            let htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title><style>
+                body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:2em}
+                table{width:100%;border-collapse:collapse;margin-top:20px;font-size:12px}
+                th,td{border:1px solid #ccc;padding:8px;text-align:left;vertical-align:middle}
+                th{background-color:#e5e7eb;font-weight:bold}
+                img{max-height:70px;max-width:70px;object-fit:cover;border-radius:4px}
+                h1{font-size:24px}
+                .shade-a { background-color: #ffffff; }
+                .shade-b { background-color: #f3f4f6; }
+                @media print{body{font-size:10pt;margin:1em}img{max-height:50px;max-width:50px}}
+            </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p><table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`;
+
+            // <-- UPDATED: Added logic to track box changes and switch colors
+            let previousBoxId = null;
+            let shadeClass = 'shade-a';
+
+            sortedData.forEach(item => {
+                const box = boxes.find(b => b.id === item.boxId) || { number: 'N/A', room: 'N/A' };
+                
+                // Switch shade color when the box ID changes
+                if (item.boxId !== previousBoxId) {
+                    shadeClass = (shadeClass === 'shade-a') ? 'shade-b' : 'shade-a';
+                    previousBoxId = item.boxId;
+                }
+
+                const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
+                const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '';
+                
+                // Apply the determined shade class to the table row
+                htmlContent += `<tr class="${shadeClass}">
+                    <td>${imageTag}</td>
+                    <td>${box.number}</td>
+                    <td>${box.room}</td>
+                    <td>${item.name || ''}</td>
+                    <td>$${formatCurrency(item.value)}</td>
+                    <td>${item.notes || ''}</td>
+                </tr>`;
+            });
+
+            htmlContent += `</tbody></table></body></html>`;
+            const exportWindow = window.open('', '_blank');
+            exportWindow.document.write(htmlContent);
+            exportWindow.document.close();
+        };
+
         function resizeAndProcessImage(file, callback) { const MAX_WIDTH = 800; const MAX_HEIGHT = 800; const MIME_TYPE = "image/jpeg"; const QUALITY = 0.8; const blobURL = URL.createObjectURL(file); const img = new Image(); img.src = blobURL; img.onerror = () => { URL.revokeObjectURL(img.src); console.error("Cannot load image"); showInfoModal("Could not load the selected image.", "Image Error"); }; img.onload = () => { URL.revokeObjectURL(img.src); let { width, height } = img; if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } } const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); const dataUrl = canvas.toDataURL(MIME_TYPE, QUALITY); callback(dataUrl); }; }
         function handleBoxPhotoUpload(e) { const file = e.target.files[0]; if (file) { resizeAndProcessImage(file, (dataUrl) => { boxPhotoDataUrlCache = dataUrl; updateBoxPhotoPreview(); }); } }
         function updateBoxPhotoPreview() { if (boxPhotoDataUrlCache) { boxPhotoPreview.src = boxPhotoDataUrlCache; boxPhotoPreview.classList.remove('hidden'); boxRemovePhotoBtn.classList.remove('hidden'); } else { resetBoxPhotoPreview(); } }
@@ -541,7 +600,7 @@
         
         function openLoginModal() { loginModal.style.display = 'flex'; }
         function openBoxModal() { document.getElementById('box-form').reset(); document.getElementById('box-id').value = ''; document.getElementById('box-modal-title').textContent = 'Add New Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.remove('hidden'); qrCodeSection.classList.add('hidden'); resetBoxPhotoPreview(); populateBoxTypeSelect(); boxModal.style.display = 'flex'; calculateVolume(); }
-        function openItemModal() { if (boxes.length === 0) { showInfoModal('Please create a box first before adding an item.'); return; } document.getElementById('item-form').reset(); document.getElementById('item-id').value = ''; document.getElementById('item-modal-title').textContent = 'Add New Item'; updateBoxSelector(newestBoxId); /* <-- UPDATED: Pass newest box ID to pre-select it */ resetItemPhotoPreviews(); newItemDetails.classList.add('hidden'); itemModal.style.display = 'flex'; }
+        function openItemModal() { if (boxes.length === 0) { showInfoModal('Please create a box first before adding an item.'); return; } document.getElementById('item-form').reset(); document.getElementById('item-id').value = ''; document.getElementById('item-modal-title').textContent = 'Add New Item'; updateBoxSelector(newestBoxId); resetItemPhotoPreviews(); newItemDetails.classList.add('hidden'); itemModal.style.display = 'flex'; }
         
         function closeAllModals() { document.querySelectorAll('.modal-backdrop').forEach(modal => modal.style.display = 'none'); }
         function closeLoginModal() { loginModal.style.display = 'none'; if(loginForm) loginForm.reset(); if(loginError) loginError.classList.add('hidden'); };
