@@ -35,57 +35,66 @@
         <p class="mt-4 text-gray-600 font-semibold">Connecting to your inventory...</p>
     </div>
 
-    <header class="header-gradient text-white shadow-lg sticky top-0 z-30">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex flex-col sm:flex-row justify-between items-center">
-                <div class="text-center sm:text-left">
-                    <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
-                    <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
-                </div>
-                <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
-                    <button id="export-btn" class="flex w-full items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-green-600 sm:w-auto sm:text-base">
-                        <i class="fas fa-print mr-2"></i><span class="whitespace-nowrap">Print / Export</span>
-                    </button>
-                    <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600 sm:w-auto sm:text-base">
-                        <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
-                    </button>
-                    <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600 sm:w-auto sm:text-base">
-                        <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
-                    </button>
-                    <div id="auth-container" class="contents col-span-2 sm:col-span-auto">
-                        <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600 sm:w-auto sm:text-base">
-                            <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
+    <div id="app-container">
+        <header class="header-gradient text-white shadow-lg sticky top-0 z-30">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center">
+                    <div class="text-center sm:text-left">
+                        <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
+                        <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
+                    </div>
+                    <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
+                        <button id="export-btn" class="flex w-full items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-green-600 sm:w-auto sm:text-base">
+                            <i class="fas fa-print mr-2"></i><span class="whitespace-nowrap">Print / Export</span>
                         </button>
-                        <button id="login-btn" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50 sm:w-auto sm:text-base">
-                            <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
+                        <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600 sm:w-auto sm:text-base">
+                            <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
                         </button>
-                        <button id="logout-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600 sm:w-auto sm:text-base">
-                            <i class="fas fa-sign-out-alt mr-2"></i><span class="whitespace-nowrap">Logout</span>
+                        <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600 sm:w-auto sm:text-base">
+                            <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
                         </button>
+                        <div id="auth-container" class="contents col-span-2 sm:col-span-auto">
+                            <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600 sm:w-auto sm:text-base">
+                                <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
+                            </button>
+                            <button id="login-btn" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50 sm:w-auto sm:text-base">
+                                <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
+                            </button>
+                            <button id="logout-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600 sm:w-auto sm:text-base">
+                                <i class="fas fa-sign-out-alt mr-2"></i><span class="whitespace-nowrap">Logout</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center">
-                <div class="bg-blue-100 text-blue-600 p-4 rounded-full"><i class="fas fa-box-open text-2xl"></i></div>
-                <div class="ml-4">
-                    <p class="text-gray-500 text-sm font-medium">Total Boxes</p>
-                    <p id="total-boxes" class="text-2xl font-bold">0</p>
-                    <p id="box-breakdown" class="text-xs text-gray-500 mt-1 h-4"></p>
+        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center">
+                    <div class="bg-blue-100 text-blue-600 p-4 rounded-full"><i class="fas fa-box-open text-2xl"></i></div>
+                    <div class="ml-4">
+                        <p class="text-gray-500 text-sm font-medium">Total Boxes</p>
+                        <p id="total-boxes" class="text-2xl font-bold">0</p>
+                        <p id="box-breakdown" class="text-xs text-gray-500 mt-1 h-4"></p>
+                    </div>
                 </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div></div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-purple-100 text-purple-600 p-4 rounded-full"><i class="fas fa-cube text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Volume</p><p id="total-volume" class="text-2xl font-bold">0 m³</p></div></div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
             </div>
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div></div>
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-purple-100 text-purple-600 p-4 rounded-full"><i class="fas fa-cube text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Volume</p><p id="total-volume" class="text-2xl font-bold">0 m³</p></div></div>
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
-        </div>
-        <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-4"><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></div><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><select id="room-filter" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"><option value="all">All Rooms</option></select></div><button id="reset-filters-btn" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">Reset</button></div>
-        <div id="inventory-list" class="space-y-6"></div>
-        <div id="empty-state" class="text-center py-16"><img src="https://placehold.co/300x200/E9D5FF/4C1D95?text=Start+Packing!" alt="Empty state illustration" class="mx-auto mb-6 rounded-lg"><h2 id="empty-state-title" class="text-2xl font-semibold text-gray-700">Please log in to view your inventory.</h2><p id="empty-state-subtext" class="text-gray-500 mt-2">Use the login button to access your items or try the guest account.</p></div>
-    </main>
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-4"><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></div><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><select id="room-filter" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"><option value="all">All Rooms</option></select></div><button id="reset-filters-btn" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">Reset</button></div>
+            <div id="inventory-list" class="space-y-6"></div>
+            <div id="empty-state" class="text-center py-16"><img src="https://placehold.co/300x200/E9D5FF/4C1D95?text=Start+Packing!" alt="Empty state illustration" class="mx-auto mb-6 rounded-lg"><h2 id="empty-state-title" class="text-2xl font-semibold text-gray-700">Please log in to view your inventory.</h2><p id="empty-state-subtext" class="text-gray-500 mt-2">Use the login button to access your items or try the guest account.</p></div>
+        </main>
+    </div>
+
+    <!-- This container is for the QR code viewer -->
+    <div id="viewer-container" class="hidden container mx-auto p-4 sm:p-6 lg:p-8">
+        <h1 id="viewer-title" class="text-3xl font-bold tracking-tight text-gray-800 mb-6"></h1>
+        <div id="viewer-item-list" class="space-y-4"></div>
+        <p class="text-center text-gray-500 mt-8 text-sm">Powered by Move Master</p>
+    </div>
 
     <div id="login-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-8 w-11/12 sm:w-96 animate-fade-in"><div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold">Admin Login</h3><button id="close-login-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="space-y-4"><div><label for="email" class="block text-sm font-medium text-gray-700">Email</label><input type="email" id="email" required autocomplete="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><div><label for="password" class="block text-sm font-medium text-gray-700">Password</label><input type="password" id="password" required autocomplete="current-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><p id="login-error" class="text-sm text-red-600 hidden"></p><div class="flex justify-end pt-4"><button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Login</button></div></form></div></div>
     
@@ -124,7 +133,7 @@
         // --- Firebase SDK Imports ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, addDoc, setDoc, deleteDoc, query, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, addDoc, setDoc, deleteDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- GLOBAL STATE ---
         let boxes = [];
@@ -155,7 +164,7 @@
             roomFilter, boxDimensionInputs, isNewCheckbox, newItemDetails, qrCodeContainer, printQrBtn,
             qrCodeSection, qrNewBoxNote, boxPhotoInput, boxPhotoPreview, boxRemovePhotoBtn, itemPhotoInput,
             itemPhotosContainer, itemAddPhotoLabel, galleryPrevBtn, galleryNextBtn, fullPhoto, loadingOverlay,
-            boxTypeSelect, boxTypeThumbnail, customDimensionsContainer, guestLoginHeaderBtn;
+            boxTypeSelect, boxTypeThumbnail, customDimensionsContainer, guestLoginHeaderBtn, appContainer, viewerContainer;
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -165,6 +174,8 @@
         });
 
         function assignDOMElements() {
+            appContainer = document.getElementById('app-container');
+            viewerContainer = document.getElementById('viewer-container');
             loginBtn = document.getElementById('login-btn');
             logoutBtn = document.getElementById('logout-btn');
             addBoxBtn = document.getElementById('add-box-btn');
@@ -263,22 +274,29 @@
                 db = getFirestore(app);
                 auth = getAuth(app);
                 
-                onAuthStateChanged(auth, user => {
-                    if (user) {
-                        currentUserId = user.uid;
-                        attachFirestoreListeners(currentUserId);
-                    } else {
-                        currentUserId = null;
-                        if (unsubscribeBoxes) unsubscribeBoxes();
-                        if (unsubscribeItems) unsubscribeItems();
-                        boxes = [];
-                        items = [];
-                        render();
-                        loadingOverlay.style.display = 'none';
-                    }
-                    updateUIForLoginState(user);
-                });
+                const params = new URLSearchParams(window.location.search);
+                const viewUserId = params.get('userId');
+                const viewBoxId = params.get('boxId');
 
+                if(viewUserId && viewBoxId) {
+                    showBoxContents(viewUserId, viewBoxId);
+                } else {
+                    appContainer.style.display = 'block';
+                    viewerContainer.style.display = 'none';
+                    onAuthStateChanged(auth, user => {
+                        currentUserId = user ? user.uid : null;
+                        if (user) {
+                            attachFirestoreListeners(currentUserId);
+                        } else {
+                            if (unsubscribeBoxes) unsubscribeBoxes();
+                            if (unsubscribeItems) unsubscribeItems();
+                            boxes = []; items = [];
+                            render();
+                            loadingOverlay.style.display = 'none';
+                        }
+                        updateUIForLoginState(user);
+                    });
+                }
             } catch (error) {
                 console.error("Firebase initialization failed:", error);
                 loadingOverlay.innerHTML = '<p class="text-red-600 font-semibold">Connection failed. Please check your Firebase config.</p>';
@@ -468,7 +486,7 @@
         }
         
         async function handleLogin(e) { e.preventDefault(); const email = document.getElementById('email').value; const password = document.getElementById('password').value; loginError.classList.add('hidden'); try { await signInWithEmailAndPassword(auth, email, password); closeLoginModal(); } catch (error) { if (error.code === 'auth/user-not-found') { try { await createUserWithEmailAndPassword(auth, email, password); closeLoginModal(); showInfoModal("Admin account created successfully! You can now find your User ID in the Firebase console to complete the setup.", "Account Created"); } catch (createError) { loginError.textContent = createError.message; loginError.classList.remove('hidden'); } } else { loginError.textContent = "Login failed: Invalid email or password."; loginError.classList.remove('hidden'); } } }
-        async function handleGuestLogin() { try { await signInWithEmailAndPassword(auth, 'guest@guest.com', 'guest123'); closeLoginModal(); } catch (error) { loginError.textContent = "Guest login failed. Please ensure the guest account has been created in Firebase."; loginError.classList.remove('hidden'); } }
+        async function handleGuestLogin() { try { await signInWithEmailAndPassword(auth, 'guest@guest.com', 'guest123'); closeLoginModal(); } catch (error) { showInfoModal("Guest login failed. Please ensure the guest account has been created in Firebase with the password 'guest123'."); } }
         async function handleSaveBox(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-box-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('box-id').value; const boxData = { number: document.getElementById('box-number').value, room: document.getElementById('box-room-area').value, height: parseFloat(document.getElementById('box-height').value) || 0, width: parseFloat(document.getElementById('box-width').value) || 0, length: parseFloat(document.getElementById('box-length').value) || 0, photoDataUrl: boxPhotoDataUrlCache }; boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000; try { if (id) { await setDoc(doc(db, "users", currentUserId, "boxes", id), boxData); } else { await addDoc(collection(db, "users", currentUserId, "boxes"), boxData); } closeBoxModal(); } catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Box'; } }
         async function handleSaveItem(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-item-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('item-id').value; const isNew = isNewCheckbox.checked; const itemData = { boxId: document.getElementById('item-box-select').value, name: document.getElementById('item-name').value, value: parseFloat(document.getElementById('estimated-value').value) || 0, notes: document.getElementById('item-notes').value, photoDataUrls: itemPhotosCache, isNew: isNew, purchaseDate: isNew ? document.getElementById('purchase-date').value : '', cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0, hasWood: document.getElementById('has-wood-checkbox').checked, isTreated: document.getElementById('is-treated-checkbox').checked, }; try { if (id) { await setDoc(doc(db, "users", currentUserId, "items", id), itemData); } else { await addDoc(collection(db, "users", currentUserId, "items"), itemData); } closeItemModal(); } catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; } }
 
@@ -481,7 +499,7 @@
         function editItem(id) { const item = items.find(i => i.id === id); if (!item) return; document.getElementById('item-form').reset(); updateBoxSelector(item.boxId); document.getElementById('item-id').value = item.id; document.getElementById('item-name').value = item.name; document.getElementById('estimated-value').value = item.value; document.getElementById('item-notes').value = item.notes; isNewCheckbox.checked = item.isNew; newItemDetails.classList.toggle('hidden', !item.isNew); document.getElementById('purchase-date').value = item.purchaseDate; document.getElementById('item-cost').value = item.cost; document.getElementById('has-wood-checkbox').checked = item.hasWood; document.getElementById('is-treated-checkbox').checked = item.isTreated; itemPhotosCache = Array.isArray(item.photoDataUrls) ? [...item.photoDataUrls] : []; renderItemPhotoPreviews(); document.getElementById('item-modal-title').textContent = 'Edit Item'; itemModal.style.display = 'flex'; }
         function updateBoxSelector(selectedId) { const select = document.getElementById('item-box-select'); select.innerHTML = ''; boxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).forEach(box => select.add(new Option(`Box ${box.number} (${box.room})`, box.id))); if (selectedId) select.value = selectedId; }
         
-        function generateQRCodeForBox() { const boxId = document.getElementById('box-id').value; if (!boxId) { showInfoModal('Please save the box before generating a QR code.'); return; } const box = boxes.find(b => b.id === boxId); if (!box) { showInfoModal('Could not find box details.'); return; } qrCodeContainer.innerHTML = ''; new QRCode(qrCodeContainer, { text: JSON.stringify({type: "MoveMasterBox", id: box.id, number: box.number, room: box.room }), width: 160, height: 160, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H }); printQrBtn.classList.remove('hidden'); qrCodeSection.classList.remove('hidden'); qrNewBoxNote.classList.add('hidden'); }
+        function generateQRCodeForBox() { const boxId = document.getElementById('box-id').value; if (!currentUserId) { showInfoModal("Please log in to generate a QR code."); return; } const box = boxes.find(b => b.id === boxId); if (!box) { showInfoModal('Could not find box details.'); return; } const baseUrl = window.location.href.split('?')[0]; const qrUrl = `${baseUrl}?userId=${currentUserId}&boxId=${boxId}`; qrCodeContainer.innerHTML = ''; new QRCode(qrCodeContainer, { text: qrUrl, width: 160, height: 160 }); printQrBtn.classList.remove('hidden'); qrCodeSection.classList.remove('hidden'); qrNewBoxNote.classList.add('hidden'); }
         function showQRCodeForBox(boxId) { editBox(boxId); setTimeout(() => generateQRCodeForBox(), 100); }
         function printQRCode() { const qrCodeImage = qrCodeContainer.querySelector('img').src; const boxNumber = document.getElementById('box-number').value; const room = document.getElementById('box-room-area').value; const printWindow = window.open('', '_blank'); printWindow.document.write(`<html><head><title>Print QR Code</title><style>body { font-family: sans-serif; text-align: center; margin-top: 50px; } img { width: 300px; height: 300px; } h2 { font-size: 2em; margin: 0; } p { font-size: 1.2em; }</style></head><body><h2>Box ${boxNumber}</h2><p>${room}</p><img src="${qrCodeImage}"><script>window.onload = function() { window.print(); window.onafterprint = function() { window.close(); }; }<\/script></body></html>`); printWindow.document.close(); }
         
