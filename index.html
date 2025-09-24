@@ -289,7 +289,13 @@
             document.getElementById('cancel-box-modal-btn').addEventListener('click', closeBoxModal);
             document.getElementById('close-item-modal-btn').addEventListener('click', closeItemModal);
             document.getElementById('cancel-item-modal-btn').addEventListener('click', closeItemModal);
-            document.getElementById('close-photo-modal-btn').addEventListener('click', closePhotoModal);
+            
+            // UPDATED: Added stopPropagation() to prevent click-through issue
+            document.getElementById('close-photo-modal-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                closePhotoModal();
+            });
+            
             document.getElementById('close-quick-view-modal-btn').addEventListener('click', closeQuickViewModal);
             
             boxDimensionInputs.forEach(input => input.addEventListener('input', calculateVolume));
@@ -457,11 +463,10 @@
             
             const itemsContainer = document.createElement('div');
             itemsContainer.id = `items-of-box-${box.id}`;
-            itemsContainer.className = 'hidden'; // No need for divide-y, we'll style items individually
+            itemsContainer.className = 'hidden'; 
             if (boxItems.length > 0) {
                 boxItems.forEach((item, index) => {
                     const itemEl = createItemEl(item);
-                    // Add alternating background color for items
                     if (index % 2 !== 0) {
                         itemEl.classList.add('bg-gray-50');
                     }
@@ -507,7 +512,7 @@
                 header.querySelector('.box-thumb-container').addEventListener('click', e => { e.stopPropagation(); openPhotoModal([box.photoDataUrl], 0) });
             }
             header.querySelector('.admin-buttons-container').addEventListener('click', e => {
-                e.stopPropagation();
+                e.stopPropagation(); 
                 const button = e.target.closest('button');
                 if (!button) return;
                 const action = button.dataset.action;
@@ -524,11 +529,9 @@
 
         function createItemEl(item) {
             const itemEl = document.createElement('div');
-            // UPDATED: New Flexbox layout for the item row
             itemEl.className = 'flex items-start gap-4 p-4 border-t border-gray-200';
             
             const hasPhotos = item.photoDataUrls && item.photoDataUrls.length > 0;
-            // UPDATED: Larger image thumbnail
             const photoThumbHTML = hasPhotos
                 ? `<div class="relative cursor-pointer flex-shrink-0">
                       <img src="${item.photoDataUrls[0]}" class="h-20 w-20 rounded-md object-cover">
@@ -543,7 +546,6 @@
                                         <button data-action="delete-item" data-id="${item.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>
                                       </div>`;
 
-            // UPDATED: New structure for the item details
             itemEl.innerHTML = `
                 <div class="photo-thumb-container">${photoThumbHTML}</div>
                 <div class="flex-grow">
@@ -693,14 +695,14 @@
                     <style>
                         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10pt; margin: 20px; background-color: #f3f4f6; }
                         table { width: 100%; border-collapse: separate; border-spacing: 0 15px; }
-                        thead { display: none; } /* Hide the main thead, headers are in the tbody now */
+                        thead { display: table-header-group; }
                         tbody { border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
                         th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; word-break: break-word; }
                         td:first-child, th:first-child { border-left: none; }
                         td:last-child, th:last-child { border-right: none; }
                         tr:last-child td { border-bottom: none; }
                         h1 { font-size: 22pt; }
-                        .box-header-row th { color: white; text-align: center; font-size: 12pt; border: none; }
+                        .box-header-row th { color: white; text-align: center; font-size: 12pt; border: none; border-radius: 8px 8px 0 0; }
                         .box-header-even { background-color: #4A5568; }
                         .box-header-odd { background-color: #64748b; }
                         ${mobileStyles}
@@ -710,7 +712,8 @@
                     <h1>Move Master Inventory List</h1>
                     <p>Generated on: ${new Date().toLocaleString()}</p>
                     <table>
-                        <thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr>
+                        <thead>
+                            <tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr>
                         </thead>
                         ${tableContent}
                     </table>
@@ -734,7 +737,7 @@
                 image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { before: '.box-group' }
+                pagebreak: { before: '.box-group', mode: 'css' }
             };
 
             html2pdf().from(htmlToExport).set(options).toPdf().get('pdf').then(function (pdf) {
