@@ -41,54 +41,6 @@
         .box-header-open p {
             color: #cbd5e1 !important;
         }
-        .glass-btn {
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-        .glass-btn:hover {
-            background: rgba(255, 255, 255, 0.35);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-        .box-number-separator {
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 4px;
-            width: 100%;
-        }
-        .admin-buttons-container {
-            margin-top: 4px;
-        }
-        @media (max-width: 640px) {
-            .box-header-open .admin-buttons-container {
-                display: flex;
-                justify-content: flex-end;
-                width: 100%;
-                margin-top: 8px;
-            }
-            .box-header-open .qr-button {
-                display: none !important;
-            }
-            .box-header-closed .qr-button {
-                display: inline-block;
-            }
-            #logout-btn {
-                display: flex !important;
-                position: absolute;
-                top: 50%;
-                right: 10px;
-                transform: translateY(-50%);
-                background: none;
-                border: none;
-                padding: 0;
-                box-shadow: none;
-            }
-            #logout-btn i {
-                font-size: 1.5rem;
-            }
-        }
     </style>
     <style id="print-styles">
         @media print {
@@ -115,40 +67,74 @@
 
     <div id="loading-overlay">
         <div class="spinner"></div>
-        <p class="mt-4 text-gray-600 font-semibold">Connecting to your inventory...</p>
+        <p class="mt-4 text-gray-600 font-semibold">Connecting...</p>
     </div>
 
-    <div id="app-container">
+    <div id="app-container" class="hidden">
         <header class="header-gradient text-white shadow-lg sticky top-0 z-30">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <div class="flex flex-col sm:flex-row justify-between items-center">
-                    <div class="text-center sm:text-left">
-                        <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
-                        <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center">
+                    <div class="relative w-full flex justify-center sm:justify-start">
+                        <div class="text-center sm:text-left">
+                            <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
+                            <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
+                        </div>
+                        <button id="logout-btn-mobile" class="hidden absolute right-0 top-1/2 -translate-y-1/2 rounded-full bg-red-500/50 p-2 text-white shadow-md hover:bg-red-500 sm:hidden">
+                            <i class="fas fa-sign-out-alt h-5 w-5"></i>
+                        </button>
                     </div>
-                    <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
-                        <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-3 px-4 text-base font-semibold text-white shadow-md glass-btn sm:py-2 sm:text-base">
-                            <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
-                        </button>
-                        <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-3 px-4 text-base font-semibold text-white shadow-md glass-btn sm:py-2 sm:text-base">
-                            <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
-                        </button>
-                        <button id="quick-view-btn" class="hidden flex w-full items-center justify-center rounded-lg border border-white/20 bg-white/10 py-2 px-4 text-sm font-semibold text-white shadow-md backdrop-blur-sm transition-colors hover:bg-white/20 sm:w-auto sm:text-base">
-                            <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
-                        </button>
-                        <button id="export-btn" class="flex w-full items-center justify-center rounded-lg border border-white/20 bg-green-500/50 py-2 px-4 text-sm font-semibold text-white shadow-md backdrop-blur-sm transition-colors hover:bg-green-500/80 sm:bg-green-500/50 sm:hover:bg-green-500/80">
-                            <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
-                        </button>
-                        <div id="auth-container" class="contents col-span-2 sm:col-span-auto">
-                             <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600">
-                                <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
+                    
+                    <div class="mt-4 w-full sm:mt-0 sm:w-auto">
+                        <div class="flex flex-col gap-3 sm:hidden" id="mobile-nav">
+                            <div class="grid grid-cols-2 gap-3">
+                                <button data-action="add-box" class="hidden items-center justify-center rounded-lg bg-cyan-500 py-4 px-4 text-lg font-semibold text-white shadow-md">
+                                    <i class="fas fa-box mr-2"></i><span>Add Box</span>
+                                </button>
+                                <button data-action="add-item" class="hidden items-center justify-center rounded-lg bg-amber-500 py-4 px-4 text-lg font-semibold text-white shadow-md">
+                                    <i class="fas fa-plus-circle mr-2"></i><span>Add Item</span>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 mt-1">
+                                <button data-action="quick-view" class="hidden items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
+                                    <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
+                                </button>
+                                <button data-action="export-pdf" class="flex items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
+                                    <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
+                                </button>
+                            </div>
+                            <div id="auth-container-mobile" class="contents">
+                                <button data-action="guest-login" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
+                                    <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
+                                </button>
+                                <button data-action="login" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md">
+                                    <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hidden sm:flex sm:items-center sm:gap-x-3" id="desktop-nav">
+                            <button data-action="add-box" class="hidden items-center justify-center rounded-lg bg-cyan-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600">
+                                <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
                             </button>
-                            <button id="login-btn" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50">
-                                <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
+                            <button data-action="add-item" class="hidden items-center justify-center rounded-lg bg-amber-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600">
+                                <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
                             </button>
-                            <button id="logout-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600">
-                                <i class="fas fa-sign-out-alt"></i>
+                            <button data-action="quick-view" class="hidden items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-purple-600">
+                                <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
                             </button>
+                            <button data-action="export-pdf" class="flex items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-green-600">
+                                <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
+                            </button>
+                            <div id="auth-container-desktop" class="contents">
+                                <button data-action="guest-login" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600">
+                                    <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
+                                </button>
+                                <button data-action="login" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50">
+                                    <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
+                                </button>
+                                <button data-action="logout" class="hidden w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600">
+                                    <i class="fas fa-sign-out-alt mr-2"></i><span class="whitespace-nowrap">Logout</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -156,8 +142,8 @@
         </header>
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
                     <div class="bg-blue-100 text-blue-600 p-4 rounded-full"><i class="fas fa-box-open text-2xl"></i></div>
                     <div class="ml-4">
                         <p class="text-gray-500 text-sm font-medium">Total Boxes</p>
@@ -165,9 +151,9 @@
                         <p id="box-breakdown" class="text-xs text-gray-500 mt-1 h-4"></p>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div></div>
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-purple-100 text-purple-600 p-4 rounded-full"><i class="fas fa-cube text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Volume</p><p id="total-volume" class="text-2xl font-bold">0 m³</p></div></div>
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
+                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div></div>
+                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-purple-100 text-purple-600 p-4 rounded-full"><i class="fas fa-cube text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Volume</p><p id="total-volume" class="text-2xl font-bold">0 m³</p></div></div>
+                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
             </div>
             <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-4"><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></div><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><select id="room-filter" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"><option value="all">All Rooms</option></select></div><button id="reset-filters-btn" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">Reset</button></div>
             <div id="inventory-list" class="space-y-6"></div>
@@ -175,15 +161,14 @@
         </main>
     </div>
 
-    <!-- This container is for the QR code viewer -->
-<div id="viewer-container" class="hidden container mx-auto p-4 sm:p-6 lg:p-8">
-<h1 id="viewer-title" class="text-3xl font-bold tracking-tight text-gray-800 mb-6"></h1>
-<div id="viewer-item-list" class="space-y-4"></div>
-<div class="mt-8 text-center"><a href="./" class="text-indigo-600 hover:underline">Back to Main App</a></div>
-<p class="text-center text-gray-500 mt-8 text-sm">Powered by Move Master</p>
-</div>
+    <div id="viewer-container" class="hidden container mx-auto p-4 sm:p-6 lg:p-8">
+        <h1 id="viewer-title" class="text-3xl font-bold tracking-tight text-gray-800 mb-6"></h1>
+        <div id="viewer-item-list" class="space-y-4"></div>
+        <div class="mt-8 text-center"><a href="./" class="text-indigo-600 hover:underline">Back to Main App</a></div>
+        <p class="text-center text-gray-500 mt-8 text-sm">Powered by Move Master</p>
+    </div>
 
-<div id="login-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-8 w-11/12 sm:w-96 animate-fade-in"><div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold">Admin Login</h3><button id="close-login-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="space-y-4"><div><label for="email" class="block text-sm font-medium text-gray-700">Email</label><input type="email" id="email" required autocomplete="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><div><label for="password" class="block text-sm font-medium text-gray-700">Password</label><input type="password" id="password" required autocomplete="current-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><p id="login-error" class="text-sm text-red-600 hidden"></p><div class="flex justify-end pt-4"><button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Login</button></div></form></div></div>
+    <div id="login-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-8 w-11/12 sm:w-96 animate-fade-in"><div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold">Admin Login</h3><button id="close-login-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="space-y-4"><div><label for="email" class="block text-sm font-medium text-gray-700">Email</label><input type="email" id="email" required autocomplete="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><div><label for="password" class="block text-sm font-medium text-gray-700">Password</label><input type="password" id="password" required autocomplete="current-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><p id="login-error" class="text-sm text-red-600 hidden"></p><div class="flex justify-end pt-4"><button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Login</button></div></form></div></div>
     
     <div id="box-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="box-modal-title" class="text-2xl font-bold">Add New Box</h2><button id="close-box-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="box-form" class="space-y-4"><input type="hidden" id="box-id"><div><label for="box-number" class="block text-sm font-medium">Box Number</label><input type="text" id="box-number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="box-room-area" class="block text-sm font-medium">Room / Area</label><input type="text" id="box-room-area" list="room-suggestions" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
     <div>
@@ -216,7 +201,7 @@
 
     <div id="confirm-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-6 w-11/12 sm:w-1/3 animate-fade-in"><h3 class="text-lg font-bold">Confirm Deletion</h3><p class="text-gray-600 my-4">Are you sure? This action cannot be undone.</p><div class="flex justify-end space-x-4"><button id="cancel-delete" class="bg-gray-200 px-4 py-2 rounded-lg">Cancel</button><button id="confirm-delete-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg">Delete</button></div></div></div>
     <div id="info-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-6 w-11/12 sm:w-1/3 animate-fade-in"><h3 id="info-modal-title" class="text-lg font-bold">Heads Up!</h3><p id="info-modal-text" class="text-gray-600 my-4"></p><div class="flex justify-end"><button id="info-ok-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">OK</button></div></div></div>
-
+    
     <div id="quick-view-modal" class="modal-backdrop">
         <div class="bg-white rounded-lg shadow-xl w-full h-full sm:w-11/12 sm:h-5/6 flex flex-col animate-fade-in">
             <div class="p-4 border-b flex justify-between items-center">
@@ -256,19 +241,19 @@
         let newestBoxId = null;
         let unsubscribeBoxes = () => {};
         let unsubscribeItems = () => {};
-
+        
         const GUEST_USER_ID = "mZ6imyS71Uc9NYxgpDhDVQZ7Y6m2";
 
         // --- Box Presets ---
         const MEDIUM_BOX_IMG_URL = 'https://placehold.co/100x100/DEB887/333333?text=Medium';
         const JUMBO_BOX_IMG_URL = 'https://placehold.co/100x100/DEB887/333333?text=Jumbo';
-
+        
         const BOX_PRESETS = [
             { id: 'medium', name: 'Medium Box Heavy Duty (40L)', w: 40, l: 30, h: 33, imgSrc: MEDIUM_BOX_IMG_URL },
             { id: 'jumbo', name: 'Jumbo Box Heavy Duty (104L)', w: 43, l: 41, h: 60, imgSrc: JUMBO_BOX_IMG_URL },
         ];
-
-        // --- DOM element VARIABLES ---
+        
+        // --- DOM ELEMENT VARIABLES ---
         let loginModal, loginForm, loginError, userIdDisplay,
             inventoryListEl, boxModal, itemModal, photoModal, confirmModal, infoModal, searchInput,
             roomFilter, boxDimensionInputs, isNewCheckbox, newItemDetails, qrCodeContainer, printQrBtn,
@@ -321,28 +306,10 @@
             quickViewModal = document.getElementById('quick-view-modal');
         }
         
-        async function playSound(soundId) {
-            const sound = document.getElementById(soundId);
-            if (sound) {
-                sound.currentTime = 0;
-                try {
-                    await sound.play();
-                } catch (err) {
-                    console.error(`Audio playback failed for ${soundId}:`, err);
-                }
-            }
-        }
-
         function addEventListeners() {
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-            document.getElementById('add-box-btn').addEventListener('click', async () => {
-                await playSound('add-box-sound');
-                openBoxModal();
-            });
-            document.getElementById('add-item-btn').addEventListener('click', async () => {
-                await playSound('add-item-sound');
-                openItemModal();
-            });
+            document.getElementById('add-box-btn').addEventListener('click', openBoxModal);
+            document.getElementById('add-item-btn').addEventListener('click', openItemModal);
             document.getElementById('quick-view-btn').addEventListener('click', openQuickViewModal);
             document.getElementById('export-btn').addEventListener('click', generatePdf);
             document.getElementById('login-btn').addEventListener('click', openLoginModal);
@@ -473,11 +440,12 @@
         function updateUIForLoginState(user) {
             const isLoggedIn = !!user;
             
-            const loggedOutElements = document.querySelectorAll('#guest-login-header-btn, #login-btn');
-            loggedOutElements.forEach(el => el.classList.toggle('hidden', isLoggedIn));
-
-            const loggedInElements = document.querySelectorAll('#logout-btn, #add-box-btn, #add-item-btn, #quick-view-btn');
-            loggedInElements.forEach(el => el.classList.toggle('hidden', !isLoggedIn));
+            document.getElementById('guest-login-header-btn').classList.toggle('hidden', isLoggedIn);
+            document.getElementById('login-btn').classList.toggle('hidden', isLoggedIn);
+            document.getElementById('logout-btn').classList.toggle('hidden', !isLoggedIn);
+            document.getElementById('add-box-btn').classList.toggle('hidden', !isLoggedIn);
+            document.getElementById('add-item-btn').classList.toggle('hidden', !isLoggedIn);
+            document.getElementById('quick-view-btn').classList.toggle('hidden', !isLoggedIn);
             
             if (user) {
                 const displayName = user.email === 'guest@guest.com' ? 'Guest (Demo)' : `Admin: ${user.email}`;
@@ -526,7 +494,7 @@
         function createBoxEl(box, boxItems) {
             const boxEl = document.createElement('div');
             boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1 active:shadow-2xl active:-translate-y-1 cursor-pointer';
-
+            
             const itemsContainer = document.createElement('div');
             itemsContainer.id = `items-of-box-${box.id}`;
             itemsContainer.className = 'hidden'; 
@@ -547,7 +515,7 @@
 
             const header = document.createElement('div');
             header.className = 'bg-gray-100 p-4 border-b flex items-center justify-between transition-colors duration-200';
-
+            
             boxEl.addEventListener('click', (e) => {
                 if (e.target.closest('button') || e.target.closest('.box-thumb-container')) return;
                 toggleBoxItems(box.id, header);
@@ -558,16 +526,15 @@
                 : '';
             
             const adminButtons = `
-                <button data-action="qrcode" data-id="${box.id}" class="text-gray-600 p-2 rounded-full hover:bg-gray-200 qr-button"><i class="fas fa-qrcode"></i></button>
+                <button data-action="qrcode" data-id="${box.id}" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>
                 <button data-action="edit-box" data-id="${box.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
                 <button data-action="delete-box" data-id="${box.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
             
             header.innerHTML = `
                 <div class="flex items-center gap-4">
                     <div class="box-thumb-container cursor-pointer">${boxPhotoThumb}</div>
-                    <div class="flex-grow">
+                    <div>
                         <h3 class="text-xl font-bold text-indigo-700 transition-colors duration-200">Box ${box.number}</h3>
-                        <div class="box-number-separator"></div>
                         <p class="text-sm text-gray-500 transition-colors duration-200">${box.room} | ${box.volume ? box.volume.toFixed(3) : '0.000'} m³</p>
                     </div>
                 </div>
@@ -621,14 +588,14 @@
                 <div class="photo-thumb-container">${photoThumbHTML}</div>
                 <div class="flex-grow">
                     <div class="flex justify-between items-start">
-                        <div class="flex-grow">
+                        <div>
                             <p class="font-semibold flex items-center">${item.name} ${newTag}</p>
                             <p class="text-sm text-gray-500 mt-1">${item.notes || ''}</p>
                             ${woodInfo}
                         </div>
                         ${adminButtonsHTML}
                     </div>
-                    <p class="font-semibold text-green-600 mt-2">$${formatCurrency(item.value)}</p>
+                    <p class="font-semibold text-green-600 mt-2 text-right">$${formatCurrency(item.value)}</p>
                 </div>
             `;
 
@@ -656,7 +623,7 @@
         async function handleSaveItem(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-item-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('item-id').value; const isNew = isNewCheckbox.checked; const itemData = { boxId: document.getElementById('item-box-select').value, name: document.getElementById('item-name').value, value: parseFloat(document.getElementById('estimated-value').value) || 0, notes: document.getElementById('item-notes').value, photoDataUrls: itemPhotosCache, isNew: isNew, purchaseDate: isNew ? document.getElementById('purchase-date').value : '', cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0, hasWood: document.getElementById('has-wood-checkbox').checked, isTreated: document.getElementById('is-treated-checkbox').checked, }; try { if (id) { await setDoc(doc(db, "users", currentUserId, "items", id), itemData); } else { await addDoc(collection(db, "users", currentUserId, "items"), itemData); } closeItemModal(); } catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; } }
 
         function toggleBoxItems(boxId, headerEl) {
-            const itemsContainer = document.getElementById(`items-of-box-${box.id}`);
+            const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
             const chevronIcon = headerEl.querySelector('.fa-chevron-down');
             if (itemsContainer && chevronIcon && headerEl) {
                 const isOpening = itemsContainer.classList.contains('hidden');
@@ -704,141 +671,53 @@
         function handleBoxTypeChange() { const selectedId = boxTypeSelect.value; const preset = BOX_PRESETS.find(p => p.id === selectedId); if (preset) { customDimensionsContainer.classList.add('hidden'); boxTypeThumbnail.src = preset.imgSrc; boxTypeThumbnail.classList.remove('hidden'); boxDimensionInputs[0].value = preset.h; boxDimensionInputs[1].value = preset.w; boxDimensionInputs[2].value = preset.l; } else { customDimensionsContainer.classList.remove('hidden'); boxTypeThumbnail.classList.add('hidden'); } calculateVolume(); }
 
         function generateInventoryHtml(mode = 'pdf') {
-            const sortedBoxes = [...boxes].sort((a,b) => parseInt(a.number) - parseInt(b.number));
-            const itemsByBox = items.reduce((acc, item) => {
-                if (!acc[item.boxId]) acc[item.boxId] = [];
-                acc[item.boxId].push(item);
-                return acc;
-            }, {});
+            const sortedData = [...items].sort((a, b) => {
+                const boxA = boxes.find(box => box.id === a.boxId) || {};
+                const boxB = boxes.find(box => box.id === b.boxId) || {};
+                const boxNumA = parseInt(boxA.number) || 0;
+                const boxNumB = parseInt(boxB.number) || 0;
+                if (boxNumA !== boxNumB) return boxNumA - boxNumB;
+                return a.name.localeCompare(b.name);
+            });
+            
+            let htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title><style>
+                body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:2em}
+                table{width:100%;border-collapse:collapse;margin-top:20px;font-size:12px; border-spacing: 0;}
+                th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:middle}
+                th{background-color:#e5e7eb;font-weight:bold}
+                th:first-child, td:first-child { width: 70px; min-width: 70px; }
+                th:nth-child(2), td:nth-child(2) { width: 60px; min-width: 60px; text-align: center; }
+                img{max-height:70px;max-width:70px;object-fit:cover;border-radius:4px}
+                h1{font-size:24px}
+                .box-header-row { background-color: #334155; color: white; font-weight: bold; text-align: center; }
+                .box-group-pdf { page-break-inside: avoid; }
+            </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p><table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`;
 
-            let tableContent = '';
-            sortedBoxes.forEach((box, boxIndex) => {
-                const boxItems = (itemsByBox[box.id] || []).sort((a,b) => a.name.localeCompare(b.name));
-                if (boxItems.length === 0 && mode === 'pdf') return;
-
-                const boxShadeClass = boxIndex % 2 === 0 ? 'box-even' : 'box-odd';
-                const headerClass = boxIndex % 2 === 0 ? 'box-header-even' : 'box-header-odd';
-                const itemHighlightClass = boxIndex % 2 === 0 ? 'item-highlight-even' : 'item-highlight-odd';
+            let currentBoxId = null;
+            sortedData.forEach(item => {
+                const box = boxes.find(b => b.id === item.boxId) || { number: 'N/A', room: 'N/A' };
                 
-                tableContent += `<tbody class="box-group-pdf">
-                    <tr class="box-header-row ${headerClass}">
-                        <th colspan="6">Box ${box.number} - ${box.room}</th>
-                    </tr>`;
-                
-                if(boxItems.length > 0) {
-                     tableContent += `<tr class="item-header-row">
-                        <th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th>
-                    </tr>`;
+                if(item.boxId !== currentBoxId) {
+                    currentBoxId = item.boxId;
+                    htmlContent += `<tr class="box-header-row"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
                 }
-               
-                boxItems.forEach(item => {
-                    const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
-                    const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}" style="max-height:50px;max-width:50px;object-fit:cover;border-radius:4px;">` : '';
-                    tableContent += `
-                        <tr>
-                            <td data-label="Image">${imageTag}</td>
-                            <td data-label="Box #" class="${itemHighlightClass}">${box.number}</td>
-                            <td data-label="Room">${box.room}</td>
-                            <td data-label="Item Name">${item.name || ''}</td>
-                            <td data-label="Value">$${formatCurrency(item.value)}</td>
-                            <td data-label="Notes">${item.notes || ''}</td>
-                        </tr>`;
-                });
-                tableContent += `</tbody>`;
+                
+                const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
+                const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '';
+                
+                htmlContent += `<tr class="box-group-pdf">
+                    <td>${imageTag}</td>
+                    <td>${box.number}</td>
+                    <td>${box.room}</td>
+                    <td>${item.name || ''}</td>
+                    <td>$${formatCurrency(item.value)}</td>
+                    <td>${item.notes || ''}</td>
+                </tr>`;
             });
 
-            let mobileStyles = '';
-            if (mode === 'quickview') {
-                mobileStyles = `
-                    @media (max-width: 600px) {
-                        table, thead, tbody, th, td, tr { 
-                            display: block; 
-                        }
-                        thead, .item-header-row {
-                            display: none;
-                        }
-                        tr {
-                            border: 1px solid #ddd;
-                            margin-bottom: 10px;
-                            border-radius: 8px;
-                            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-                            background-color: #fff;
-                            padding: 10px;
-                        }
-                        tbody tr:nth-of-type(even) {
-                            background-color: #f9fafb;
-                        }
-                        tr.box-header-row {
-                            border-radius: 8px;
-                            margin-bottom: 0;
-                            border-bottom: none;
-                        }
-                        tr.box-header-row th {
-                            font-size: 14pt;
-                            border-radius: 8px;
-                            padding: 12px;
-                        }
-                        td { 
-                            border: none;
-                            border-bottom: 1px solid #eee; 
-                            position: relative;
-                            padding: 8px 50% 8px 0; 
-                            text-align: right;
-                            min-height: 30px;
-                        }
-                        td:before { 
-                            position: absolute;
-                            left: 0;
-                            width: 50%; 
-                            padding-right: 10px; 
-                            white-space: nowrap;
-                            content: attr(data-label);
-                            font-weight: bold;
-                            text-align: left;
-                        }
-                        td.item-highlight-even { background-color: #eef2ff; }
-                        td.item-highlight-odd { background-color: #e0f2fe; }
-                    }
-                `;
-            }
-
-            return `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Move Master Inventory</title>
-                    <style>
-                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10pt; margin: 20px; background-color: #f3f4f6; }
-                        table { width: 100%; border-collapse: separate; border-spacing: 0; }
-                        thead { display: table-header-group; }
-                        tbody { border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-top: 15px; }
-                        th, td { border-bottom: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: middle; word-break: break-word; }
-                        th:first-child, td:first-child { width: 70px; min-width: 70px; }
-                        td:first-child, th:first-child { border-left: none; }
-                        td:last-child, th:last-child { border-right: none; }
-                        tr:last-child td { border-bottom: none; }
-                        h1 { font-size: 22pt; }
-                        .box-header-row th { text-align: center; font-size: 12pt; border: none; border-radius: 8px 8px 0 0; }
-                        .box-header-even { background-color: #334155; color: white; }
-                        .box-header-odd { background-color: #475569; color: white; }
-                        .item-header-row th { background-color: #e5e7eb; font-weight: bold; }
-                        .box-even { background-color: #f3f4f6; }
-                        .box-odd { background-color: #e5e7eb; }
-                        ${mobileStyles}
-                    </style>
-                </head>
-                <body>
-                    <h1>Move Master Inventory List</h1>
-                    <p>Generated on: ${new Date().toLocaleString()}</p>
-                    <table>
-                        <thead>
-                            <tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr>
-                        </thead>
-                        ${tableContent}
-                    </table>
-                </body>
-                </html>`;
-        }
+            htmlContent += `</tbody></table></body></html>`;
+            return htmlContent;
+        };
         
         function generatePdf() {
             if (items.length === 0) {
@@ -847,7 +726,7 @@
             }
             loadingOverlay.querySelector('p').textContent = 'Generating PDF...';
             loadingOverlay.style.display = 'flex';
-
+            
             const htmlToExport = generateInventoryHtml('pdf');
 
             const options = {
@@ -941,7 +820,7 @@
 
         function formatCurrency(num) { return (parseFloat(num) || 0).toFixed(2); }
         function resetFilters() { searchInput.value = ''; roomFilter.value = 'all'; render(); }
-
+        
         async function showBoxContents(userId, boxId) {
             loadingOverlay.style.display = 'flex';
             appContainer.style.display = 'none';
