@@ -29,6 +29,7 @@
         .photo-count-badge { position: absolute; bottom: 4px; right: 4px; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
         #quick-view-content-area { width: 100%; max-width: 1024px; }
         #quick-view-content-area iframe { width: 100%; height: 100%; border: 1px solid #ccc; }
+        
         .box-header-open {
             background-color: #475569 !important;
         }
@@ -39,6 +40,26 @@
         }
         .box-header-open p {
             color: #cbd5e1 !important;
+        }
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .box-number-separator {
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 4px;
+            width: 100%;
+        }
+        .admin-buttons-container {
+            margin-top: 4px;
         }
     </style>
     <style id="print-styles">
@@ -66,10 +87,10 @@
 
     <div id="loading-overlay">
         <div class="spinner"></div>
-        <p class="mt-4 text-gray-600 font-semibold">Connecting...</p>
+        <p class="mt-4 text-gray-600 font-semibold">Connecting to your inventory...</p>
     </div>
 
-    <div id="app-container" class="hidden">
+    <div id="app-container">
         <header class="header-gradient text-white shadow-lg sticky top-0 z-30">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div class="flex flex-col sm:flex-row justify-between items-center">
@@ -77,28 +98,28 @@
                         <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
                         <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
                     </div>
-                    <div class="mt-4 flex flex-wrap justify-center gap-2 sm:mt-0 sm:flex-nowrap sm:gap-x-3">
-                        <button id="add-box-btn" class="hidden items-center justify-center rounded-lg bg-cyan-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600">
+                    <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
+                        <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-3 px-4 text-base font-semibold text-white shadow-md glass-btn sm:py-2 sm:text-base">
                             <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
                         </button>
-                        <button id="add-item-btn" class="hidden items-center justify-center rounded-lg bg-amber-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600">
+                        <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-3 px-4 text-base font-semibold text-white shadow-md glass-btn sm:py-2 sm:text-base">
                             <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
                         </button>
-                        <button id="quick-view-btn" class="hidden items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-purple-600">
+                        <button id="quick-view-btn" class="hidden flex w-full items-center justify-center rounded-lg border border-white/20 bg-white/10 py-2 px-4 text-sm font-semibold text-white shadow-md backdrop-blur-sm transition-colors hover:bg-white/20 sm:w-auto sm:text-base">
                             <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
                         </button>
-                        <button id="export-btn" class="flex items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-green-600">
+                        <button id="export-btn" class="flex w-full items-center justify-center rounded-lg border border-white/20 bg-green-500/50 py-2 px-4 text-sm font-semibold text-white shadow-md backdrop-blur-sm transition-colors hover:bg-green-500/80 sm:bg-white/10 sm:hover:bg-white/20">
                             <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
                         </button>
-                        <div id="auth-container" class="contents">
-                            <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600">
+                        <div id="auth-container" class="contents col-span-2 sm:col-span-auto">
+                             <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600">
                                 <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
                             </button>
                             <button id="login-btn" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50">
                                 <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
                             </button>
-                            <button id="logout-btn" class="hidden items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600">
-                                <i class="fas fa-sign-out-alt mr-2"></i><span class="whitespace-nowrap">Logout</span>
+                            <button id="logout-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600">
+                                <i class="fas fa-sign-out-alt"></i>
                             </button>
                         </div>
                     </div>
@@ -107,8 +128,8 @@
         </header>
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center">
                     <div class="bg-blue-100 text-blue-600 p-4 rounded-full"><i class="fas fa-box-open text-2xl"></i></div>
                     <div class="ml-4">
                         <p class="text-gray-500 text-sm font-medium">Total Boxes</p>
@@ -116,9 +137,9 @@
                         <p id="box-breakdown" class="text-xs text-gray-500 mt-1 h-4"></p>
                     </div>
                 </div>
-                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div></div>
-                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-purple-100 text-purple-600 p-4 rounded-full"><i class="fas fa-cube text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Volume</p><p id="total-volume" class="text-2xl font-bold">0 m³</p></div></div>
-                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div></div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-purple-100 text-purple-600 p-4 rounded-full"><i class="fas fa-cube text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Volume</p><p id="total-volume" class="text-2xl font-bold">0 m³</p></div></div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
             </div>
             <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-4"><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></div><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><select id="room-filter" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"><option value="all">All Rooms</option></select></div><button id="reset-filters-btn" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">Reset</button></div>
             <div id="inventory-list" class="space-y-6"></div>
@@ -126,36 +147,37 @@
         </main>
     </div>
 
-    <div id="viewer-container" class="hidden container mx-auto p-4 sm:p-6 lg:p-8">
-        <h1 id="viewer-title" class="text-3xl font-bold tracking-tight text-gray-800 mb-6"></h1>
-        <div id="viewer-item-list" class="space-y-4"></div>
-        <div class="mt-8 text-center"><a href="./" class="text-indigo-600 hover:underline">Back to Main App</a></div>
-        <p class="text-center text-gray-500 mt-8 text-sm">Powered by Move Master</p>
-    </div>
+    <!-- This container is for the QR code viewer -->
+<div id="viewer-container" class="hidden container mx-auto p-4 sm:p-6 lg:p-8">
+<h1 id="viewer-title" class="text-3xl font-bold tracking-tight text-gray-800 mb-6"></h1>
+<div id="viewer-item-list" class="space-y-4"></div>
+<div class="mt-8 text-center"><a href="./" class="text-indigo-600 hover:underline">Back to Main App</a></div>
+<p class="text-center text-gray-500 mt-8 text-sm">Powered by Move Master</p>
+</div>
 
-    <div id="login-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-8 w-11/12 sm:w-96 animate-fade-in"><div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold">Admin Login</h3><button id="close-login-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="space-y-4"><div><label for="email" class="block text-sm font-medium text-gray-700">Email</label><input type="email" id="email" required autocomplete="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><div><label for="password" class="block text-sm font-medium text-gray-700">Password</label><input type="password" id="password" required autocomplete="current-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><p id="login-error" class="text-sm text-red-600 hidden"></p><div class="flex justify-end pt-4"><button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Login</button></div></form></div></div>
-    
-    <div id="box-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="box-modal-title" class="text-2xl font-bold">Add New Box</h2><button id="close-box-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="box-form" class="space-y-4"><input type="hidden" id="box-id"><div><label for="box-number" class="block text-sm font-medium">Box Number</label><input type="text" id="box-number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="box-room-area" class="block text-sm font-medium">Room / Area</label><input type="text" id="box-room-area" list="room-suggestions" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
-    <div>
-        <label for="box-type-select" class="block text-sm font-medium">Box Type</label>
-        <div class="flex items-center gap-4 mt-1">
-            <select id="box-type-select" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
-            <img id="box-type-thumbnail" src="" class="h-12 w-12 rounded-md object-contain border border-gray-200 hidden">
-        </div>
+<div id="login-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-8 w-11/12 sm:w-96 animate-fade-in"><div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold">Admin Login</h3><button id="close-login-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="login-form" class="space-y-4"><div><label for="email" class="block text-sm font-medium text-gray-700">Email</label><input type="email" id="email" required autocomplete="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><div><label for="password" class="block text-sm font-medium text-gray-700">Password</label><input type="password" id="password" required autocomplete="current-password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500"></div><p id="login-error" class="text-sm text-red-600 hidden"></p><div class="flex justify-end pt-4"><button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Login</button></div></form></div></div>
+
+<div id="box-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-1/2 lg:w-1/3 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="box-modal-title" class="text-2xl font-bold">Add New Box</h2><button id="close-box-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="box-form" class="space-y-4"><input type="hidden" id="box-id"><div><label for="box-number" class="block text-sm font-medium">Box Number</label><input type="text" id="box-number" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="box-room-area" class="block text-sm font-medium">Room / Area</label><input type="text" id="box-room-area" list="room-suggestions" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div>
+<div>
+    <label for="box-type-select" class="block text-sm font-medium">Box Type</label>
+    <div class="flex items-center gap-4 mt-1">
+        <select id="box-type-select" class="block w-full border-gray-300 rounded-md shadow-sm"></select>
+        <img id="box-type-thumbnail" src="" class="h-12 w-12 rounded-md object-contain border border-gray-200 hidden">
     </div>
-    <div id="custom-dimensions-container" class="hidden">
-        <label class="block text-sm font-medium">Custom Dimensions (cm)</label>
-        <div class="grid grid-cols-3 gap-2 mt-1">
-            <input type="number" step="1" id="box-height" placeholder="H" class="block w-full border-gray-300 rounded-md shadow-sm">
-            <input type="number" step="1" id="box-width" placeholder="W" class="block w-full border-gray-300 rounded-md shadow-sm">
-            <input type="number" step="1" id="box-length" placeholder="L" class="block w-full border-gray-300 rounded-md shadow-sm">
-        </div>
+</div>
+<div id="custom-dimensions-container" class="hidden">
+    <label class="block text-sm font-medium">Custom Dimensions (cm)</label>
+    <div class="grid grid-cols-3 gap-2 mt-1">
+        <input type="number" step="1" id="box-height" placeholder="H" class="block w-full border-gray-300 rounded-md shadow-sm">
+        <input type="number" step="1" id="box-width" placeholder="W" class="block w-full border-gray-300 rounded-md shadow-sm">
+        <input type="number" step="1" id="box-length" placeholder="L" class="block w-full border-gray-300 rounded-md shadow-sm">
     </div>
-    <div><p class="text-sm text-gray-600">Calculated Volume: <span id="box-volume" class="font-bold text-indigo-600">0.000 m³</span></p></div>
-    <div><label class="block text-sm font-medium">Photo of Box</label><div class="mt-1 flex items-center gap-4"><img id="box-photo-preview" class="hidden photo-preview-thumb"><input type="file" id="box-photo-input" accept="image/*" class="hidden"><label for="box-photo-input" class="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md"><span><i class="fas fa-camera mr-2"></i>Take/Upload</span></label><button type="button" id="box-remove-photo-btn" class="hidden text-red-600">Remove</button></div></div>
-    <div id="qr-code-section" class="pt-4 border-t mt-4 text-center hidden"><div id="qr-code-container" class="mx-auto w-40 h-40 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-500 p-2">QR Code will appear here</div><div class="mt-4 flex justify-center space-x-2"><button type="button" id="generate-qr-btn" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700"><i class="fas fa-qrcode mr-2"></i>Generate QR</button><button type="button" id="print-qr-btn" class="hidden bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"><i class="fas fa-print mr-2"></i>Print</button></div><p id="qr-new-box-note" class="text-xs text-gray-500 mt-2">Save the box first to generate a QR code.</p></div><div class="flex justify-end space-x-4 pt-4 border-t"><button type="button" id="cancel-box-modal-btn" class="bg-gray-200 px-6 py-2 rounded-lg">Cancel</button><button type="submit" id="save-box-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg">Save Box</button></div></form></div></div>
-    
-    <div id="item-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-2/3 lg:w-1/2 xl:w-2/5 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="item-modal-title" class="text-2xl font-bold">Add New Item</h2><button id="close-item-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="item-form" class="space-y-4"><input type="hidden" id="item-id"><div><label for="item-box-select" class="block text-sm font-medium">Assign to Box</label><select id="item-box-select" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select></div><hr><h3 class="text-lg font-semibold">Item Details</h3><div><label for="item-name" class="block text-sm font-medium">Item Name</label><input type="text" id="item-name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="estimated-value" class="block text-sm font-medium">Estimated Current Value ($)</label>
+</div>
+<div><p class="text-sm text-gray-600">Calculated Volume: <span id="box-volume" class="font-bold text-indigo-600">0.000 m³</span></p></div>
+<div><label class="block text-sm font-medium">Photo of Box</label><div class="mt-1 flex items-center gap-4"><img id="box-photo-preview" class="hidden photo-preview-thumb"><input type="file" id="box-photo-input" accept="image/*" class="hidden"><label for="box-photo-input" class="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md"><span><i class="fas fa-camera mr-2"></i>Take/Upload</span></label><button type="button" id="box-remove-photo-btn" class="hidden text-red-600">Remove</button></div></div>
+<div id="qr-code-section" class="pt-4 border-t mt-4 text-center hidden"><div id="qr-code-container" class="mx-auto w-40 h-40 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-500 p-2">QR Code will appear here</div><div class="mt-4 flex justify-center space-x-2"><button type="button" id="generate-qr-btn" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700"><i class="fas fa-qrcode mr-2"></i>Generate QR</button><button type="button" id="print-qr-btn" class="hidden bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"><i class="fas fa-print mr-2"></i>Print</button></div><p id="qr-new-box-note" class="text-xs text-gray-500 mt-2">Save the box first to generate a QR code.</p></div><div class="flex justify-end space-x-4 pt-4 border-t"><button type="button" id="cancel-box-modal-btn" class="bg-gray-200 px-6 py-2 rounded-lg">Cancel</button><button type="submit" id="save-box-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg">Save Box</button></div></form></div></div>
+
+<div id="item-modal" class="modal-backdrop"><div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-2/3 lg:w-1/2 xl:w-2/5 p-8 modal-content animate-fade-in"><div class="flex justify-between items-center mb-6"><h2 id="item-modal-title" class="text-2xl font-bold">Add New Item</h2><button id="close-item-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div><form id="item-form" class="space-y-4"><input type="hidden" id="item-id"><div><label for="item-box-select" class="block text-sm font-medium">Assign to Box</label><select id="item-box-select" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select></div><hr><h3 class="text-lg font-semibold">Item Details</h3><div><label for="item-name" class="block text-sm font-medium">Item Name</label><input type="text" id="item-name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="estimated-value" class="block text-sm font-medium">Estimated Current Value ($)</label>
     <input type="text" inputmode="decimal" placeholder="0.00" id="estimated-value" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="is-new-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="is-new-checkbox" class="font-medium text-gray-700">Is this item 12 months or newer?</label></div></div><div id="new-item-details" class="hidden space-y-4 pt-2 border-t mt-4"><div><label for="purchase-date" class="block text-sm font-medium">Purchase Date</label><input type="date" id="purchase-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div><div><label for="item-cost" class="block text-sm font-medium">Cost ($)</label>
     <input type="text" inputmode="decimal" placeholder="0.00" id="item-cost" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></div></div><div class="space-y-2 pt-2 border-t mt-4"><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="has-wood-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="has-wood-checkbox" class="font-medium text-gray-700">Does this item have any wood?</label></div></div><div class="relative flex items-start"><div class="flex h-5 items-center"><input id="is-treated-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"></div><div class="ml-3 text-sm"><label for="is-treated-checkbox" class="font-medium text-gray-700">Is it sealed / treated?</label></div></div></div><textarea id="item-notes" rows="2" placeholder="Notes (e.g., fragile, parts, etc.)" class="block w-full border-gray-300 rounded-md shadow-sm"></textarea>
     <div><label class="block text-sm font-medium">Photos (up to 3)</label><div class="mt-1 flex items-center gap-4"><div id="item-photos-container" class="flex gap-2"></div><input type="file" id="item-photo-input" accept="image/*" class="hidden"><label id="item-add-photo-label" for="item-photo-input" class="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md"><span><i class="fas fa-plus mr-2"></i>Add Photo</span></label></div></div>
@@ -166,7 +188,7 @@
 
     <div id="confirm-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-6 w-11/12 sm:w-1/3 animate-fade-in"><h3 class="text-lg font-bold">Confirm Deletion</h3><p class="text-gray-600 my-4">Are you sure? This action cannot be undone.</p><div class="flex justify-end space-x-4"><button id="cancel-delete" class="bg-gray-200 px-4 py-2 rounded-lg">Cancel</button><button id="confirm-delete-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg">Delete</button></div></div></div>
     <div id="info-modal" class="modal-backdrop"><div class="bg-white rounded-lg shadow-xl p-6 w-11/12 sm:w-1/3 animate-fade-in"><h3 id="info-modal-title" class="text-lg font-bold">Heads Up!</h3><p id="info-modal-text" class="text-gray-600 my-4"></p><div class="flex justify-end"><button id="info-ok-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">OK</button></div></div></div>
-    
+
     <div id="quick-view-modal" class="modal-backdrop">
         <div class="bg-white rounded-lg shadow-xl w-full h-full sm:w-11/12 sm:h-5/6 flex flex-col animate-fade-in">
             <div class="p-4 border-b flex justify-between items-center">
@@ -206,19 +228,19 @@
         let newestBoxId = null;
         let unsubscribeBoxes = () => {};
         let unsubscribeItems = () => {};
-        
+
         const GUEST_USER_ID = "mZ6imyS71Uc9NYxgpDhDVQZ7Y6m2";
 
         // --- Box Presets ---
         const MEDIUM_BOX_IMG_URL = 'https://placehold.co/100x100/DEB887/333333?text=Medium';
         const JUMBO_BOX_IMG_URL = 'https://placehold.co/100x100/DEB887/333333?text=Jumbo';
-        
+
         const BOX_PRESETS = [
             { id: 'medium', name: 'Medium Box Heavy Duty (40L)', w: 40, l: 30, h: 33, imgSrc: MEDIUM_BOX_IMG_URL },
             { id: 'jumbo', name: 'Jumbo Box Heavy Duty (104L)', w: 43, l: 41, h: 60, imgSrc: JUMBO_BOX_IMG_URL },
         ];
-        
-        // --- DOM ELEMENT VARIABLES ---
+
+        // --- DOM element VARIABLES ---
         let loginModal, loginForm, loginError, userIdDisplay,
             inventoryListEl, boxModal, itemModal, photoModal, confirmModal, infoModal, searchInput,
             roomFilter, boxDimensionInputs, isNewCheckbox, newItemDetails, qrCodeContainer, printQrBtn,
@@ -271,10 +293,28 @@
             quickViewModal = document.getElementById('quick-view-modal');
         }
         
+        async function playSound(soundId) {
+            const sound = document.getElementById(soundId);
+            if (sound) {
+                sound.currentTime = 0;
+                try {
+                    await sound.play();
+                } catch (err) {
+                    console.error(`Audio playback failed for ${soundId}:`, err);
+                }
+            }
+        }
+
         function addEventListeners() {
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-            document.getElementById('add-box-btn').addEventListener('click', openBoxModal);
-            document.getElementById('add-item-btn').addEventListener('click', openItemModal);
+            document.getElementById('add-box-btn').addEventListener('click', async () => {
+                await playSound('add-box-sound');
+                openBoxModal();
+            });
+            document.getElementById('add-item-btn').addEventListener('click', async () => {
+                await playSound('add-item-sound');
+                openItemModal();
+            });
             document.getElementById('quick-view-btn').addEventListener('click', openQuickViewModal);
             document.getElementById('export-btn').addEventListener('click', generatePdf);
             document.getElementById('login-btn').addEventListener('click', openLoginModal);
@@ -405,12 +445,11 @@
         function updateUIForLoginState(user) {
             const isLoggedIn = !!user;
             
-            document.getElementById('guest-login-header-btn').classList.toggle('hidden', isLoggedIn);
-            document.getElementById('login-btn').classList.toggle('hidden', isLoggedIn);
-            document.getElementById('logout-btn').classList.toggle('hidden', !isLoggedIn);
-            document.getElementById('add-box-btn').classList.toggle('hidden', !isLoggedIn);
-            document.getElementById('add-item-btn').classList.toggle('hidden', !isLoggedIn);
-            document.getElementById('quick-view-btn').classList.toggle('hidden', !isLoggedIn);
+            const loggedOutElements = document.querySelectorAll('#guest-login-header-btn, #login-btn');
+            loggedOutElements.forEach(el => el.classList.toggle('hidden', isLoggedIn));
+
+            const loggedInElements = document.querySelectorAll('#logout-btn, #add-box-btn, #add-item-btn, #quick-view-btn');
+            loggedInElements.forEach(el => el.classList.toggle('hidden', !isLoggedIn));
             
             if (user) {
                 const displayName = user.email === 'guest@guest.com' ? 'Guest (Demo)' : `Admin: ${user.email}`;
@@ -459,7 +498,7 @@
         function createBoxEl(box, boxItems) {
             const boxEl = document.createElement('div');
             boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1 active:shadow-2xl active:-translate-y-1 cursor-pointer';
-            
+
             const itemsContainer = document.createElement('div');
             itemsContainer.id = `items-of-box-${box.id}`;
             itemsContainer.className = 'hidden'; 
@@ -480,7 +519,7 @@
 
             const header = document.createElement('div');
             header.className = 'bg-gray-100 p-4 border-b flex items-center justify-between transition-colors duration-200';
-            
+
             boxEl.addEventListener('click', (e) => {
                 if (e.target.closest('button') || e.target.closest('.box-thumb-container')) return;
                 toggleBoxItems(box.id, header);
@@ -498,8 +537,10 @@
             header.innerHTML = `
                 <div class="flex items-center gap-4">
                     <div class="box-thumb-container cursor-pointer">${boxPhotoThumb}</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-indigo-700 transition-colors duration-200">Box ${box.number}</h3>
+                    <div class="flex-grow">
+                        <div class="box-number-separator">
+                            <h3 class="text-xl font-bold text-indigo-700 transition-colors duration-200">Box ${box.number}</h3>
+                        </div>
                         <p class="text-sm text-gray-500 transition-colors duration-200">${box.room} | ${box.volume ? box.volume.toFixed(3) : '0.000'} m³</p>
                     </div>
                 </div>
@@ -636,53 +677,136 @@
         function handleBoxTypeChange() { const selectedId = boxTypeSelect.value; const preset = BOX_PRESETS.find(p => p.id === selectedId); if (preset) { customDimensionsContainer.classList.add('hidden'); boxTypeThumbnail.src = preset.imgSrc; boxTypeThumbnail.classList.remove('hidden'); boxDimensionInputs[0].value = preset.h; boxDimensionInputs[1].value = preset.w; boxDimensionInputs[2].value = preset.l; } else { customDimensionsContainer.classList.remove('hidden'); boxTypeThumbnail.classList.add('hidden'); } calculateVolume(); }
 
         function generateInventoryHtml(mode = 'pdf') {
-            const sortedData = [...items].sort((a, b) => {
-                const boxA = boxes.find(box => box.id === a.boxId) || {};
-                const boxB = boxes.find(box => box.id === b.boxId) || {};
-                const boxNumA = parseInt(boxA.number) || 0;
-                const boxNumB = parseInt(boxB.number) || 0;
-                if (boxNumA !== boxNumB) return boxNumA - boxNumB;
-                return a.name.localeCompare(b.name);
-            });
-            
-            let htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title><style>
-                body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:2em}
-                table{width:100%;border-collapse:collapse;margin-top:20px;font-size:12px; border-spacing: 0;}
-                th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:middle}
-                th{background-color:#e5e7eb;font-weight:bold}
-                th:first-child, td:first-child { width: 70px; min-width: 70px; }
-                th:nth-child(2), td:nth-child(2) { width: 60px; min-width: 60px; text-align: center; }
-                img{max-height:70px;max-width:70px;object-fit:cover;border-radius:4px}
-                h1{font-size:24px}
-                .box-header-row { background-color: #334155; color: white; font-weight: bold; text-align: center; }
-                .box-group-pdf { page-break-inside: avoid; }
-            </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p><table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`;
+            const sortedBoxes = [...boxes].sort((a,b) => parseInt(a.number) - parseInt(b.number));
+            const itemsByBox = items.reduce((acc, item) => {
+                if (!acc[item.boxId]) acc[item.boxId] = [];
+                acc[item.boxId].push(item);
+                return acc;
+            }, {});
 
-            let currentBoxId = null;
-            sortedData.forEach(item => {
-                const box = boxes.find(b => b.id === item.boxId) || { number: 'N/A', room: 'N/A' };
+            let tableContent = '';
+            sortedBoxes.forEach((box, boxIndex) => {
+                const boxItems = (itemsByBox[box.id] || []).sort((a,b) => a.name.localeCompare(b.name));
+                if (boxItems.length === 0 && mode === 'pdf') return;
+
+                const headerClass = boxIndex % 2 === 0 ? 'box-header-even' : 'box-header-odd';
+                const itemHighlightClass = boxIndex % 2 === 0 ? 'item-highlight-even' : 'item-highlight-odd';
                 
-                if(item.boxId !== currentBoxId) {
-                    currentBoxId = item.boxId;
-                    htmlContent += `<tr class="box-header-row"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
+                tableContent += `<tbody class="box-group-pdf">
+                    <tr class="box-header-row ${headerClass}">
+                        <th colspan="6">Box ${box.number} - ${box.room}</th>
+                    </tr>`;
+                
+                if(boxItems.length > 0) {
+                     tableContent += `<tr class="item-header-row">
+                        <th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th>
+                    </tr>`;
                 }
-                
-                const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
-                const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '';
-                
-                htmlContent += `<tr class="box-group-pdf">
-                    <td>${imageTag}</td>
-                    <td>${box.number}</td>
-                    <td>${box.room}</td>
-                    <td>${item.name || ''}</td>
-                    <td>$${formatCurrency(item.value)}</td>
-                    <td>${item.notes || ''}</td>
-                </tr>`;
+               
+                boxItems.forEach(item => {
+                    const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
+                    const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}" style="max-height:50px;max-width:50px;object-fit:cover;border-radius:4px;">` : '';
+                    tableContent += `
+                        <tr>
+                            <td data-label="Image">${imageTag}</td>
+                            <td data-label="Box #" class="${itemHighlightClass}">${box.number}</td>
+                            <td data-label="Room">${box.room}</td>
+                            <td data-label="Item Name">${item.name || ''}</td>
+                            <td data-label="Value">$${formatCurrency(item.value)}</td>
+                            <td data-label="Notes">${item.notes || ''}</td>
+                        </tr>`;
+                });
+                tableContent += `</tbody>`;
             });
 
-            htmlContent += `</tbody></table></body></html>`;
-            return htmlContent;
-        };
+            let mobileStyles = '';
+            if (mode === 'quickview') {
+                mobileStyles = `
+                    @media (max-width: 600px) {
+                        table, thead, tbody, th, td, tr { 
+                            display: block; 
+                        }
+                        thead, .item-header-row {
+                            display: none;
+                        }
+                        tr {
+                            border: 1px solid #ddd;
+                            margin-bottom: 10px;
+                            border-radius: 8px;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                            background-color: #fff;
+                        }
+                        tbody tr:nth-of-type(even) {
+                            background-color: #f9fafb;
+                        }
+                        tr.box-header-row {
+                            border-radius: 8px;
+                            margin-bottom: 0;
+                            border-bottom: none;
+                        }
+                        tr.box-header-row th {
+                            font-size: 14pt;
+                            border-radius: 8px;
+                        }
+                        td { 
+                            border: none;
+                            border-bottom: 1px solid #eee; 
+                            position: relative;
+                            padding-left: 50%; 
+                            text-align: right;
+                            min-height: 30px;
+                        }
+                        td:before { 
+                            position: absolute;
+                            left: 10px;
+                            width: 45%; 
+                            padding-right: 10px; 
+                            white-space: nowrap;
+                            content: attr(data-label);
+                            font-weight: bold;
+                            text-align: left;
+                        }
+                        td.item-highlight-even { background-color: #eef2ff; }
+                        td.item-highlight-odd { background-color: #e0f2fe; }
+                    }
+                `;
+            }
+
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Move Master Inventory</title>
+                    <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10pt; margin: 20px; background-color: #f3f4f6; }
+                        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+                        thead { display: table-header-group; }
+                        tbody { border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-top: 15px; }
+                        th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; word-break: break-word; }
+                        th:first-child, td:first-child { width: 70px; min-width: 70px; }
+                        td:first-child, th:first-child { border-left: none; }
+                        td:last-child, th:last-child { border-right: none; }
+                        tr:last-child td { border-bottom: none; }
+                        h1 { font-size: 22pt; }
+                        .box-header-row th { text-align: center; font-size: 12pt; border: none; border-radius: 8px 8px 0 0; }
+                        .box-header-even { background-color: #334155; color: white; }
+                        .box-header-odd { background-color: #475569; color: white; }
+                        .item-header-row th { background-color: #e5e7eb; font-weight: bold; }
+                        ${mobileStyles}
+                    </style>
+                </head>
+                <body>
+                    <h1>Move Master Inventory List</h1>
+                    <p>Generated on: ${new Date().toLocaleString()}</p>
+                    <table>
+                        <thead>
+                            <tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr>
+                        </thead>
+                        ${tableContent}
+                    </table>
+                </body>
+                </html>`;
+        }
         
         function generatePdf() {
             if (items.length === 0) {
@@ -691,7 +815,7 @@
             }
             loadingOverlay.querySelector('p').textContent = 'Generating PDF...';
             loadingOverlay.style.display = 'flex';
-            
+
             const htmlToExport = generateInventoryHtml('pdf');
 
             const options = {
@@ -785,7 +909,7 @@
 
         function formatCurrency(num) { return (parseFloat(num) || 0).toFixed(2); }
         function resetFilters() { searchInput.value = ''; roomFilter.value = 'all'; render(); }
-        
+
         async function showBoxContents(userId, boxId) {
             loadingOverlay.style.display = 'flex';
             appContainer.style.display = 'none';
