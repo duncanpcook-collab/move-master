@@ -581,7 +581,7 @@
         function populateBoxTypeSelect(box = null) { boxTypeSelect.innerHTML = ''; BOX_PRESETS.forEach(preset => boxTypeSelect.add(new Option(preset.name, preset.id))); boxTypeSelect.add(new Option('Custom Dimensions', 'custom')); let selectedType = 'medium'; if (box) { const mediumPreset = BOX_PRESETS[0]; const jumboPreset = BOX_PRESETS[1]; const isMedium = Math.abs(box.height - mediumPreset.h) < 0.1 && Math.abs(box.width - mediumPreset.w) < 0.1 && Math.abs(box.length - mediumPreset.l) < 0.1; const isJumbo = Math.abs(box.height - jumboPreset.h) < 0.1 && Math.abs(box.width - jumboPreset.w) < 0.1 && Math.abs(box.length - jumboPreset.l) < 0.1; if (isJumbo) selectedType = 'jumbo'; else if (isMedium) selectedType = 'medium'; else selectedType = 'custom'; } boxTypeSelect.value = selectedType; handleBoxTypeChange(); }
         function handleBoxTypeChange() { const selectedId = boxTypeSelect.value; const preset = BOX_PRESETS.find(p => p.id === selectedId); if (preset) { customDimensionsContainer.classList.add('hidden'); boxTypeThumbnail.src = preset.imgSrc; boxTypeThumbnail.classList.remove('hidden'); boxDimensionInputs[0].value = preset.h; boxDimensionInputs[1].value = preset.w; boxDimensionInputs[2].value = preset.l; } else { customDimensionsContainer.classList.remove('hidden'); boxTypeThumbnail.classList.add('hidden'); } calculateVolume(); }
 
-        function generateInventoryHtml() {
+        function generateInventoryHtml(mode = 'pdf') {
             const sortedData = [...items].sort((a, b) => {
                 const boxA = boxes.find(box => box.id === a.boxId) || {};
                 const boxB = boxes.find(box => box.id === b.boxId) || {};
@@ -614,7 +614,6 @@
                 }
                 const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
                 const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}" style="max-height:50px;max-width:50px;object-fit:cover;border-radius:4px;">` : '';
-                // UPDATED: Added data-label attributes for the mobile "card" view CSS
                 groupedContent += `
                     <tr>
                         <td data-label="Image">${imageTag}</td>
@@ -629,55 +628,67 @@
                 groupedContent += `</tbody></table></div>`;
             }
 
+            let mobileStyles = '';
+            if (mode === 'quickview') {
+                mobileStyles = `
+                    @media (max-width: 600px) {
+                        table, thead, tbody, th, td, tr { 
+                            display: block; 
+                        }
+                        thead tr { 
+                            position: absolute;
+                            top: -9999px;
+                            left: -9999px;
+                        }
+                        tr {
+                            border: 1px solid #ddd;
+                            margin-bottom: 10px;
+                            border-radius: 8px;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                            background-color: #fff;
+                        }
+                        tbody tr:nth-of-type(odd) {
+                            background-color: #f9fafb;
+                        }
+                        td { 
+                            border: none;
+                            border-bottom: 1px solid #eee; 
+                            position: relative;
+                            padding-left: 50%; 
+                            text-align: right;
+                            min-height: 30px;
+                        }
+                        td:before { 
+                            position: absolute;
+                            left: 10px;
+                            width: 45%; 
+                            padding-right: 10px; 
+                            white-space: nowrap;
+                            content: attr(data-label);
+                            font-weight: bold;
+                            text-align: left;
+                        }
+                        .box-header-row th {
+                            font-size: 14pt;
+                        }
+                    }
+                `;
+            }
+
             return `
                 <!DOCTYPE html>
                 <html>
                 <head>
                     <title>Move Master Inventory</title>
                     <style>
-                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10pt; margin: 20px; }
+                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10pt; margin: 20px; background-color: #f3f4f6; }
                         table { width: 100%; border-collapse: collapse; }
                         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; word-break: break-word; }
                         th { background-color: #e5e7eb; font-weight: bold; }
                         h1 { font-size: 22pt; }
                         .box-group { margin-top: 15px; }
                         .box-header-row th { background-color: #4A5568; color: white; text-align: center; font-size: 12pt; }
-                        
-                        /* UPDATED: Media query to transform table to cards on mobile */
-                        @media (max-width: 600px) {
-                            table, thead, tbody, th, td, tr { 
-                                display: block; 
-                            }
-                            thead tr { 
-                                position: absolute;
-                                top: -9999px;
-                                left: -9999px;
-                            }
-                            tr {
-                                border: 1px solid #ccc;
-                                margin-bottom: 10px;
-                            }
-                            td { 
-                                border: none;
-                                border-bottom: 1px solid #eee; 
-                                position: relative;
-                                padding-left: 50%; 
-                                text-align: right;
-                            }
-                            td:before { 
-                                position: absolute;
-                                left: 6px;
-                                width: 45%; 
-                                padding-right: 10px; 
-                                white-space: nowrap;
-                                content: attr(data-label);
-                                font-weight: bold;
-                                text-align: left;
-                            }
-                            .box-header-row th {
-                                font-size: 14pt;
-                            }
-                        }
+                        ${mobileStyles}
                     </style>
                 </head>
                 <body>
@@ -695,8 +706,8 @@
             }
             loadingOverlay.querySelector('p').textContent = 'Generating PDF...';
             loadingOverlay.style.display = 'flex';
-
-            const htmlToExport = generateInventoryHtml();
+            
+            const htmlToExport = generateInventoryHtml('pdf');
 
             const options = {
                 margin: [15, 10, 15, 10],
@@ -726,7 +737,7 @@
                 showInfoModal('There are no items to view.');
                 return;
             }
-            const htmlContent = generateInventoryHtml();
+            const htmlContent = generateInventoryHtml('quickview');
             const iframe = document.getElementById('quick-view-iframe');
             iframe.srcdoc = htmlContent;
             quickViewModal.style.display = 'flex';
