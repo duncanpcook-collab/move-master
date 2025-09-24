@@ -37,7 +37,7 @@
         .box-header-open i.fa-chevron-down {
             color: white !important;
         }
-        .box-header-open p {
+        .box-header-open .box-details p {
             color: #cbd5e1 !important;
         }
     </style>
@@ -152,20 +152,42 @@
         </header>
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
-                    <div class="bg-blue-100 text-blue-600 p-4 rounded-full"><i class="fas fa-box-open text-2xl"></i></div>
-                    <div class="ml-4">
-                        <p class="text-gray-500 text-sm font-medium">Total Boxes</p>
-                        <p id="total-boxes" class="text-2xl font-bold">0</p>
-                        <p id="box-breakdown" class="text-xs text-gray-500 mt-1 h-4"></p>
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
+                <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
+                    <div class="bg-blue-100 text-blue-600 p-2 sm:p-4 rounded-full"><i class="fas fa-box-open text-xl sm:text-2xl"></i></div>
+                    <div class="ml-3 sm:ml-4">
+                        <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Boxes</p>
+                        <p id="total-boxes" class="text-lg sm:text-2xl font-bold">0</p>
                     </div>
                 </div>
-                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div></div>
-                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-purple-100 text-purple-600 p-4 rounded-full"><i class="fas fa-cube text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Volume</p><p id="total-volume" class="text-2xl font-bold">0 m³</p></div></div>
-                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
+                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
+                    <div class="bg-green-100 text-green-600 p-2 sm:p-4 rounded-full"><i class="fas fa-clipboard-list text-xl sm:text-2xl"></i></div>
+                    <div class="ml-3 sm:ml-4">
+                        <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Items</p>
+                        <p id="total-items" class="text-lg sm:text-2xl font-bold">0</p>
+                    </div>
+                </div>
+                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
+                    <div class="bg-purple-100 text-purple-600 p-2 sm:p-4 rounded-full"><i class="fas fa-cube text-xl sm:text-2xl"></i></div>
+                    <div class="ml-3 sm:ml-4">
+                        <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Volume</p>
+                        <p id="total-volume" class="text-lg sm:text-2xl font-bold">0 m³</p>
+                    </div>
+                </div>
+                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
+                    <div class="bg-yellow-100 text-yellow-600 p-2 sm:p-4 rounded-full"><i class="fas fa-dollar-sign text-xl sm:text-2xl"></i></div>
+                    <div class="ml-3 sm:ml-4">
+                        <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Value</p>
+                        <p id="total-value" class="text-lg sm:text-2xl font-bold">$0.00</p>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-4"><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></div><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><select id="room-filter" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"><option value="all">All Rooms</option></select></div><button id="reset-filters-btn" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">Reset</button></div>
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6">
+                <div class="relative flex-grow w-full">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+            </div>
             <div id="inventory-list" class="space-y-6"></div>
             <div id="empty-state" class="text-center py-16"><img src="https://placehold.co/300x200/E9D5FF/4C1D95?text=Start+Packing!" alt="Empty state illustration" class="mx-auto mb-6 rounded-lg"><h2 id="empty-state-title" class="text-2xl font-semibold text-gray-700">Please log in to view your inventory.</h2><p id="empty-state-subtext" class="text-gray-500 mt-2">Use the login button to access your items or try the guest account.</p></div>
         </main>
@@ -266,7 +288,7 @@
         // --- DOM ELEMENT VARIABLES ---
         let loginModal, loginForm, loginError,
             inventoryListEl, boxModal, itemModal, photoModal, confirmModal, infoModal, searchInput,
-            roomFilter, boxDimensionInputs, isNewCheckbox, newItemDetails, qrCodeContainer, printQrBtn,
+            boxDimensionInputs, isNewCheckbox, newItemDetails, qrCodeContainer, printQrBtn,
             qrCodeSection, qrNewBoxNote, boxPhotoInput, boxPhotoPreview, boxRemovePhotoBtn, itemPhotoInput,
             itemPhotosContainer, itemAddPhotoLabel, galleryPrevBtn, galleryNextBtn, fullPhoto, loadingOverlay,
             boxTypeSelect, boxTypeThumbnail, customDimensionsContainer, appContainer, viewerContainer, quickViewModal;
@@ -291,7 +313,6 @@
             confirmModal = document.getElementById('confirm-modal');
             infoModal = document.getElementById('info-modal');
             searchInput = document.getElementById('search-input');
-            roomFilter = document.getElementById('room-filter');
             boxDimensionInputs = ['box-height', 'box-width', 'box-length'].map(id => document.getElementById(id));
             isNewCheckbox = document.getElementById('is-new-checkbox');
             newItemDetails = document.getElementById('new-item-details');
@@ -334,7 +355,6 @@
             document.getElementById('login-btn-mobile').addEventListener('click', openLoginModal);
             document.getElementById('guest-login-header-btn-mobile').addEventListener('click', handleGuestLogin);
 
-            document.getElementById('reset-filters-btn').addEventListener('click', resetFilters);
             loginForm.addEventListener('submit', handleLogin);
             document.getElementById('box-form').addEventListener('submit', handleSaveBox);
             document.getElementById('item-form').addEventListener('submit', handleSaveItem);
@@ -369,8 +389,7 @@
             document.getElementById('info-ok-btn').addEventListener('click', closeInfoModal);
 
             searchInput.addEventListener('input', render);
-            roomFilter.addEventListener('change', render);
-
+           
             window.addEventListener('click', (e) => { 
                 if (e.target.classList.contains('modal-backdrop')) { 
                     closeAllModals(); 
@@ -502,13 +521,10 @@
             }
 
             const searchTerm = searchInput.value.toLowerCase();
-            const selectedRoom = roomFilter.value;
             const itemsToShow = items.filter(item => (item.name.toLowerCase().includes(searchTerm) || (item.notes && item.notes.toLowerCase().includes(searchTerm))));
             const boxIdsToShow = new Set(itemsToShow.map(item => item.boxId));
             const filteredBoxes = boxes.filter(box => {
-                const matchesRoom = selectedRoom === 'all' || box.room === selectedRoom;
-                const hasSearchedItem = searchTerm ? boxIdsToShow.has(box.id) : true;
-                return matchesRoom && hasSearchedItem;
+                return searchTerm ? boxIdsToShow.has(box.id) : true;
             });
 
             if (filteredBoxes.length > 0) {
@@ -518,7 +534,6 @@
                 });
             }
             updateSummary();
-            updateRoomFilter();
         }
 
         function createBoxEl(box, boxItems) {
@@ -540,7 +555,10 @@
                     <div class="box-thumb-container cursor-pointer">${boxPhotoThumb}</div>
                     <div class="flex-grow min-w-0">
                         <h3 class="text-xl font-bold text-indigo-700 transition-colors duration-200 truncate">Box ${box.number}</h3>
-                        <p class="text-sm text-gray-500 transition-colors duration-200 truncate">${box.room} | ${box.volume ? box.volume.toFixed(3) : '0.000'} m³</p>
+                        <hr class="border-t border-gray-300 my-1">
+                        <div class="box-details">
+                           <p class="text-sm text-gray-500 transition-colors duration-200 truncate">${box.room} | ${box.volume ? box.volume.toFixed(3) : '0.000'} m³</p>
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center flex-shrink-0">
@@ -666,6 +684,7 @@
             const actionsRow = document.getElementById(`actions-for-box-${boxId}`);
             const chevronIcon = headerEl.querySelector('.fa-chevron-down');
             const qrButton = headerEl.querySelector('.box-header-qr-button');
+            const divider = headerEl.querySelector('hr');
 
             if (itemsContainer && chevronIcon && headerEl) {
                 const isOpening = itemsContainer.classList.contains('hidden');
@@ -678,6 +697,10 @@
                 if (qrButton) {
                     qrButton.classList.toggle('hidden', isOpening);
                 }
+                if(divider) {
+                    divider.classList.toggle('border-gray-300', !isOpening);
+                    divider.classList.toggle('border-white/20', isOpening);
+                }
             }
         };
         
@@ -688,23 +711,8 @@
             document.getElementById('total-value').textContent = `$${formatCurrency(totalValue)}`;
             const totalVolume = boxes.reduce((sum, box) => sum + (parseFloat(box.volume) || 0), 0);
             document.getElementById('total-volume').textContent = `${totalVolume.toFixed(3)} m³`;
-            let mediumCount = 0, jumboCount = 0, customCount = 0;
-            const mediumPreset = BOX_PRESETS.find(p => p.id === 'medium');
-            const jumboPreset = BOX_PRESETS.find(p => p.id === 'jumbo');
-            boxes.forEach(box => {
-                const isMedium = mediumPreset && Math.abs(box.height - mediumPreset.h) < 0.1 && Math.abs(box.width - mediumPreset.w) < 0.1 && Math.abs(box.length - mediumPreset.l) < 0.1;
-                const isJumbo = jumboPreset && Math.abs(box.height - jumboPreset.h) < 0.1 && Math.abs(box.width - jumboPreset.w) < 0.1 && Math.abs(box.length - jumboPreset.l) < 0.1;
-                if (isMedium) mediumCount++;
-                else if (isJumbo) jumboCount++;
-                else if (box.height > 0 || box.width > 0 || box.length > 0) customCount++;
-            });
-            const breakdownParts = [];
-            if (jumboCount > 0) breakdownParts.push(`Jumbo: ${jumboCount}`);
-            if (mediumCount > 0) breakdownParts.push(`Medium: ${mediumCount}`);
-            if (customCount > 0) breakdownParts.push(`Custom: ${customCount}`);
-            document.getElementById('box-breakdown').textContent = breakdownParts.join(' / ');
+            // Removed box breakdown logic for simplicity as it was hidden
         }
-        function updateRoomFilter() { const rooms = [...new Set(boxes.map(box => box.room))].sort(); const currentVal = roomFilter.value; roomFilter.innerHTML = '<option value="all">All Rooms</option>'; rooms.forEach(room => roomFilter.add(new Option(room, room))); if (rooms.includes(currentVal)) roomFilter.value = currentVal; }
         
         function editBox(id) { const box = boxes.find(b => b.id === id); if (!box) return; document.getElementById('box-form').reset(); document.getElementById('box-id').value = box.id; document.getElementById('box-number').value = box.number; document.getElementById('box-room-area').value = box.room; document.getElementById('box-height').value = box.height; document.getElementById('box-width').value = box.width; document.getElementById('box-length').value = box.length; document.getElementById('box-modal-title').textContent = 'Edit Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.remove('hidden'); qrCodeSection.classList.add('hidden'); boxPhotoDataUrlCache = box.photoDataUrl; updateBoxPhotoPreview(); populateBoxTypeSelect(box); boxModal.style.display = 'flex'; calculateVolume(); }
         function calculateVolume() { const h = parseFloat(boxDimensionInputs[0].value) || 0, w = parseFloat(boxDimensionInputs[1].value) || 0, l = parseFloat(boxDimensionInputs[2].value) || 0; document.getElementById('box-volume').textContent = `${((h * w * l) / 1000000).toFixed(3)} m³`; }
@@ -867,7 +875,6 @@
         function closeInfoModal() { infoModal.style.display = 'none'; }
 
         function formatCurrency(num) { return (parseFloat(num) || 0).toFixed(2); }
-        function resetFilters() { searchInput.value = ''; roomFilter.value = 'all'; render(); }
         
         async function showBoxContents(userId, boxId) {
             loadingOverlay.style.display = 'flex';
@@ -927,4 +934,5 @@
     </script>
 </body>
 </html>
+"
 
