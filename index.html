@@ -85,53 +85,53 @@
                     </div>
                     
                     <div class="mt-4 w-full sm:mt-0 sm:w-auto">
-                        <div class="flex flex-col gap-3 sm:hidden">
+                        <div class="flex flex-col gap-3 sm:hidden" id="mobile-nav">
                             <div class="grid grid-cols-2 gap-3">
-                                <button id="add-box-btn-mobile" class="hidden items-center justify-center rounded-lg bg-cyan-500 py-4 px-4 text-lg font-semibold text-white shadow-md">
+                                <button data-action="add-box" class="hidden items-center justify-center rounded-lg bg-cyan-500 py-4 px-4 text-lg font-semibold text-white shadow-md">
                                     <i class="fas fa-box mr-2"></i><span>Add Box</span>
                                 </button>
-                                <button id="add-item-btn-mobile" class="hidden items-center justify-center rounded-lg bg-amber-500 py-4 px-4 text-lg font-semibold text-white shadow-md">
+                                <button data-action="add-item" class="hidden items-center justify-center rounded-lg bg-amber-500 py-4 px-4 text-lg font-semibold text-white shadow-md">
                                     <i class="fas fa-plus-circle mr-2"></i><span>Add Item</span>
                                 </button>
                             </div>
                             <div class="grid grid-cols-2 gap-3 mt-1">
-                                <button id="quick-view-btn-mobile" class="hidden items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
+                                <button data-action="quick-view" class="hidden items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
                                     <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
                                 </button>
-                                <button id="export-btn-mobile" class="flex items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
+                                <button data-action="export-pdf" class="flex items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
                                     <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
                                 </button>
                             </div>
                             <div id="auth-container-mobile" class="contents">
-                                <button id="guest-login-header-btn-mobile" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
+                                <button data-action="guest-login" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
                                     <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
                                 </button>
-                                <button id="login-btn-mobile" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md">
+                                <button data-action="login" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md">
                                     <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
                                 </button>
                             </div>
                         </div>
-                        <div class="hidden sm:flex sm:items-center sm:gap-x-3">
-                            <button id="add-box-btn" class="hidden items-center justify-center rounded-lg bg-cyan-500 py-2 px-4 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600">
+                        <div class="hidden sm:flex sm:items-center sm:gap-x-3" id="desktop-nav">
+                            <button data-action="add-box" class="hidden items-center justify-center rounded-lg bg-cyan-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600">
                                 <i class="fas fa-box mr-2"></i><span>Add Box</span>
                             </button>
-                            <button id="add-item-btn" class="hidden items-center justify-center rounded-lg bg-amber-500 py-2 px-4 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600">
+                            <button data-action="add-item" class="hidden items-center justify-center rounded-lg bg-amber-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600">
                                 <i class="fas fa-plus-circle mr-2"></i><span>Add Item</span>
                             </button>
-                            <button id="quick-view-btn" class="hidden items-center justify-center rounded-lg bg-white/20 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-white/30">
+                            <button data-action="quick-view" class="hidden items-center justify-center rounded-lg bg-white/20 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-white/30">
                                 <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
                             </button>
-                            <button id="export-btn" class="flex items-center justify-center rounded-lg bg-white/20 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-white/30">
+                            <button data-action="export-pdf" class="flex items-center justify-center rounded-lg bg-white/20 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-white/30">
                                 <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
                             </button>
                             <div id="auth-container-desktop" class="contents">
-                                <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600">
+                                <button data-action="guest-login" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600">
                                     <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
                                 </button>
-                                <button id="login-btn" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50">
+                                <button data-action="login" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50">
                                     <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
                                 </button>
-                                <button id="logout-btn" class="hidden w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600">
+                                <button data-action="logout" class="hidden w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600">
                                     <i class="fas fa-sign-out-alt mr-2"></i><span class="whitespace-nowrap">Logout</span>
                                 </button>
                             </div>
@@ -259,8 +259,7 @@
             roomFilter, boxDimensionInputs, isNewCheckbox, newItemDetails, qrCodeContainer, printQrBtn,
             qrCodeSection, qrNewBoxNote, boxPhotoInput, boxPhotoPreview, boxRemovePhotoBtn, itemPhotoInput,
             itemPhotosContainer, itemAddPhotoLabel, galleryPrevBtn, galleryNextBtn, fullPhoto, loadingOverlay,
-            boxTypeSelect, boxTypeThumbnail, customDimensionsContainer, guestLoginHeaderBtn, appContainer, viewerContainer, quickViewModal, logoutBtnMobile,
-            addBoxBtnMobile, addItemBtnMobile, quickViewBtnMobile, exportBtnMobile, guestLoginBtnMobile, loginBtnMobile;
+            boxTypeSelect, boxTypeThumbnail, customDimensionsContainer, guestLoginHeaderBtn, appContainer, viewerContainer, quickViewModal, logoutBtnMobile;
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -273,21 +272,21 @@
             appContainer = document.getElementById('app-container');
             viewerContainer = document.getElementById('viewer-container');
             // Desktop Buttons
-            loginBtn = document.getElementById('login-btn');
-            logoutBtn = document.getElementById('logout-btn');
-            addBoxBtn = document.getElementById('add-box-btn');
-            addItemBtn = document.getElementById('add-item-btn');
-            guestLoginHeaderBtn = document.getElementById('guest-login-header-btn');
-            quickViewBtn = document.getElementById('quick-view-btn');
+            loginBtn = document.querySelector('#desktop-nav [data-action="login"]');
+            logoutBtn = document.querySelector('#desktop-nav [data-action="logout"]');
+            addBoxBtn = document.querySelector('#desktop-nav [data-action="add-box"]');
+            addItemBtn = document.querySelector('#desktop-nav [data-action="add-item"]');
+            guestLoginHeaderBtn = document.querySelector('#desktop-nav [data-action="guest-login"]');
+            quickViewBtn = document.querySelector('#desktop-nav [data-action="quick-view"]');
             
             // Mobile Buttons
             logoutBtnMobile = document.getElementById('logout-btn-mobile');
-            addBoxBtnMobile = document.getElementById('add-box-btn-mobile');
-            addItemBtnMobile = document.getElementById('add-item-btn-mobile');
-            quickViewBtnMobile = document.getElementById('quick-view-btn-mobile');
-            exportBtnMobile = document.getElementById('export-btn-mobile');
-            guestLoginBtnMobile = document.getElementById('guest-login-header-btn-mobile');
-            loginBtnMobile = document.getElementById('login-btn-mobile');
+            addBoxBtnMobile = document.querySelector('#mobile-nav [data-action="add-box"]');
+            addItemBtnMobile = document.querySelector('#mobile-nav [data-action="add-item"]');
+            quickViewBtnMobile = document.querySelector('#mobile-nav [data-action="quick-view"]');
+            exportBtnMobile = document.querySelector('#mobile-nav [data-action="export-pdf"]');
+            guestLoginBtnMobile = document.querySelector('#mobile-nav [data-action="guest-login"]');
+            loginBtnMobile = document.querySelector('#mobile-nav [data-action="login"]');
 
             loginModal = document.getElementById('login-modal');
             loginForm = document.getElementById('login-form');
@@ -324,7 +323,6 @@
             quickViewModal = document.getElementById('quick-view-modal');
         }
         
-        // NEW: Robust function to handle playing sounds
         async function playSound(soundId) {
             const sound = document.getElementById(soundId);
             if (sound) {
@@ -495,10 +493,10 @@
         function updateUIForLoginState(user) {
             const isLoggedIn = !!user;
             
-            const loggedOutElements = document.querySelectorAll('#guest-login-header-btn, #login-btn, #guest-login-header-btn-mobile, #login-btn-mobile');
+            const loggedOutElements = document.querySelectorAll('[data-action="guest-login"], [data-action="login"]');
             loggedOutElements.forEach(el => el.classList.toggle('hidden', isLoggedIn));
 
-            const loggedInElements = document.querySelectorAll('#logout-btn, #logout-btn-mobile, #add-box-btn, #add-item-btn, #quick-view-btn, #add-box-btn-mobile, #add-item-btn-mobile, #quick-view-btn-mobile');
+            const loggedInElements = document.querySelectorAll('[data-action="logout"], #logout-btn-mobile, [data-action="add-box"], [data-action="add-item"], [data-action="quick-view"]');
             loggedInElements.forEach(el => el.classList.toggle('hidden', !isLoggedIn));
             
             if (user) {
@@ -593,15 +591,14 @@
                             <p class="text-sm text-gray-500 transition-colors duration-200">${box.room} | ${box.volume ? box.volume.toFixed(3) : '0.000'} m³</p>
                         </div>
                     </div>
-                    <div class="flex items-center admin-buttons-container sm:hidden">
+                    <div class="flex items-center">
+                         <div class="hidden sm:flex items-center space-x-1 admin-buttons-container">
+                            ${adminButtons}
+                        </div>
                         <i id="chevron-for-box-${box.id}" class="fas fa-chevron-down text-gray-500 transition-transform duration-300 ml-4"></i>
                     </div>
-                    <div class="hidden sm:flex items-center space-x-1 admin-buttons-container">
-                        ${adminButtons}
-                        <i id="chevron-for-box-desktop-${box.id}" class="fas fa-chevron-down text-gray-500 transition-transform duration-300 ml-4"></i>
-                    </div>
                 </div>
-                <div class="hidden items-center justify-end space-x-2 admin-buttons-container-mobile w-full mt-2 pt-2 border-t border-gray-200">
+                <div class="flex sm:hidden items-center justify-end space-x-2 admin-buttons-container-mobile w-full mt-2 pt-2 border-t border-gray-200">
                     ${adminButtons}
                 </div>`;
             
@@ -688,17 +685,11 @@
         function toggleBoxItems(boxId, headerEl) {
             const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
             const chevronIcon = headerEl.querySelector('.fa-chevron-down');
-            const mobileAdminButtons = headerEl.querySelector('.admin-buttons-container-mobile');
-
             if (itemsContainer && chevronIcon && headerEl) {
                 const isOpening = itemsContainer.classList.contains('hidden');
                 itemsContainer.classList.toggle('hidden');
                 chevronIcon.classList.toggle('rotate-180', isOpening);
                 headerEl.classList.toggle('box-header-open', isOpening);
-                if (mobileAdminButtons) {
-                    mobileAdminButtons.classList.toggle('hidden', !isOpening);
-                    mobileAdminButtons.classList.toggle('flex', isOpening);
-                }
             }
         };
         
@@ -887,7 +878,7 @@
                 image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: 'css', before: '.box-group:not(:first-of-type)' }
+                pagebreak: { mode: 'css', avoid: '.box-group' } // Use 'avoid' to prevent breaking inside a group
             };
 
             html2pdf().from(htmlToExport).set(options).toPdf().get('pdf').then(function (pdf) {
