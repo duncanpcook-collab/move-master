@@ -555,14 +555,18 @@
                     <div class="box-thumb-container cursor-pointer">${boxPhotoThumb}</div>
                     <div class="flex-grow min-w-0">
                         <h3 class="text-xl font-bold text-indigo-700 transition-colors duration-200 truncate">Box ${box.number}</h3>
-                        <hr class="border-t border-gray-300 my-1">
+                        <hr class="border-t border-gray-300 my-1 hidden">
                         <div class="box-details">
                            <p class="text-sm text-gray-500 transition-colors duration-200 truncate">${box.room} | ${box.volume ? box.volume.toFixed(3) : '0.000'} m³</p>
                         </div>
                     </div>
                 </div>
                 <div class="flex items-center flex-shrink-0">
-                     <button data-action="qrcode" data-id="${box.id}" class="text-gray-600 p-2 rounded-full hover:bg-gray-200 box-header-qr-button"><i class="fas fa-qrcode"></i></button>
+                    <div id="collapsed-actions-for-box-${box.id}" class="flex items-center">
+                         <button data-action="qrcode" data-id="${box.id}" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>
+                         <button data-action="edit-box" data-id="${box.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
+                         <button data-action="delete-box" data-id="${box.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>
+                    </div>
                     <i id="chevron-for-box-${box.id}" class="fas fa-chevron-down text-gray-500 transition-transform duration-300 ml-2"></i>
                 </div>`;
             
@@ -598,23 +602,33 @@
             
             // Event Listeners
             mainHeaderRow.addEventListener('click', (e) => {
-                if (e.target.closest('button') || e.target.closest('.box-thumb-container')) return;
+                if (e.target.closest('button')) return;
+                 if (e.target.closest('.box-thumb-container')) {
+                    e.stopPropagation();
+                    openPhotoModal([box.photoDataUrl], 0);
+                    return;
+                }
                 toggleBoxItems(box.id, header);
             });
-            if (box.photoDataUrl) {
-                mainHeaderRow.querySelector('.box-thumb-container').addEventListener('click', e => { e.stopPropagation(); openPhotoModal([box.photoDataUrl], 0) });
-            }
-            mainHeaderRow.querySelector('[data-action="qrcode"]').addEventListener('click', e => {
-                e.stopPropagation();
-                showQRCodeForBox(box.id);
+           
+            mainHeaderRow.querySelector('#collapsed-actions-for-box-'+box.id).addEventListener('click', e => {
+                 e.stopPropagation();
+                const button = e.target.closest('button');
+                if (!button) return;
+                const action = button.dataset.action;
+                const id = button.dataset.id;
+                if (action === 'qrcode') showQRCodeForBox(id);
+                if (action === 'edit-box') editBox(id);
+                if (action === 'delete-box') confirmDelete('box', id);
             });
-            actionsRow.querySelector('[data-action="edit-box"]').addEventListener('click', e => {
-                e.stopPropagation();
-                editBox(box.id);
-            });
-            actionsRow.querySelector('[data-action="delete-box"]').addEventListener('click', e => {
-                e.stopPropagation();
-                confirmDelete('box', box.id);
+            actionsRow.addEventListener('click', e => {
+                 e.stopPropagation();
+                const button = e.target.closest('button');
+                if (!button) return;
+                const action = button.dataset.action;
+                const id = button.dataset.id;
+                if (action === 'edit-box') editBox(id);
+                if (action === 'delete-box') confirmDelete('box', id);
             });
             
             boxEl.appendChild(header);
@@ -681,22 +695,27 @@
 
         function toggleBoxItems(boxId, headerEl) {
             const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
+            const collapsedActions = document.getElementById(`collapsed-actions-for-box-${boxId}`);
             const actionsRow = document.getElementById(`actions-for-box-${boxId}`);
-            const chevronIcon = headerEl.querySelector('.fa-chevron-down');
-            const qrButton = headerEl.querySelector('.box-header-qr-button');
+            const chevronIcon = headerEl.querySelector(`#chevron-for-box-${boxId}`);
             const divider = headerEl.querySelector('hr');
 
             if (itemsContainer && chevronIcon && headerEl) {
                 const isOpening = itemsContainer.classList.contains('hidden');
                 
                 itemsContainer.classList.toggle('hidden');
-                actionsRow.classList.toggle('hidden');
+                
+                // Toggle visibility of buttons and divider
+                collapsedActions.classList.toggle('hidden', isOpening);
+                actionsRow.classList.toggle('hidden', !isOpening);
                 actionsRow.classList.toggle('flex', isOpening);
+                divider.classList.toggle('hidden', !isOpening);
+
+                // General open state styling
                 chevronIcon.classList.toggle('rotate-180', isOpening);
                 headerEl.classList.toggle('box-header-open', isOpening);
-                if (qrButton) {
-                    qrButton.classList.toggle('hidden', isOpening);
-                }
+                
+                // Adjust divider color for dark background
                 if(divider) {
                     divider.classList.toggle('border-gray-300', !isOpening);
                     divider.classList.toggle('border-white/20', isOpening);
