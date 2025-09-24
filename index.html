@@ -820,11 +820,29 @@
                 <div class="summary-grid">
                     <div class="summary-card">
                         <strong>Total Boxes: ${totalBoxesCount}</strong>
-                        <span class="box-breakdown">(M: ${mediumCount}, J: ${jumboCount}, C: ${customCount})</span>
+                        <span class="box-breakdown">(Medium: ${mediumCount}, Jumbo: ${jumboCount}, Custom: ${customCount})</span>
                     </div>
                     <div class="summary-card"><strong>Total Items:</strong> ${totalItemsCount}</div>
                     <div class="summary-card"><strong>Total Volume:</strong> ${totalVolume.toFixed(3)} m³</div>
                     <div class="summary-card"><strong>Total Value:</strong> $${formatCurrency(totalValue)}</div>
+                </div>
+            `;
+
+            const boxTypesHtml = `
+                <div class="box-types-card">
+                    <h4>Box Type Dimensions</h4>
+                    <dl>
+                        ${BOX_PRESETS.map(preset => `
+                          <div>
+                            <dt>${preset.name.split('(')[0].trim()}</dt>
+                            <dd>${preset.l}cm L x ${preset.w}cm W x ${preset.h}cm H</dd>
+                          </div>
+                        `).join('')}
+                        <div>
+                          <dt>Custom</dt>
+                          <dd>Dimensions specified per-box.</dd>
+                        </div>
+                    </dl>
                 </div>
             `;
             // --- End Summary ---
@@ -843,14 +861,20 @@
                 th:first-child, td:first-child { width: 70px; min-width: 70px; }
                 th:nth-child(2), td:nth-child(2) { width: 60px; min-width: 60px; text-align: center; }
                 img{max-height:70px;max-width:70px;object-fit:cover;border-radius:4px}
-                h1{font-size:24px}
+                h1{font-size:24px; margin-bottom: 0.5em;}
                 .box-header-row { background-color: #334155; color: white; font-weight: bold; text-align: center; }
                 .box-group { page-break-inside: avoid !important; }
-                .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin-bottom: 2em; page-break-inside: avoid; }
+                .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin-bottom: 1em; page-break-inside: avoid; }
                 .summary-card { background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1em; text-align: center; font-size: 12px; }
                 .summary-card strong { display: block; font-size: 14px; margin-bottom: 0.25em; color: #1f2937; }
                 .box-breakdown { font-size: 11px; color: #4b5563; }
-            </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}<table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead>`;
+                .box-types-card { background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1em; margin-bottom: 2em; page-break-inside: avoid; }
+                .box-types-card h4 { margin-top: 0; margin-bottom: 0.75em; font-size: 14px; font-weight: bold; text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 0.5em; }
+                .box-types-card dl { margin: 0; font-size: 12px; }
+                .box-types-card div { display: flex; justify-content: space-between; padding: 0.25em 0; }
+                .box-types-card dt { font-weight: bold; color: #374151; }
+                .box-types-card dd { margin: 0; color: #4b5563; }
+            </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}${boxTypesHtml}<table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead>`;
 
             const sortedBoxIds = Object.keys(groupedByBox).sort((a, b) => {
                  const boxA = boxes.find(box => box.id === a) || {};
@@ -1044,5 +1068,6 @@
     </script>
 </body>
 </html>
+
 
 
