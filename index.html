@@ -555,8 +555,8 @@
                     <div class="box-thumb-container cursor-pointer">${boxPhotoThumb}</div>
                     <div class="flex-grow min-w-0">
                         <h3 class="text-xl font-bold text-indigo-700 transition-colors duration-200 truncate">Box ${box.number}</h3>
-                        <hr class="border-t border-gray-300 my-1 hidden">
-                        <div class="box-details">
+                        <hr class="border-t border-gray-300 my-1">
+                        <div class="box-details pt-1">
                            <p class="text-sm text-gray-500 transition-colors duration-200 truncate">${box.room} | ${box.volume ? box.volume.toFixed(3) : '0.000'} m³</p>
                         </div>
                     </div>
@@ -605,7 +605,7 @@
                 if (e.target.closest('button')) return;
                  if (e.target.closest('.box-thumb-container')) {
                     e.stopPropagation();
-                    openPhotoModal([box.photoDataUrl], 0);
+                    if(box.photoDataUrl) openPhotoModal([box.photoDataUrl], 0);
                     return;
                 }
                 toggleBoxItems(box.id, header);
@@ -709,7 +709,7 @@
                 collapsedActions.classList.toggle('hidden', isOpening);
                 actionsRow.classList.toggle('hidden', !isOpening);
                 actionsRow.classList.toggle('flex', isOpening);
-                divider.classList.toggle('hidden', !isOpening);
+                // divider.classList.toggle('hidden', !isOpening);
 
                 // General open state styling
                 chevronIcon.classList.toggle('rotate-180', isOpening);
