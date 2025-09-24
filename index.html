@@ -152,29 +152,46 @@
         </header>
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
-                <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
-                    <div class="bg-blue-100 text-blue-600 p-2 sm:p-4 rounded-full"><i class="fas fa-box-open text-xl sm:text-2xl"></i></div>
-                    <div class="ml-3 sm:ml-4">
-                        <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Boxes</p>
-                        <p id="total-boxes" class="text-lg sm:text-2xl font-bold">0</p>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 sm:mb-8">
+                <!-- Expanded Total Boxes Card -->
+                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 col-span-2 lg:col-span-1">
+                    <div class="flex items-center justify-between flex-wrap gap-y-2">
+                         <!-- Main Total -->
+                         <div class="flex items-center">
+                            <div class="bg-blue-100 text-blue-600 p-3 sm:p-4 rounded-full"><i class="fas fa-box-open text-xl sm:text-2xl"></i></div>
+                            <div class="ml-3 sm:ml-4">
+                                <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Boxes</p>
+                                <p id="total-boxes" class="text-lg sm:text-2xl font-bold">0</p>
+                            </div>
+                         </div>
+                         <!-- Breakdown -->
+                         <div class="text-right lg:hidden">
+                             <div class="flex flex-col sm:flex-row gap-x-4 gap-y-1 text-xs sm:text-sm text-gray-600">
+                                <p><span class="font-bold text-gray-800 text-base sm:text-lg" id="total-boxes-medium">0</span> Medium</p>
+                                <p><span class="font-bold text-gray-800 text-base sm:text-lg" id="total-boxes-jumbo">0</span> Jumbo</p>
+                                <p><span class="font-bold text-gray-800 text-base sm:text-lg" id="total-boxes-custom">0</span> Custom</p>
+                             </div>
+                         </div>
                     </div>
                 </div>
-                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
+                <!-- Total Items -->
+                <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
                     <div class="bg-green-100 text-green-600 p-2 sm:p-4 rounded-full"><i class="fas fa-clipboard-list text-xl sm:text-2xl"></i></div>
                     <div class="ml-3 sm:ml-4">
                         <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Items</p>
                         <p id="total-items" class="text-lg sm:text-2xl font-bold">0</p>
                     </div>
                 </div>
-                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
+                <!-- Total Volume -->
+                <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
                     <div class="bg-purple-100 text-purple-600 p-2 sm:p-4 rounded-full"><i class="fas fa-cube text-xl sm:text-2xl"></i></div>
                     <div class="ml-3 sm:ml-4">
                         <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Volume</p>
                         <p id="total-volume" class="text-lg sm:text-2xl font-bold">0 m³</p>
                     </div>
                 </div>
-                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
+                 <!-- Total Value Card -->
+                <div class="hidden lg:flex bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 items-center">
                     <div class="bg-yellow-100 text-yellow-600 p-2 sm:p-4 rounded-full"><i class="fas fa-dollar-sign text-xl sm:text-2xl"></i></div>
                     <div class="ml-3 sm:ml-4">
                         <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Value</p>
@@ -389,7 +406,7 @@
             document.getElementById('info-ok-btn').addEventListener('click', closeInfoModal);
 
             searchInput.addEventListener('input', render);
-           
+            
             window.addEventListener('click', (e) => { 
                 if (e.target.classList.contains('modal-backdrop')) { 
                     closeAllModals(); 
@@ -598,9 +615,9 @@
                 }
                 toggleBoxItems(box.id, header);
             });
-           
+            
             mainHeaderRow.querySelector('#actions-for-box-'+box.id).addEventListener('click', e => {
-                 e.stopPropagation();
+                e.stopPropagation();
                 const button = e.target.closest('button');
                 if (!button) return;
                 const action = button.dataset.action;
@@ -629,9 +646,9 @@
             const newTag = item.isNew ? '<span class="ml-2 text-xs font-semibold bg-green-100 text-green-800 px-2 py-0.5 rounded-full">NEW</span>' : '';
             let woodInfo = item.hasWood ? `<p class="text-xs text-amber-700 mt-1"><i class="fas fa-tree mr-1"></i> Wood ${item.isTreated ? '(Treated)' : '(Untreated)'}</p>` : '';
             const adminButtonsHTML = `<div class="flex items-center justify-end space-x-1 item-buttons-container flex-shrink-0">
-                                        <button data-action="edit-item" data-id="${item.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
-                                        <button data-action="delete-item" data-id="${item.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>
-                                      </div>`;
+                                            <button data-action="edit-item" data-id="${item.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
+                                            <button data-action="delete-item" data-id="${item.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>
+                                          </div>`;
 
             itemEl.innerHTML = `
                 <div class="photo-thumb-container">${photoThumbHTML}</div>
@@ -697,12 +714,47 @@
             document.getElementById('total-boxes').textContent = boxes.length;
             document.getElementById('total-items').textContent = items.length;
             const totalValue = items.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
-            document.getElementById('total-value').textContent = `$${formatCurrency(totalValue)}`;
+            const totalValueEl = document.getElementById('total-value');
+            if (totalValueEl) totalValueEl.textContent = `$${formatCurrency(totalValue)}`;
             const totalVolume = boxes.reduce((sum, box) => sum + (parseFloat(box.volume) || 0), 0);
             document.getElementById('total-volume').textContent = `${totalVolume.toFixed(3)} m³`;
-            // Removed box breakdown logic for simplicity as it was hidden
+
+            // Calculate box type breakdown
+            let mediumCount = 0;
+            let jumboCount = 0;
+            let customCount = 0;
+
+            const mediumPreset = BOX_PRESETS.find(p => p.id === 'medium');
+            const jumboPreset = BOX_PRESETS.find(p => p.id === 'jumbo');
+
+            boxes.forEach(box => {
+                // Use a small epsilon for float comparison
+                const isApproximately = (val1, val2) => Math.abs(val1 - val2) < 0.1;
+
+                const isMedium = mediumPreset &&
+                    isApproximately(box.height, mediumPreset.h) &&
+                    isApproximately(box.width, mediumPreset.w) &&
+                    isApproximately(box.length, mediumPreset.l);
+
+                const isJumbo = jumboPreset &&
+                    isApproximately(box.height, jumboPreset.h) &&
+                    isApproximately(box.width, jumboPreset.w) &&
+                    isApproximately(box.length, jumboPreset.l);
+
+                if (isJumbo) {
+                    jumboCount++;
+                } else if (isMedium) {
+                    mediumCount++;
+                } else {
+                    customCount++;
+                }
+            });
+
+            document.getElementById('total-boxes-medium').textContent = mediumCount;
+            document.getElementById('total-boxes-jumbo').textContent = jumboCount;
+            document.getElementById('total-boxes-custom').textContent = customCount;
         }
-        
+
         function editBox(id) { 
             const box = boxes.find(b => b.id === id); 
             if (!box) return; 
@@ -731,7 +783,7 @@
         function updateBoxSelector(selectedId) { const select = document.getElementById('item-box-select'); select.innerHTML = ''; boxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).forEach(box => select.add(new Option(`Box ${box.number} (${box.room})`, box.id))); if (selectedId) select.value = selectedId; }
         
         function generateQRCodeForBox() { const boxId = document.getElementById('box-id').value; if (!currentUserId) { showInfoModal("Please log in to generate a QR code."); return; } const box = boxes.find(b => b.id === boxId); if (!box) { showInfoModal('Could not find box details.'); return; } const baseUrl = window.location.href.split('?')[0]; const qrUrl = `${baseUrl}?userId=${currentUserId}&boxId=${boxId}`; qrCodeContainer.innerHTML = ''; new QRCode(qrCodeContainer, { text: qrUrl, width: 160, height: 160 }); printQrBtn.classList.remove('hidden'); qrCodeSection.classList.remove('hidden'); qrNewBoxNote.classList.add('hidden'); }
-       
+        
         function printQRCode() { const qrCodeImage = qrCodeContainer.querySelector('img').src; const boxNumber = document.getElementById('box-number').value; const room = document.getElementById('box-room-area').value; const printWindow = window.open('', '_blank'); printWindow.document.write(`<html><head><title>Print QR Code</title><style>body { font-family: sans-serif; text-align: center; margin-top: 50px; } img { width: 300px; height: 300px; } h2 { font-size: 2em; margin: 0; } p { font-size: 1.2em; }</style></head><body><h2>Box ${boxNumber}</h2><p>${room}</p><img src="${qrCodeImage}"><script>window.onload = function() { window.print(); window.onafterprint = function() { window.close(); }; }<\/script></body></html>`); printWindow.document.close(); }
         
         function populateBoxTypeSelect(box = null) { boxTypeSelect.innerHTML = ''; BOX_PRESETS.forEach(preset => boxTypeSelect.add(new Option(preset.name, preset.id))); boxTypeSelect.add(new Option('Custom Dimensions', 'custom')); let selectedType = 'medium'; if (box) { const mediumPreset = BOX_PRESETS[0]; const jumboPreset = BOX_PRESETS[1]; const isMedium = Math.abs(box.height - mediumPreset.h) < 0.1 && Math.abs(box.width - mediumPreset.w) < 0.1 && Math.abs(box.length - mediumPreset.l) < 0.1; const isJumbo = Math.abs(box.height - jumboPreset.h) < 0.1 && Math.abs(box.width - jumboPreset.w) < 0.1 && Math.abs(box.length - jumboPreset.l) < 0.1; if (isJumbo) selectedType = 'jumbo'; else if (isMedium) selectedType = 'medium'; else selectedType = 'custom'; } boxTypeSelect.value = selectedType; handleBoxTypeChange(); }
@@ -747,6 +799,36 @@
                 return a.name.localeCompare(b.name);
             });
             
+            // --- Summary Calculation ---
+            const totalBoxesCount = boxes.length;
+            const totalItemsCount = items.length;
+            const totalVolume = boxes.reduce((sum, box) => sum + (parseFloat(box.volume) || 0), 0);
+            const totalValue = items.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
+            let mediumCount = 0, jumboCount = 0, customCount = 0;
+            const mediumPreset = BOX_PRESETS.find(p => p.id === 'medium');
+            const jumboPreset = BOX_PRESETS.find(p => p.id === 'jumbo');
+            boxes.forEach(box => {
+                const isApproximately = (val1, val2) => Math.abs(val1 - val2) < 0.1;
+                const isMedium = mediumPreset && isApproximately(box.height, mediumPreset.h) && isApproximately(box.width, mediumPreset.w) && isApproximately(box.length, mediumPreset.l);
+                const isJumbo = jumboPreset && isApproximately(box.height, jumboPreset.h) && isApproximately(box.width, jumboPreset.w) && isApproximately(box.length, jumboPreset.l);
+                if (isJumbo) jumboCount++;
+                else if (isMedium) mediumCount++;
+                else customCount++;
+            });
+
+            const summaryHtml = `
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <strong>Total Boxes: ${totalBoxesCount}</strong>
+                        <span class="box-breakdown">(M: ${mediumCount}, J: ${jumboCount}, C: ${customCount})</span>
+                    </div>
+                    <div class="summary-card"><strong>Total Items:</strong> ${totalItemsCount}</div>
+                    <div class="summary-card"><strong>Total Volume:</strong> ${totalVolume.toFixed(3)} m³</div>
+                    <div class="summary-card"><strong>Total Value:</strong> $${formatCurrency(totalValue)}</div>
+                </div>
+            `;
+            // --- End Summary ---
+
             // Group items by box
             const groupedByBox = sortedData.reduce((acc, item) => {
                 (acc[item.boxId] = acc[item.boxId] || []).push(item);
@@ -764,7 +846,11 @@
                 h1{font-size:24px}
                 .box-header-row { background-color: #334155; color: white; font-weight: bold; text-align: center; }
                 .box-group { page-break-inside: avoid !important; }
-            </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p><table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead>`;
+                .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin-bottom: 2em; page-break-inside: avoid; }
+                .summary-card { background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1em; text-align: center; font-size: 12px; }
+                .summary-card strong { display: block; font-size: 14px; margin-bottom: 0.25em; color: #1f2937; }
+                .box-breakdown { font-size: 11px; color: #4b5563; }
+            </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}<table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead>`;
 
             const sortedBoxIds = Object.keys(groupedByBox).sort((a, b) => {
                  const boxA = boxes.find(box => box.id === a) || {};
@@ -958,5 +1044,5 @@
     </script>
 </body>
 </html>
-"
+
 
