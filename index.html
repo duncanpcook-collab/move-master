@@ -61,6 +61,20 @@
         .admin-buttons-container {
             margin-top: 4px;
         }
+        @media (max-width: 640px) {
+            .box-header-open .admin-buttons-container {
+                display: flex;
+                justify-content: flex-end;
+                width: 100%;
+                margin-top: 8px;
+            }
+            .box-header-open .qr-button {
+                display: none !important;
+            }
+            .box-header-closed .qr-button {
+                display: inline-block;
+            }
+        }
     </style>
     <style id="print-styles">
         @media print {
@@ -80,12 +94,12 @@
             .box-group-pdf {
                 page-break-inside: avoid;
             }
-            table th:nth-child(1), td:nth-child(1) { width: 15%; } /* Image */
-            table th:nth-child(2), td:nth-child(2) { width: 10%; } /* Box # */
-            table th:nth-child(3), td:nth-child(3) { width: 15%; } /* Room */
-            table th:nth-child(4), td:nth-child(4) { width: 30%; } /* Item Name */
-            table th:nth-child(5), td:nth-child(5) { width: 10%; } /* Value */
-            table th:nth-child(6), td:nth-child(6) { width: 20%; } /* Notes */
+            .box-even {
+                background-color: #f3f4f6;
+            }
+            .box-odd {
+                background-color: #e5e7eb;
+            }
         }
     </style>
 </head>
@@ -105,10 +119,10 @@
                         <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
                     </div>
                     <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
-                        <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-3 px-4 text-base font-semibold text-white shadow-md glass-btn sm:py-2 sm:text-base">
+                        <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-4 px-6 text-lg font-semibold text-white shadow-md glass-btn sm:py-2 sm:px-5 sm:text-base">
                             <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
                         </button>
-                        <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-3 px-4 text-base font-semibold text-white shadow-md glass-btn sm:py-2 sm:text-base">
+                        <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-4 px-6 text-lg font-semibold text-white shadow-md glass-btn sm:py-2 sm:px-5 sm:text-base">
                             <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
                         </button>
                         <button id="quick-view-btn" class="hidden flex w-full items-center justify-center rounded-lg border border-white/20 bg-white/10 py-2 px-4 text-sm font-semibold text-white shadow-md backdrop-blur-sm transition-colors hover:bg-white/20 sm:w-auto sm:text-base">
@@ -240,12 +254,12 @@
         // --- Box Presets ---
         const MEDIUM_BOX_IMG_URL = 'https://placehold.co/100x100/DEB887/333333?text=Medium';
         const JUMBO_BOX_IMG_URL = 'https://placehold.co/100x100/DEB887/333333?text=Jumbo';
-        
+
         const BOX_PRESETS = [
             { id: 'medium', name: 'Medium Box Heavy Duty (40L)', w: 40, l: 30, h: 33, imgSrc: MEDIUM_BOX_IMG_URL },
             { id: 'jumbo', name: 'Jumbo Box Heavy Duty (104L)', w: 43, l: 41, h: 60, imgSrc: JUMBO_BOX_IMG_URL },
         ];
-        
+
         // --- DOM element VARIABLES ---
         let loginModal, loginForm, loginError, userIdDisplay,
             inventoryListEl, boxModal, itemModal, photoModal, confirmModal, infoModal, searchInput,
@@ -536,7 +550,7 @@
                 : '';
             
             const adminButtons = `
-                <button data-action="qrcode" data-id="${box.id}" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>
+                <button data-action="qrcode" data-id="${box.id}" class="text-gray-600 p-2 rounded-full hover:bg-gray-200 qr-button"><i class="fas fa-qrcode"></i></button>
                 <button data-action="edit-box" data-id="${box.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
                 <button data-action="delete-box" data-id="${box.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
             
@@ -600,12 +614,13 @@
                 <div class="flex-grow">
                     <div class="flex justify-between items-start">
                         <div class="flex-grow">
-                            <p class="font-semibold flex items-center justify-between">${item.name} ${newTag} <span class="font-semibold text-green-600">$${formatCurrency(item.value)}</span></p>
+                            <p class="font-semibold flex items-center">${item.name} ${newTag}</p>
                             <p class="text-sm text-gray-500 mt-1">${item.notes || ''}</p>
                             ${woodInfo}
                         </div>
                         ${adminButtonsHTML}
                     </div>
+                    <p class="font-semibold text-green-600 mt-2">$${formatCurrency(item.value)}</p>
                 </div>
             `;
 
@@ -681,53 +696,139 @@
         function handleBoxTypeChange() { const selectedId = boxTypeSelect.value; const preset = BOX_PRESETS.find(p => p.id === selectedId); if (preset) { customDimensionsContainer.classList.add('hidden'); boxTypeThumbnail.src = preset.imgSrc; boxTypeThumbnail.classList.remove('hidden'); boxDimensionInputs[0].value = preset.h; boxDimensionInputs[1].value = preset.w; boxDimensionInputs[2].value = preset.l; } else { customDimensionsContainer.classList.remove('hidden'); boxTypeThumbnail.classList.add('hidden'); } calculateVolume(); }
 
         function generateInventoryHtml(mode = 'pdf') {
-            const sortedData = [...items].sort((a, b) => {
-                const boxA = boxes.find(box => box.id === a.boxId) || {};
-                const boxB = boxes.find(box => box.id === b.boxId) || {};
-                const boxNumA = parseInt(boxA.number) || 0;
-                const boxNumB = parseInt(boxB.number) || 0;
-                if (boxNumA !== boxNumB) return boxNumA - boxNumB;
-                return a.name.localeCompare(b.name);
-            });
-            
-            let htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title><style>
-                body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:2em}
-                table{width:100%;border-collapse:collapse;margin-top:20px;font-size:12px; border-spacing: 0;}
-                th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:middle}
-                th{background-color:#e5e7eb;font-weight:bold}
-                th:first-child, td:first-child { width: 70px; min-width: 70px; }
-                th:nth-child(2), td:nth-child(2) { width: 60px; min-width: 60px; text-align: center; }
-                img{max-height:70px;max-width:70px;object-fit:cover;border-radius:4px}
-                h1{font-size:24px}
-                .box-header-row { background-color: #334155; color: white; font-weight: bold; text-align: center; }
-                .box-group-pdf { page-break-inside: avoid; }
-            </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p><table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`;
+            const sortedBoxes = [...boxes].sort((a,b) => parseInt(a.number) - parseInt(b.number));
+            const itemsByBox = items.reduce((acc, item) => {
+                if (!acc[item.boxId]) acc[item.boxId] = [];
+                acc[item.boxId].push(item);
+                return acc;
+            }, {});
 
-            let currentBoxId = null;
-            sortedData.forEach(item => {
-                const box = boxes.find(b => b.id === item.boxId) || { number: 'N/A', room: 'N/A' };
+            let tableContent = '';
+            sortedBoxes.forEach((box, boxIndex) => {
+                const boxItems = (itemsByBox[box.id] || []).sort((a,b) => a.name.localeCompare(b.name));
+                if (boxItems.length === 0 && mode === 'pdf') return;
+
+                const boxShadeClass = boxIndex % 2 === 0 ? 'box-even' : 'box-odd';
+                const headerClass = boxIndex % 2 === 0 ? 'box-header-even' : 'box-header-odd';
+                const itemHighlightClass = boxIndex % 2 === 0 ? 'item-highlight-even' : 'item-highlight-odd';
                 
-                if(item.boxId !== currentBoxId) {
-                    currentBoxId = item.boxId;
-                    htmlContent += `<tr class="box-header-row"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
+                tableContent += `<tbody class="box-group-pdf ${boxShadeClass}">
+                    <tr class="box-header-row ${headerClass}">
+                        <th colspan="6">Box ${box.number} - ${box.room}</th>
+                    </tr>`;
+                
+                if(boxItems.length > 0) {
+                     tableContent += `<tr class="item-header-row">
+                        <th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th>
+                    </tr>`;
                 }
-                
-                const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
-                const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '';
-                
-                htmlContent += `<tr class="box-group-pdf">
-                    <td>${imageTag}</td>
-                    <td>${box.number}</td>
-                    <td>${box.room}</td>
-                    <td>${item.name || ''}</td>
-                    <td>$${formatCurrency(item.value)}</td>
-                    <td>${item.notes || ''}</td>
-                </tr>`;
+               
+                boxItems.forEach(item => {
+                    const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
+                    const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}" style="max-height:50px;max-width:50px;object-fit:cover;border-radius:4px;">` : '';
+                    tableContent += `
+                        <tr>
+                            <td data-label="Image">${imageTag}</td>
+                            <td data-label="Box #" class="${itemHighlightClass}">${box.number}</td>
+                            <td data-label="Room">${box.room}</td>
+                            <td data-label="Item Name">${item.name || ''}</td>
+                            <td data-label="Value">$${formatCurrency(item.value)}</td>
+                            <td data-label="Notes">${item.notes || ''}</td>
+                        </tr>`;
+                });
+                tableContent += `</tbody>`;
             });
 
-            htmlContent += `</tbody></table></body></html>`;
-            return htmlContent;
-        };
+            let mobileStyles = '';
+            if (mode === 'quickview') {
+                mobileStyles = `
+                    @media (max-width: 600px) {
+                        table, thead, tbody, th, td, tr { 
+                            display: block; 
+                        }
+                        thead, .item-header-row {
+                            display: none;
+                        }
+                        tr {
+                            border: 1px solid #ddd;
+                            margin-bottom: 10px;
+                            border-radius: 8px;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                            background-color: #fff;
+                        }
+                        tbody tr:nth-of-type(even) {
+                            background-color: #f9fafb;
+                        }
+                        tr.box-header-row {
+                            border-radius: 8px;
+                            margin-bottom: 0;
+                            border-bottom: none;
+                        }
+                        tr.box-header-row th {
+                            font-size: 14pt;
+                            border-radius: 8px;
+                        }
+                        td { 
+                            border: none;
+                            border-bottom: 1px solid #eee; 
+                            position: relative;
+                            padding-left: 50%; 
+                            text-align: right;
+                            min-height: 30px;
+                        }
+                        td:before { 
+                            position: absolute;
+                            left: 10px;
+                            width: 45%; 
+                            padding-right: 10px; 
+                            white-space: nowrap;
+                            content: attr(data-label);
+                            font-weight: bold;
+                            text-align: left;
+                        }
+                        td.item-highlight-even { background-color: #eef2ff; }
+                        td.item-highlight-odd { background-color: #e0f2fe; }
+                    }
+                `;
+            }
+
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Move Master Inventory</title>
+                    <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10pt; margin: 20px; background-color: #f3f4f6; }
+                        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+                        thead { display: table-header-group; }
+                        tbody { border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-top: 15px; }
+                        th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; word-break: break-word; }
+                        th:first-child, td:first-child { width: 70px; min-width: 70px; }
+                        td:first-child, th:first-child { border-left: none; }
+                        td:last-child, th:last-child { border-right: none; }
+                        tr:last-child td { border-bottom: none; }
+                        h1 { font-size: 22pt; }
+                        .box-header-row th { text-align: center; font-size: 12pt; border: none; border-radius: 8px 8px 0 0; }
+                        .box-header-even { background-color: #334155; color: white; }
+                        .box-header-odd { background-color: #475569; color: white; }
+                        .item-header-row th { background-color: #e5e7eb; font-weight: bold; }
+                        .box-even { background-color: #f3f4f6; }
+                        .box-odd { background-color: #e5e7eb; }
+                        ${mobileStyles}
+                    </style>
+                </head>
+                <body>
+                    <h1>Move Master Inventory List</h1>
+                    <p>Generated on: ${new Date().toLocaleString()}</p>
+                    <table>
+                        <thead>
+                            <tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr>
+                        </thead>
+                        ${tableContent}
+                    </table>
+                </body>
+                </html>`;
+        }
         
         function generatePdf() {
             if (items.length === 0) {
