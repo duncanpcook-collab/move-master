@@ -982,12 +982,26 @@
         async function executeDelete() { try { if (itemToDelete) { await deleteDoc(doc(db, "users", currentUserId, "items", itemToDelete)); } if (boxToDelete) { const itemsInBoxQuery = query(collection(db, "users", currentUserId, "items"), where("boxId", "==", boxToDelete)); const itemsInBoxSnapshot = await getDocs(itemsInBoxQuery); const batch = writeBatch(db); itemsInBoxSnapshot.forEach(doc => batch.delete(doc.ref)); batch.delete(doc(db, "users", currentUserId, "boxes", boxToDelete)); await batch.commit(); } } catch (error) { console.error("Error deleting document: ", error); showInfoModal("Failed to delete. Please try again."); } closeConfirmModal(); }
         
         function openLoginModal() { loginModal.style.display = 'flex'; }
-        function openBoxModal() { document.getElementById('box-form').reset(); document.getElementById('box-id').value = ''; document.getElementById('box-modal-title').textContent = 'Add New Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.remove('hidden'); qrCodeSection.classList.add('hidden'); resetBoxPhotoPreview(); populateBoxTypeSelect(); boxModal.style.display = 'flex'; calculateVolume(); }
+        function openBoxModal() { 
+            document.getElementById('add-box-sound').play();
+            document.getElementById('box-form').reset(); 
+            document.getElementById('box-id').value = ''; 
+            document.getElementById('box-modal-title').textContent = 'Add New Box'; 
+            qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; 
+            printQrBtn.classList.add('hidden'); 
+            qrNewBoxNote.classList.remove('hidden'); 
+            qrCodeSection.classList.add('hidden'); 
+            resetBoxPhotoPreview(); 
+            populateBoxTypeSelect(); 
+            boxModal.style.display = 'flex'; 
+            calculateVolume(); 
+        }
         function openItemModal() {
             if (boxes.length === 0) {
                 showInfoModal('Please create a box first before adding an item.');
                 return;
             }
+            document.getElementById('add-item-sound').play();
             document.getElementById('item-form').reset();
             document.getElementById('item-id').value = '';
             document.getElementById('estimated-value').value = '';
@@ -1073,4 +1087,5 @@
     </script>
 </body>
 </html>
+
 
