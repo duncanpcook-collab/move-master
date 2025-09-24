@@ -330,6 +330,9 @@
             assignDOMElements();
             addEventListeners();
             initFirebase();
+            // Add a one-time event listener to initialize audio on the first user interaction.
+            document.body.addEventListener('click', initAudio, { once: true });
+            document.body.addEventListener('touchstart', initAudio, { once: true });
         });
 
         function assignDOMElements() {
