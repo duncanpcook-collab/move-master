@@ -73,7 +73,7 @@
                         <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
                         <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
                     </div>
-                    <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
+                    <div class="mt-4 flex w-full flex-col gap-2 sm:mt-0 sm:w-auto sm:flex-row sm:items-center">
                         <button id="quick-view-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-purple-600 sm:w-auto sm:text-base">
                             <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
                         </button>
@@ -86,7 +86,7 @@
                         <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600 sm:w-auto sm:text-base">
                             <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
                         </button>
-                        <div id="auth-container" class="contents col-span-2 sm:col-span-auto">
+                        <div id="auth-container" class="contents">
                             <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600 sm:w-auto sm:text-base">
                                 <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
                             </button>
@@ -103,8 +103,8 @@
         </header>
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
                     <div class="bg-blue-100 text-blue-600 p-4 rounded-full"><i class="fas fa-box-open text-2xl"></i></div>
                     <div class="ml-4">
                         <p class="text-gray-500 text-sm font-medium">Total Boxes</p>
@@ -112,9 +112,9 @@
                         <p id="box-breakdown" class="text-xs text-gray-500 mt-1 h-4"></p>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div></div>
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-purple-100 text-purple-600 p-4 rounded-full"><i class="fas fa-cube text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Volume</p><p id="total-volume" class="text-2xl font-bold">0 m³</p></div></div>
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
+                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-green-100 text-green-600 p-4 rounded-full"><i class="fas fa-clipboard-list text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Items</p><p id="total-items" class="text-2xl font-bold">0</p></div></div>
+                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-purple-100 text-purple-600 p-4 rounded-full"><i class="fas fa-cube text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Volume</p><p id="total-volume" class="text-2xl font-bold">0 m³</p></div></div>
+                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 flex items-center"><div class="bg-yellow-100 text-yellow-600 p-4 rounded-full"><i class="fas fa-dollar-sign text-2xl"></i></div><div class="ml-4"><p class="text-gray-500 text-sm font-medium">Total Estimated Value</p><p id="total-value" class="text-2xl font-bold">$0.00</p></div></div>
             </div>
             <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-4"><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></div><div class="relative flex-grow w-full sm:w-auto"><i class="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><select id="room-filter" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none"><option value="all">All Rooms</option></select></div><button id="reset-filters-btn" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300">Reset</button></div>
             <div id="inventory-list" class="space-y-6"></div>
@@ -289,13 +289,10 @@
             document.getElementById('cancel-box-modal-btn').addEventListener('click', closeBoxModal);
             document.getElementById('close-item-modal-btn').addEventListener('click', closeItemModal);
             document.getElementById('cancel-item-modal-btn').addEventListener('click', closeItemModal);
-            
-            // UPDATED: Added stopPropagation() to prevent click-through issue
             document.getElementById('close-photo-modal-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 closePhotoModal();
             });
-            
             document.getElementById('close-quick-view-modal-btn').addEventListener('click', closeQuickViewModal);
             
             boxDimensionInputs.forEach(input => input.addEventListener('input', calculateVolume));
@@ -461,28 +458,31 @@
             const boxEl = document.createElement('div');
             boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1 active:shadow-2xl active:-translate-y-1 cursor-pointer';
             
-            const itemsContainer = document.createElement('div');
-            itemsContainer.id = `items-of-box-${box.id}`;
-            itemsContainer.className = 'hidden'; 
+            const itemsContainer = document.getElementById('items-of-box-' + box.id);
+            if(itemsContainer) itemsContainer.innerHTML = ''; // Clear previous items before re-rendering
+            const newItemsContainer = document.createElement('div');
+            newItemsContainer.id = `items-of-box-${box.id}`;
+            newItemsContainer.className = 'hidden'; 
+            
             if (boxItems.length > 0) {
                 boxItems.forEach((item, index) => {
                     const itemEl = createItemEl(item);
                     if (index % 2 !== 0) {
-                        itemEl.classList.add('bg-gray-50');
+                        itemEl.classList.add('bg-indigo-50');
                     }
-                    itemsContainer.appendChild(itemEl);
+                    newItemsContainer.appendChild(itemEl);
                 });
             } else {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = 'p-4 text-gray-500 text-sm';
                 emptyMsg.textContent = 'No items in this box yet.';
-                itemsContainer.appendChild(emptyMsg);
+                newItemsContainer.appendChild(emptyMsg);
             }
 
             const header = document.createElement('div');
             header.className = 'bg-gray-100 p-4 border-b flex justify-between items-center';
             
-            boxEl.addEventListener('click', () => toggleBoxItems(box.id));
+            boxEl.addEventListener('click', () => toggleBoxItems(box.id, header));
 
             const boxPhotoThumb = box.photoDataUrl 
                 ? `<img src="${box.photoDataUrl}" class="h-12 w-12 rounded-md object-cover">` 
@@ -523,13 +523,13 @@
             });
             
             boxEl.appendChild(header);
-            boxEl.appendChild(itemsContainer);
+            boxEl.appendChild(newItemsContainer);
             return boxEl;
         }
 
         function createItemEl(item) {
             const itemEl = document.createElement('div');
-            itemEl.className = 'flex items-start gap-4 p-4 border-t border-gray-200';
+            itemEl.className = 'flex items-start gap-4 p-4 border-t border-gray-100';
             
             const hasPhotos = item.photoDataUrls && item.photoDataUrls.length > 0;
             const photoThumbHTML = hasPhotos
@@ -584,7 +584,19 @@
         async function handleSaveBox(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-box-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('box-id').value; const boxData = { number: document.getElementById('box-number').value, room: document.getElementById('box-room-area').value, height: parseFloat(document.getElementById('box-height').value) || 0, width: parseFloat(document.getElementById('box-width').value) || 0, length: parseFloat(document.getElementById('box-length').value) || 0, photoDataUrl: boxPhotoDataUrlCache }; boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000; try { if (id) { await setDoc(doc(db, "users", currentUserId, "boxes", id), boxData); } else { const newBoxRef = await addDoc(collection(db, "users", currentUserId, "boxes"), boxData); newestBoxId = newBoxRef.id; } closeBoxModal(); } catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Box'; } }
         async function handleSaveItem(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-item-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('item-id').value; const isNew = isNewCheckbox.checked; const itemData = { boxId: document.getElementById('item-box-select').value, name: document.getElementById('item-name').value, value: parseFloat(document.getElementById('estimated-value').value) || 0, notes: document.getElementById('item-notes').value, photoDataUrls: itemPhotosCache, isNew: isNew, purchaseDate: isNew ? document.getElementById('purchase-date').value : '', cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0, hasWood: document.getElementById('has-wood-checkbox').checked, isTreated: document.getElementById('is-treated-checkbox').checked, }; try { if (id) { await setDoc(doc(db, "users", currentUserId, "items", id), itemData); } else { await addDoc(collection(db, "users", currentUserId, "items"), itemData); } closeItemModal(); } catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; } }
 
-        function toggleBoxItems(boxId) { const itemsContainer = document.getElementById(`items-of-box-${boxId}`); const chevronIcon = document.getElementById(`chevron-for-box-${boxId}`); if (itemsContainer && chevronIcon) { const isHidden = itemsContainer.classList.contains('hidden'); itemsContainer.classList.toggle('hidden', !isHidden); chevronIcon.classList.toggle('rotate-180', isHidden); } };
+        function toggleBoxItems(boxId, headerEl) {
+            const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
+            const chevronIcon = document.getElementById(`chevron-for-box-${boxId}`);
+            if (itemsContainer && chevronIcon) {
+                const isHidden = itemsContainer.classList.contains('hidden');
+                itemsContainer.classList.toggle('hidden', !isHidden);
+                chevronIcon.classList.toggle('rotate-180', isHidden);
+                // UPDATED: Toggle header color on expand/collapse
+                headerEl.classList.toggle('bg-gray-100', !isHidden);
+                headerEl.classList.toggle('bg-indigo-100', isHidden);
+            }
+        };
+        
         function updateSummary() { document.getElementById('total-boxes').textContent = boxes.length; document.getElementById('total-items').textContent = items.length; const totalValue = items.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0); document.getElementById('total-value').textContent = `$${formatCurrency(totalValue)}`; const totalVolume = boxes.reduce((sum, box) => sum + (parseFloat(box.volume) || 0), 0); document.getElementById('total-volume').textContent = `${totalVolume.toFixed(3)} m³`; let mediumCount = 0, jumboCount = 0, customCount = 0; const mediumPreset = BOX_PRESETS.find(p => p.id === 'medium'); const jumboPreset = BOX_PRESETS.find(p => p.id === 'jumbo'); boxes.forEach(box => { const isMedium = mediumPreset && Math.abs(box.height - mediumPreset.h) < 0.1 && Math.abs(box.width - mediumPreset.w) < 0.1 && Math.abs(box.length - mediumPreset.l) < 0.1; const isJumbo = jumboPreset && Math.abs(box.height - jumboPreset.h) < 0.1 && Math.abs(box.width - jumboPreset.w) < 0.1 && Math.abs(box.length - jumboPreset.l) < 0.1; if (isMedium) mediumCount++; else if (isJumbo) jumboCount++; else if (box.height > 0 || box.width > 0 || box.length > 0) customCount++; }); const breakdownParts = []; if (jumboCount > 0) breakdownParts.push(`Jumbo: ${jumboCount}`); if (mediumCount > 0) breakdownParts.push(`Medium: ${mediumCount}`); if (customCount > 0) breakdownParts.push(`Custom: ${customCount}`); document.getElementById('box-breakdown').textContent = breakdownParts.join(' / '); }
         function updateRoomFilter() { const rooms = [...new Set(boxes.map(box => box.room))].sort(); const currentVal = roomFilter.value; roomFilter.innerHTML = '<option value="all">All Rooms</option>'; rooms.forEach(room => roomFilter.add(new Option(room, room))); if (rooms.includes(currentVal)) roomFilter.value = currentVal; }
         
@@ -611,7 +623,7 @@
             let tableContent = '';
             sortedBoxes.forEach((box, boxIndex) => {
                 const boxItems = (itemsByBox[box.id] || []).sort((a,b) => a.name.localeCompare(b.name));
-                if (boxItems.length === 0) return;
+                if (boxItems.length === 0 && mode === 'pdf') return; // Skip empty boxes in PDF
 
                 const headerClass = boxIndex % 2 === 0 ? 'box-header-even' : 'box-header-odd';
                 
@@ -620,6 +632,13 @@
                         <th colspan="6">Box ${box.number} - ${box.room}</th>
                     </tr>`;
                 
+                // Add a header row for the items, but it will be hidden on mobile by the CSS
+                if(boxItems.length > 0) {
+                     tableContent += `<tr class="item-header-row">
+                        <th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th>
+                    </tr>`;
+                }
+               
                 boxItems.forEach(item => {
                     const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
                     const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}" style="max-height:50px;max-width:50px;object-fit:cover;border-radius:4px;">` : '';
@@ -643,7 +662,7 @@
                         table, thead, tbody, th, td, tr { 
                             display: block; 
                         }
-                        thead {
+                        thead, .item-header-row {
                             display: none;
                         }
                         tr {
@@ -653,17 +672,17 @@
                             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
                             background-color: #fff;
                         }
-                        tbody tr:nth-of-type(odd) {
+                        tbody tr:nth-of-type(even) { /* nth-of-type(even) targets the item rows correctly now */
                             background-color: #f9fafb;
                         }
                         tr.box-header-row {
-                            border-radius: 8px 8px 0 0;
+                            border-radius: 8px;
                             margin-bottom: 0;
                             border-bottom: none;
                         }
                         tr.box-header-row th {
                             font-size: 14pt;
-                            border-radius: 8px 8px 0 0;
+                            border-radius: 8px;
                         }
                         td { 
                             border: none;
@@ -694,17 +713,18 @@
                     <title>Move Master Inventory</title>
                     <style>
                         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10pt; margin: 20px; background-color: #f3f4f6; }
-                        table { width: 100%; border-collapse: separate; border-spacing: 0 15px; }
-                        thead { display: table-header-group; }
-                        tbody { border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+                        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+                        thead { display: none; }
+                        tbody { border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-top: 15px; }
                         th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; word-break: break-word; }
                         td:first-child, th:first-child { border-left: none; }
                         td:last-child, th:last-child { border-right: none; }
                         tr:last-child td { border-bottom: none; }
                         h1 { font-size: 22pt; }
-                        .box-header-row th { color: white; text-align: center; font-size: 12pt; border: none; border-radius: 8px 8px 0 0; }
-                        .box-header-even { background-color: #4A5568; }
-                        .box-header-odd { background-color: #64748b; }
+                        .box-header-row th { text-align: center; font-size: 12pt; border: none; border-radius: 8px 8px 0 0; }
+                        .box-header-even { background-color: #4A5568; color: #f1f5f9; }
+                        .box-header-odd { background-color: #64748b; color: #f8fafc; }
+                        .item-header-row th { background-color: #e5e7eb; font-weight: bold; }
                         ${mobileStyles}
                     </style>
                 </head>
