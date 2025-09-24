@@ -538,7 +538,7 @@
 
         function createBoxEl(box, boxItems) {
             const boxEl = document.createElement('div');
-            boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out';
+            boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1 active:shadow-2xl active:-translate-y-1';
             
             const header = document.createElement('div');
             header.className = 'bg-gray-100 transition-colors duration-200';
@@ -568,7 +568,7 @@
             
             const actionsRow = document.createElement('div');
             actionsRow.id = `actions-for-box-${box.id}`;
-            actionsRow.className = 'hidden px-4 pb-2 justify-end border-t border-white/20 pt-2';
+            actionsRow.className = 'hidden px-4 pb-2 justify-end';
             actionsRow.innerHTML = `
                 <div class="flex items-center space-x-1">
                     <button data-action="edit-box" data-id="${box.id}" class="text-blue-300 p-2 rounded-full hover:bg-white/20"><i class="fas fa-pencil-alt"></i></button>
