@@ -29,7 +29,6 @@
         .photo-count-badge { position: absolute; bottom: 4px; right: 4px; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
         #quick-view-content-area { width: 100%; max-width: 1024px; }
         #quick-view-content-area iframe { width: 100%; height: 100%; border: 1px solid #ccc; }
-        
         .box-header-open {
             background-color: #475569 !important;
         }
@@ -79,17 +78,17 @@
                         <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
                     </div>
                     <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
-                        <button id="quick-view-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-purple-600 sm:w-auto sm:text-base">
-                            <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
-                        </button>
-                        <button id="export-btn" class="flex w-full items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-green-600 sm:w-auto sm:text-base">
-                            <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
-                        </button>
                         <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600 sm:w-auto sm:text-base">
                             <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
                         </button>
                         <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600 sm:w-auto sm:text-base">
                             <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
+                        </button>
+                        <button id="quick-view-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-purple-600 sm:w-auto sm:text-base">
+                            <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
+                        </button>
+                        <button id="export-btn" class="flex w-full items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-green-600 sm:w-auto sm:text-base">
+                            <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Print / Export</span>
                         </button>
                         <div id="auth-container" class="contents col-span-2 sm:col-span-auto">
                             <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600 sm:w-auto sm:text-base">
@@ -406,11 +405,12 @@
         function updateUIForLoginState(user) {
             const isLoggedIn = !!user;
             
-            const loggedOutElements = document.querySelectorAll('#guest-login-header-btn, #login-btn');
-            loggedOutElements.forEach(el => el.classList.toggle('hidden', isLoggedIn));
-
-            const loggedInElements = document.querySelectorAll('#logout-btn, #add-box-btn, #add-item-btn, #quick-view-btn');
-            loggedInElements.forEach(el => el.classList.toggle('hidden', !isLoggedIn));
+            document.getElementById('guest-login-header-btn').classList.toggle('hidden', isLoggedIn);
+            document.getElementById('login-btn').classList.toggle('hidden', isLoggedIn);
+            document.getElementById('logout-btn').classList.toggle('hidden', !isLoggedIn);
+            document.getElementById('add-box-btn').classList.toggle('hidden', !isLoggedIn);
+            document.getElementById('add-item-btn').classList.toggle('hidden', !isLoggedIn);
+            document.getElementById('quick-view-btn').classList.toggle('hidden', !isLoggedIn);
             
             if (user) {
                 const displayName = user.email === 'guest@guest.com' ? 'Guest (Demo)' : `Admin: ${user.email}`;
@@ -482,7 +482,7 @@
             header.className = 'bg-gray-100 p-4 border-b flex items-center justify-between transition-colors duration-200';
             
             boxEl.addEventListener('click', (e) => {
-                if (e.target.closest('button')) return;
+                if (e.target.closest('button') || e.target.closest('.box-thumb-container')) return;
                 toggleBoxItems(box.id, header);
             });
 
