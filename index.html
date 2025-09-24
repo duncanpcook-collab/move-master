@@ -40,6 +40,14 @@
         .box-header-open .box-details p {
             color: #cbd5e1 !important;
         }
+        @keyframes button-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: button-pop 0.2s ease-out;
+        }
     </style>
     <style id="print-styles">
         @media print {
@@ -272,10 +280,6 @@
 
     <datalist id="room-suggestions"><option value="Living Room"><option value="Dining Room"><option value="Kitchen"><option value="Bedroom 1"><option value="Bedroom 2"><option value="Office"><option value="Garage"><option value="Bathroom"><option value="Storage"></option></datalist>
 
-    <!-- Audio elements are kept as a fallback -->
-    <audio id="add-box-sound-element" src="https://assets.mixkit.co/sfx/preview/mixkit-hard-pop-click-2364.mp3" preload="auto"></audio>
-    <audio id="add-item-sound-element" src="https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3" preload="auto"></audio>
-
     <script type="module">
         // --- Firebase SDK Imports ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -326,9 +330,6 @@
             assignDOMElements();
             addEventListeners();
             initFirebase();
-            // Add a one-time event listener to initialize audio on the first user interaction.
-            document.body.addEventListener('click', initAudio, { once: true });
-            document.body.addEventListener('touchstart', initAudio, { once: true });
         });
 
         function assignDOMElements() {
@@ -697,8 +698,41 @@
             return itemEl;
         }
         
-        async function handleLogin(e) { e.preventDefault(); const email = document.getElementById('email').value; const password = document.getElementById('password').value; loginError.classList.add('hidden'); try { await signInWithEmailAndPassword(auth, email, password); closeLoginModal(); } catch (error) { if (error.code === 'auth/user-not-found') { try { await createUserWithEmailAndPassword(auth, email, password); closeLoginModal(); showInfoModal("Admin account created successfully! You can now find your User ID in the Firebase console to complete the setup.", "Account Created"); } catch (createError) { loginError.textContent = createError.message; loginError.classList.remove('hidden'); } } else { loginError.textContent = "Login failed: Invalid email or password."; loginError.classList.remove('hidden'); } } }
-        async function handleGuestLogin() { try { await signInWithEmailAndPassword(auth, 'guest@guest.com', 'guest123'); closeLoginModal(); } catch (error) { showInfoModal("Guest login failed. Please ensure the guest account has been created in Firebase with the password 'guest123'."); } }
+        async function handleLogin(e) { 
+            e.preventDefault(); 
+            const email = document.getElementById('email').value; 
+            const password = document.getElementById('password').value; 
+            loginError.classList.add('hidden'); 
+            try { 
+                await signInWithEmailAndPassword(auth, email, password); 
+                initAudio();
+                closeLoginModal(); 
+            } catch (error) { 
+                if (error.code === 'auth/user-not-found') { 
+                    try { 
+                        await createUserWithEmailAndPassword(auth, email, password); 
+                        initAudio();
+                        closeLoginModal(); 
+                        showInfoModal("Admin account created successfully! You can now find your User ID in the Firebase console to complete the setup.", "Account Created"); 
+                    } catch (createError) { 
+                        loginError.textContent = createError.message; 
+                        loginError.classList.remove('hidden'); 
+                    } 
+                } else { 
+                    loginError.textContent = "Login failed: Invalid email or password."; 
+                    loginError.classList.remove('hidden'); 
+                } 
+            } 
+        }
+        async function handleGuestLogin() { 
+            try { 
+                await signInWithEmailAndPassword(auth, 'guest@guest.com', 'guest123'); 
+                initAudio();
+                closeLoginModal(); 
+            } catch (error) { 
+                showInfoModal("Guest login failed. Please ensure the guest account has been created in Firebase with the password 'guest123'."); 
+            } 
+        }
         async function handleSaveBox(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-box-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('box-id').value; const boxData = { number: document.getElementById('box-number').value, room: document.getElementById('box-room-area').value, height: parseFloat(document.getElementById('box-height').value) || 0, width: parseFloat(document.getElementById('box-width').value) || 0, length: parseFloat(document.getElementById('box-length').value) || 0, photoDataUrl: boxPhotoDataUrlCache }; boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000; try { if (id) { await setDoc(doc(db, "users", currentUserId, "boxes", id), boxData); } else { const newBoxRef = await addDoc(collection(db, "users", currentUserId, "boxes"), boxData); newestBoxId = newBoxRef.id; } closeBoxModal(); } catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Box'; } }
         async function handleSaveItem(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-item-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('item-id').value; const isNew = isNewCheckbox.checked; const itemData = { boxId: document.getElementById('item-box-select').value, name: document.getElementById('item-name').value, value: parseFloat(document.getElementById('estimated-value').value) || 0, notes: document.getElementById('item-notes').value, photoDataUrls: itemPhotosCache, isNew: isNew, purchaseDate: isNew ? document.getElementById('purchase-date').value : '', cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0, hasWood: document.getElementById('has-wood-checkbox').checked, isTreated: document.getElementById('is-treated-checkbox').checked, }; try { if (id) { await setDoc(doc(db, "users", currentUserId, "items", id), itemData); } else { await addDoc(collection(db, "users", currentUserId, "items"), itemData); } closeItemModal(); } catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; } }
 
@@ -993,29 +1027,24 @@
         async function initAudio() {
             if (audioInitialized) return;
             audioInitialized = true;
-
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioContext.state === 'suspended') {
                     await audioContext.resume();
                 }
-
                 const soundUrls = {
                     addBox: 'https://assets.mixkit.co/sfx/preview/mixkit-hard-pop-click-2364.mp3',
                     addItem: 'https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3'
                 };
-
                 for (const key in soundUrls) {
                     const response = await fetch(soundUrls[key]);
                     const arrayBuffer = await response.arrayBuffer();
-                    audioContext.decodeAudioData(arrayBuffer, (buffer) => {
-                        soundBuffers[key] = buffer;
-                    }, (error) => {
-                        console.error(`Error decoding audio file ${key}:`, error);
-                    });
+                    const buffer = await audioContext.decodeAudioData(arrayBuffer);
+                    soundBuffers[key] = buffer;
                 }
             } catch (e) {
                 console.error("Could not initialize Web Audio API:", e);
+                audioInitialized = false; // Reset if failed
             }
         }
 
@@ -1026,19 +1055,20 @@
                 source.connect(audioContext.destination);
                 source.start(0);
             } else {
-                // Fallback for when Web Audio API fails or is not ready
-                const soundKey = soundId === 'addBox' ? 'add-box-sound-element' : 'add-item-sound-element';
-                const soundElement = document.getElementById(soundKey);
-                if (soundElement) {
-                     soundElement.play().catch(e => console.error("Fallback audio failed:", e));
-                }
+                console.log("Audio not ready or sound buffer not found for:", soundId);
             }
         }
 
+        function openLoginModal() { 
+            loginModal.style.display = 'flex'; 
+        }
 
-        function openLoginModal() { loginModal.style.display = 'flex'; }
         function openBoxModal() { 
             playSound('addBox');
+            document.querySelectorAll('[id^="add-box-btn"]').forEach(btn => {
+                btn.classList.add('animate-pop');
+                setTimeout(() => btn.classList.remove('animate-pop'), 200);
+            });
             document.getElementById('box-form').reset(); 
             document.getElementById('box-id').value = ''; 
             document.getElementById('box-modal-title').textContent = 'Add New Box'; 
@@ -1051,12 +1081,17 @@
             boxModal.style.display = 'flex'; 
             calculateVolume(); 
         }
+
         function openItemModal() {
             if (boxes.length === 0) {
                 showInfoModal('Please create a box first before adding an item.');
                 return;
             }
             playSound('addItem');
+             document.querySelectorAll('[id^="add-item-btn"]').forEach(btn => {
+                btn.classList.add('animate-pop');
+                setTimeout(() => btn.classList.remove('animate-pop'), 200);
+            });
             document.getElementById('item-form').reset();
             document.getElementById('item-id').value = '';
             document.getElementById('estimated-value').value = '';
