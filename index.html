@@ -31,6 +31,8 @@
         #quick-view-content-area iframe { width: 100%; height: 100%; border: 1px solid #ccc; }
         .box-header-open {
             background-color: #475569 !important;
+            /* This adds the requested separation line inside the header when open */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
         }
         .box-header-open h3,
         .box-header-open .admin-buttons-container button i,
@@ -464,7 +466,6 @@
             itemsContainer.id = `items-of-box-${box.id}`;
             itemsContainer.className = 'hidden'; 
             
-            // This container will hold the separator and the items
             const contentWrapper = document.createElement('div');
             
             if (boxItems.length > 0) {
@@ -596,21 +597,10 @@
             const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
             const chevronIcon = headerEl.querySelector('.fa-chevron-down');
             const qrButton = headerEl.querySelector('.box-header-qr-button');
-            const separator = document.getElementById(`separator-for-box-${boxId}`);
 
             if (itemsContainer && chevronIcon && headerEl) {
                 const isOpening = itemsContainer.classList.contains('hidden');
                 
-                // Add separator dynamically if opening and it doesn't exist
-                if (isOpening && !separator) {
-                    const newSeparator = document.createElement('hr');
-                    newSeparator.id = `separator-for-box-${boxId}`;
-                    newSeparator.className = 'border-t border-gray-200';
-                    headerEl.parentNode.insertBefore(newSeparator, itemsContainer);
-                } else if (!isOpening && separator) {
-                    separator.remove();
-                }
-
                 itemsContainer.classList.toggle('hidden');
                 chevronIcon.classList.toggle('rotate-180', isOpening);
                 headerEl.classList.toggle('box-header-open', isOpening);
