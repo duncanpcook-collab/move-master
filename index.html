@@ -272,8 +272,9 @@
 
     <datalist id="room-suggestions"><option value="Living Room"><option value="Dining Room"><option value="Kitchen"><option value="Bedroom 1"><option value="Bedroom 2"><option value="Office"><option value="Garage"><option value="Bathroom"><option value="Storage"></option></datalist>
 
-    <audio id="add-box-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-hard-pop-click-2364.mp3" preload="auto"></audio>
-    <audio id="add-item-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3" preload="auto"></audio>
+    <!-- Audio elements are kept as a fallback -->
+    <audio id="add-box-sound-element" src="https://assets.mixkit.co/sfx/preview/mixkit-hard-pop-click-2364.mp3" preload="auto"></audio>
+    <audio id="add-item-sound-element" src="https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3" preload="auto"></audio>
 
     <script type="module">
         // --- Firebase SDK Imports ---
@@ -295,6 +296,10 @@
         let newestBoxId = null;
         let unsubscribeBoxes = () => {};
         let unsubscribeItems = () => {};
+        
+        // --- Audio State ---
+        let audioContext;
+        let soundBuffers = {};
         let audioInitialized = false;
         
         const GUEST_USER_ID = "mZ6imyS71Uc9NYxgpDhDVQZ7Y6m2";
@@ -985,35 +990,55 @@
         function confirmDelete(type, id) { if (!currentUserId) return; if (type === 'item') {itemToDelete=id; boxToDelete=null;} if (type === 'box') {boxToDelete=id; itemToDelete=null;} confirmModal.style.display = 'flex'; }
         async function executeDelete() { try { if (itemToDelete) { await deleteDoc(doc(db, "users", currentUserId, "items", itemToDelete)); } if (boxToDelete) { const itemsInBoxQuery = query(collection(db, "users", currentUserId, "items"), where("boxId", "==", boxToDelete)); const itemsInBoxSnapshot = await getDocs(itemsInBoxQuery); const batch = writeBatch(db); itemsInBoxSnapshot.forEach(doc => batch.delete(doc.ref)); batch.delete(doc(db, "users", currentUserId, "boxes", boxToDelete)); await batch.commit(); } } catch (error) { console.error("Error deleting document: ", error); showInfoModal("Failed to delete. Please try again."); } closeConfirmModal(); }
         
-        function initAudio() {
+        async function initAudio() {
             if (audioInitialized) return;
-            const sounds = [document.getElementById('add-box-sound'), document.getElementById('add-item-sound')];
-            sounds.forEach(sound => {
-                if (sound) {
-                    sound.play().then(() => sound.pause()).catch(() => {});
-                    sound.currentTime = 0;
-                }
-            });
             audioInitialized = true;
+
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+
+                const soundUrls = {
+                    addBox: 'https://assets.mixkit.co/sfx/preview/mixkit-hard-pop-click-2364.mp3',
+                    addItem: 'https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3'
+                };
+
+                for (const key in soundUrls) {
+                    const response = await fetch(soundUrls[key]);
+                    const arrayBuffer = await response.arrayBuffer();
+                    audioContext.decodeAudioData(arrayBuffer, (buffer) => {
+                        soundBuffers[key] = buffer;
+                    }, (error) => {
+                        console.error(`Error decoding audio file ${key}:`, error);
+                    });
+                }
+            } catch (e) {
+                console.error("Could not initialize Web Audio API:", e);
+            }
         }
 
         function playSound(soundId) {
-            if (!audioInitialized) {
-                console.log("Audio not initialized by user gesture.");
-                return;
-            }
-            const sound = document.getElementById(soundId);
-            if (sound) {
-                sound.currentTime = 0; // Rewind to the start
-                sound.play().catch(error => {
-                    console.error(`Could not play sound ${soundId}:`, error);
-                });
+            if (audioContext && audioContext.state === 'running' && soundBuffers[soundId]) {
+                const source = audioContext.createBufferSource();
+                source.buffer = soundBuffers[soundId];
+                source.connect(audioContext.destination);
+                source.start(0);
+            } else {
+                // Fallback for when Web Audio API fails or is not ready
+                const soundKey = soundId === 'addBox' ? 'add-box-sound-element' : 'add-item-sound-element';
+                const soundElement = document.getElementById(soundKey);
+                if (soundElement) {
+                     soundElement.play().catch(e => console.error("Fallback audio failed:", e));
+                }
             }
         }
 
+
         function openLoginModal() { loginModal.style.display = 'flex'; }
         function openBoxModal() { 
-            playSound('add-box-sound');
+            playSound('addBox');
             document.getElementById('box-form').reset(); 
             document.getElementById('box-id').value = ''; 
             document.getElementById('box-modal-title').textContent = 'Add New Box'; 
@@ -1031,7 +1056,7 @@
                 showInfoModal('Please create a box first before adding an item.');
                 return;
             }
-            playSound('add-item-sound');
+            playSound('addItem');
             document.getElementById('item-form').reset();
             document.getElementById('item-id').value = '';
             document.getElementById('estimated-value').value = '';
