@@ -74,6 +74,20 @@
             .box-header-closed .qr-button {
                 display: inline-block;
             }
+            #logout-btn {
+                display: flex !important;
+                position: absolute;
+                top: 50%;
+                right: 10px;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                padding: 0;
+                box-shadow: none;
+            }
+            #logout-btn i {
+                font-size: 1.5rem;
+            }
         }
     </style>
     <style id="print-styles">
@@ -94,12 +108,6 @@
             .box-group-pdf {
                 page-break-inside: avoid;
             }
-            .box-even {
-                background-color: #f3f4f6;
-            }
-            .box-odd {
-                background-color: #e5e7eb;
-            }
         }
     </style>
 </head>
@@ -119,10 +127,10 @@
                         <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
                     </div>
                     <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
-                        <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-4 px-6 text-lg font-semibold text-white shadow-md glass-btn sm:py-2 sm:px-5 sm:text-base">
+                        <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-3 px-4 text-base font-semibold text-white shadow-md glass-btn sm:py-2 sm:text-base">
                             <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
                         </button>
-                        <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-4 px-6 text-lg font-semibold text-white shadow-md glass-btn sm:py-2 sm:px-5 sm:text-base">
+                        <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-3 px-4 text-base font-semibold text-white shadow-md glass-btn sm:py-2 sm:text-base">
                             <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
                         </button>
                         <button id="quick-view-btn" class="hidden flex w-full items-center justify-center rounded-lg border border-white/20 bg-white/10 py-2 px-4 text-sm font-semibold text-white shadow-md backdrop-blur-sm transition-colors hover:bg-white/20 sm:w-auto sm:text-base">
@@ -648,7 +656,7 @@
         async function handleSaveItem(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-item-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('item-id').value; const isNew = isNewCheckbox.checked; const itemData = { boxId: document.getElementById('item-box-select').value, name: document.getElementById('item-name').value, value: parseFloat(document.getElementById('estimated-value').value) || 0, notes: document.getElementById('item-notes').value, photoDataUrls: itemPhotosCache, isNew: isNew, purchaseDate: isNew ? document.getElementById('purchase-date').value : '', cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0, hasWood: document.getElementById('has-wood-checkbox').checked, isTreated: document.getElementById('is-treated-checkbox').checked, }; try { if (id) { await setDoc(doc(db, "users", currentUserId, "items", id), itemData); } else { await addDoc(collection(db, "users", currentUserId, "items"), itemData); } closeItemModal(); } catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; } }
 
         function toggleBoxItems(boxId, headerEl) {
-            const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
+            const itemsContainer = document.getElementById(`items-of-box-${box.id}`);
             const chevronIcon = headerEl.querySelector('.fa-chevron-down');
             if (itemsContainer && chevronIcon && headerEl) {
                 const isOpening = itemsContainer.classList.contains('hidden');
@@ -712,7 +720,7 @@
                 const headerClass = boxIndex % 2 === 0 ? 'box-header-even' : 'box-header-odd';
                 const itemHighlightClass = boxIndex % 2 === 0 ? 'item-highlight-even' : 'item-highlight-odd';
                 
-                tableContent += `<tbody class="box-group-pdf ${boxShadeClass}">
+                tableContent += `<tbody class="box-group-pdf">
                     <tr class="box-header-row ${headerClass}">
                         <th colspan="6">Box ${box.number} - ${box.room}</th>
                     </tr>`;
@@ -755,6 +763,7 @@
                             border-radius: 8px;
                             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
                             background-color: #fff;
+                            padding: 10px;
                         }
                         tbody tr:nth-of-type(even) {
                             background-color: #f9fafb;
@@ -767,19 +776,20 @@
                         tr.box-header-row th {
                             font-size: 14pt;
                             border-radius: 8px;
+                            padding: 12px;
                         }
                         td { 
                             border: none;
                             border-bottom: 1px solid #eee; 
                             position: relative;
-                            padding-left: 50%; 
+                            padding: 8px 50% 8px 0; 
                             text-align: right;
                             min-height: 30px;
                         }
                         td:before { 
                             position: absolute;
-                            left: 10px;
-                            width: 45%; 
+                            left: 0;
+                            width: 50%; 
                             padding-right: 10px; 
                             white-space: nowrap;
                             content: attr(data-label);
@@ -802,7 +812,7 @@
                         table { width: 100%; border-collapse: separate; border-spacing: 0; }
                         thead { display: table-header-group; }
                         tbody { border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-top: 15px; }
-                        th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; word-break: break-word; }
+                        th, td { border-bottom: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: middle; word-break: break-word; }
                         th:first-child, td:first-child { width: 70px; min-width: 70px; }
                         td:first-child, th:first-child { border-left: none; }
                         td:last-child, th:last-child { border-right: none; }
