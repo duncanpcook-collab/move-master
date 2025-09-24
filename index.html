@@ -458,37 +458,42 @@
 
         function createBoxEl(box, boxItems) {
             const boxEl = document.createElement('div');
-            boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1 active:shadow-2xl active:-translate-y-1 cursor-pointer';
+            boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1 active:shadow-2xl active:-translate-y-1';
             
             const itemsContainer = document.createElement('div');
             itemsContainer.id = `items-of-box-${box.id}`;
-            itemsContainer.className = 'hidden border-t border-gray-200'; 
+            itemsContainer.className = 'hidden'; 
+            
+            // This container will hold the separator and the items
+            const contentWrapper = document.createElement('div');
+            
             if (boxItems.length > 0) {
                 boxItems.sort((a,b) => a.name.localeCompare(b.name)).forEach((item, index) => {
                     const itemEl = createItemEl(item);
                     if (index % 2 !== 0) {
                         itemEl.classList.add('bg-indigo-50');
                     }
-                    itemsContainer.appendChild(itemEl);
+                    contentWrapper.appendChild(itemEl);
                 });
             } else {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = 'p-4 text-gray-500 text-sm';
                 emptyMsg.textContent = 'No items in this box yet.';
-                itemsContainer.appendChild(emptyMsg);
+                contentWrapper.appendChild(emptyMsg);
             }
+            itemsContainer.appendChild(contentWrapper);
 
             const header = document.createElement('div');
-            header.className = 'bg-gray-100 p-4 border-b flex items-center justify-between transition-colors duration-200';
+            header.className = 'bg-gray-100 p-4 flex items-center justify-between transition-colors duration-200 cursor-pointer';
             
-            boxEl.addEventListener('click', (e) => {
+            header.addEventListener('click', (e) => {
                 if (e.target.closest('button') || e.target.closest('.box-thumb-container')) return;
                 toggleBoxItems(box.id, header);
             });
 
             const boxPhotoThumb = box.photoDataUrl 
                 ? `<img src="${box.photoDataUrl}" class="h-12 w-12 rounded-md object-cover">` 
-                : '';
+                : `<div class="h-12 w-12 rounded-md bg-gray-300 flex items-center justify-center"><i class="fas fa-box text-white text-2xl"></i></div>`;
             
             const adminButtons = `
                 <button data-action="qrcode" data-id="${box.id}" class="text-gray-600 p-2 rounded-full hover:bg-gray-200 box-header-qr-button"><i class="fas fa-qrcode"></i></button>
@@ -591,8 +596,21 @@
             const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
             const chevronIcon = headerEl.querySelector('.fa-chevron-down');
             const qrButton = headerEl.querySelector('.box-header-qr-button');
+            const separator = document.getElementById(`separator-for-box-${boxId}`);
+
             if (itemsContainer && chevronIcon && headerEl) {
                 const isOpening = itemsContainer.classList.contains('hidden');
+                
+                // Add separator dynamically if opening and it doesn't exist
+                if (isOpening && !separator) {
+                    const newSeparator = document.createElement('hr');
+                    newSeparator.id = `separator-for-box-${boxId}`;
+                    newSeparator.className = 'border-t border-gray-200';
+                    headerEl.parentNode.insertBefore(newSeparator, itemsContainer);
+                } else if (!isOpening && separator) {
+                    separator.remove();
+                }
+
                 itemsContainer.classList.toggle('hidden');
                 chevronIcon.classList.toggle('rotate-180', isOpening);
                 headerEl.classList.toggle('box-header-open', isOpening);
