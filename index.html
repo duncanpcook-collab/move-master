@@ -23,12 +23,9 @@
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.8); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .spinner { border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: #4f46e5; animation: spin 1s ease infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .gallery-nav { position: absolute; top: 50%; transform: translateY(-50%); background-color: rgba(0,0,0,0.5); color: white; border: none; font-size: 2rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; user-select: none; }
-        .gallery-nav.prev { left: 1rem; }
-        .gallery-nav.next { right: 1rem; }
-        .photo-count-badge { position: absolute; bottom: 4px; right: 4px; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
         #quick-view-content-area { width: 100%; max-width: 1024px; }
         #quick-view-content-area iframe { width: 100%; height: 100%; border: 1px solid #ccc; }
+        
         .box-header-open {
             background-color: #475569 !important;
         }
@@ -73,33 +70,67 @@
         <header class="header-gradient text-white shadow-lg sticky top-0 z-30">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div class="flex flex-col sm:flex-row justify-between items-center">
-                    <div class="text-center sm:text-left">
-                        <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
-                        <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
+                    <div class="relative w-full flex justify-center sm:justify-start">
+                        <div class="text-center sm:text-left">
+                            <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
+                            <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
+                        </div>
+                        <button id="logout-btn-mobile" class="hidden absolute right-0 top-1/2 -translate-y-1/2 rounded-full bg-red-500/50 p-2 text-white shadow-md hover:bg-red-500 sm:hidden">
+                            <i class="fas fa-sign-out-alt h-5 w-5"></i>
+                        </button>
                     </div>
-                    <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
-                        <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600">
-                            <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
-                        </button>
-                        <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600">
-                            <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
-                        </button>
-                        <button id="quick-view-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-purple-600">
-                            <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
-                        </button>
-                        <button id="export-btn" class="flex w-full items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-green-600">
-                            <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
-                        </button>
-                        <div id="auth-container" class="contents col-span-2 sm:col-span-auto">
-                            <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600">
-                                <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
+                    
+                    <div class="mt-4 w-full sm:mt-0 sm:w-auto">
+                        <div class="flex flex-col gap-3 sm:hidden" id="mobile-nav">
+                            <div class="grid grid-cols-2 gap-3">
+                                <button data-action="add-box" class="hidden items-center justify-center rounded-lg bg-cyan-500 py-4 px-4 text-lg font-semibold text-white shadow-md">
+                                    <i class="fas fa-box mr-2"></i><span>Add Box</span>
+                                </button>
+                                <button data-action="add-item" class="hidden items-center justify-center rounded-lg bg-amber-500 py-4 px-4 text-lg font-semibold text-white shadow-md">
+                                    <i class="fas fa-plus-circle mr-2"></i><span>Add Item</span>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 mt-1">
+                                <button data-action="quick-view" class="hidden items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
+                                    <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
+                                </button>
+                                <button data-action="export-pdf" class="flex items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
+                                    <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
+                                </button>
+                            </div>
+                            <div id="auth-container-mobile" class="contents">
+                                <button data-action="guest-login" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
+                                    <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
+                                </button>
+                                <button data-action="login" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md">
+                                    <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hidden sm:flex sm:items-center sm:gap-x-3" id="desktop-nav">
+                            <button data-action="add-box" class="hidden items-center justify-center rounded-lg bg-cyan-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600">
+                                <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
                             </button>
-                            <button id="login-btn" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50">
-                                <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
+                            <button data-action="add-item" class="hidden items-center justify-center rounded-lg bg-amber-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600">
+                                <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
                             </button>
-                            <button id="logout-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600">
-                                <i class="fas fa-sign-out-alt mr-2"></i><span class="whitespace-nowrap">Logout</span>
+                            <button data-action="quick-view" class="hidden items-center justify-center rounded-lg border border-white/20 bg-purple-500/80 backdrop-blur-sm py-2 px-4 text-sm font-semibold text-white shadow-md transition-colors hover:bg-purple-500">
+                                <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
                             </button>
+                            <button data-action="export-pdf" class="flex items-center justify-center rounded-lg border border-white/20 bg-green-500/80 backdrop-blur-sm py-2 px-4 text-sm font-semibold text-white shadow-md transition-colors hover:bg-green-500">
+                                <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
+                            </button>
+                            <div id="auth-container-desktop" class="contents">
+                                <button data-action="guest-login" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600">
+                                    <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
+                                </button>
+                                <button data-action="login" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50">
+                                    <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
+                                </button>
+                                <button data-action="logout" class="hidden w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600">
+                                    <i class="fas fa-sign-out-alt mr-2"></i><span class="whitespace-nowrap">Logout</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -405,11 +436,12 @@
         function updateUIForLoginState(user) {
             const isLoggedIn = !!user;
             
-            const loggedOutElements = document.querySelectorAll('#guest-login-header-btn, #login-btn');
-            loggedOutElements.forEach(el => el.classList.toggle('hidden', isLoggedIn));
-
-            const loggedInElements = document.querySelectorAll('#logout-btn, #add-box-btn, #add-item-btn, #quick-view-btn');
-            loggedInElements.forEach(el => el.classList.toggle('hidden', !isLoggedIn));
+            document.getElementById('guest-login-header-btn').classList.toggle('hidden', isLoggedIn);
+            document.getElementById('login-btn').classList.toggle('hidden', isLoggedIn);
+            document.getElementById('logout-btn').classList.toggle('hidden', !isLoggedIn);
+            document.getElementById('add-box-btn').classList.toggle('hidden', !isLoggedIn);
+            document.getElementById('add-item-btn').classList.toggle('hidden', !isLoggedIn);
+            document.getElementById('quick-view-btn').classList.toggle('hidden', !isLoggedIn);
             
             if (user) {
                 const displayName = user.email === 'guest@guest.com' ? 'Guest (Demo)' : `Admin: ${user.email}`;
