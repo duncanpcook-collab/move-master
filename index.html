@@ -29,9 +29,8 @@
         .photo-count-badge { position: absolute; bottom: 4px; right: 4px; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
         #quick-view-content-area { width: 100%; max-width: 1024px; }
         #quick-view-content-area iframe { width: 100%; height: 100%; border: 1px solid #ccc; }
-        
         .box-header-open {
-            background-color: #475569 !important; /* Lighter slate color */
+            background-color: #475569 !important;
         }
         .box-header-open h3,
         .box-header-open .admin-buttons-container button i,
@@ -39,7 +38,7 @@
             color: white !important;
         }
         .box-header-open p {
-            color: #cbd5e1 !important; /* slate-300 */
+            color: #cbd5e1 !important;
         }
     </style>
     <style id="print-styles">
@@ -73,70 +72,34 @@
     <div id="app-container" class="hidden">
         <header class="header-gradient text-white shadow-lg sticky top-0 z-30">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <div class="flex flex-col sm:flex-row justify-between sm:items-center">
-                    <div class="relative w-full flex justify-center sm:justify-start">
-                        <div class="text-center sm:text-left">
-                            <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
-                            <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
-                        </div>
-                        <button id="logout-btn-mobile" class="hidden absolute right-0 top-1/2 -translate-y-1/2 rounded-full bg-red-500/50 p-2 text-white shadow-md hover:bg-red-500 sm:hidden">
-                            <i class="fas fa-sign-out-alt h-5 w-5"></i>
-                        </button>
+                <div class="flex flex-col sm:flex-row justify-between items-center">
+                    <div class="text-center sm:text-left">
+                        <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
+                        <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
                     </div>
-                    
-                    <div class="mt-4 w-full sm:mt-0 sm:w-auto">
-                        <!-- Mobile Button Layout -->
-                        <div class="flex flex-col gap-3 sm:hidden" id="mobile-nav">
-                            <div class="grid grid-cols-2 gap-3">
-                                <button data-action="add-box" class="hidden items-center justify-center rounded-lg bg-cyan-500 py-4 px-4 text-lg font-semibold text-white shadow-md">
-                                    <i class="fas fa-box mr-2"></i><span>Add Box</span>
-                                </button>
-                                <button data-action="add-item" class="hidden items-center justify-center rounded-lg bg-amber-500 py-4 px-4 text-lg font-semibold text-white shadow-md">
-                                    <i class="fas fa-plus-circle mr-2"></i><span>Add Item</span>
-                                </button>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3 mt-1">
-                                <button data-action="quick-view" class="hidden items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
-                                    <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
-                                </button>
-                                <button data-action="export-pdf" class="flex items-center justify-center rounded-lg bg-green-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
-                                    <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
-                                </button>
-                            </div>
-                            <div id="auth-container-mobile" class="contents">
-                                <button data-action="guest-login" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
-                                    <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
-                                </button>
-                                <button data-action="login" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md">
-                                    <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Desktop Button Layout -->
-                        <div class="hidden sm:flex sm:items-center sm:gap-x-3" id="desktop-nav">
-                            <button data-action="add-box" class="hidden items-center justify-center rounded-lg bg-cyan-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600">
-                                <i class="fas fa-box mr-2"></i><span>Add Box</span>
+                    <div class="mt-4 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:w-auto sm:grid-flow-col sm:auto-cols-auto sm:gap-x-3">
+                        <button id="add-box-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-cyan-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-cyan-600">
+                            <i class="fas fa-box mr-2"></i><span class="whitespace-nowrap">Add Box</span>
+                        </button>
+                        <button id="add-item-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-amber-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600">
+                            <i class="fas fa-plus-circle mr-2"></i><span class="whitespace-nowrap">Add Item</span>
+                        </button>
+                        <button id="quick-view-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-white/20 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-white/30">
+                            <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
+                        </button>
+                        <button id="export-btn" class="flex w-full items-center justify-center rounded-lg bg-white/20 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-white/30">
+                            <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
+                        </button>
+                        <div id="auth-container" class="contents col-span-2 sm:col-span-auto">
+                            <button id="guest-login-header-btn" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600">
+                                <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
                             </button>
-                            <button data-action="add-item" class="hidden items-center justify-center rounded-lg bg-amber-500 py-2 px-5 text-base font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-amber-600">
-                                <i class="fas fa-plus-circle mr-2"></i><span>Add Item</span>
+                            <button id="login-btn" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50">
+                                <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
                             </button>
-                            <button data-action="quick-view" class="hidden items-center justify-center rounded-lg bg-white/20 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-white/30">
-                                <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
+                            <button id="logout-btn" class="hidden flex w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600">
+                                <i class="fas fa-sign-out-alt mr-2"></i><span class="whitespace-nowrap">Logout</span>
                             </button>
-                            <button data-action="export-pdf" class="flex items-center justify-center rounded-lg bg-white/20 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-white/30">
-                                <i class="fas fa-file-pdf mr-2"></i><span class="whitespace-nowrap">Save as PDF</span>
-                            </button>
-                            <div id="auth-container-desktop" class="contents">
-                                <button data-action="guest-login" class="flex w-full items-center justify-center rounded-lg bg-gray-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-gray-600">
-                                    <i class="fas fa-user-secret mr-2"></i><span class="whitespace-nowrap">Guest Demo</span>
-                                </button>
-                                <button data-action="login" class="flex w-full items-center justify-center rounded-lg bg-white py-2 px-4 text-sm font-semibold text-indigo-600 shadow-md transition-transform hover:scale-105 hover:bg-indigo-50">
-                                    <i class="fas fa-sign-in-alt mr-2"></i><span class="whitespace-nowrap">Admin Login</span>
-                                </button>
-                                <button data-action="logout" class="hidden w-full items-center justify-center rounded-lg bg-red-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-red-600">
-                                    <i class="fas fa-sign-out-alt mr-2"></i><span class="whitespace-nowrap">Logout</span>
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -163,7 +126,6 @@
         </main>
     </div>
 
-    <!-- This container is for the QR code viewer -->
     <div id="viewer-container" class="hidden container mx-auto p-4 sm:p-6 lg:p-8">
         <h1 id="viewer-title" class="text-3xl font-bold tracking-tight text-gray-800 mb-6"></h1>
         <div id="viewer-item-list" class="space-y-4"></div>
@@ -309,18 +271,6 @@
             quickViewModal = document.getElementById('quick-view-modal');
         }
         
-        async function playSound(soundId) {
-            const sound = document.getElementById(soundId);
-            if (sound) {
-                sound.currentTime = 0;
-                try {
-                    await sound.play();
-                } catch (err) {
-                    console.error(`Audio playback failed for ${soundId}:`, err);
-                }
-            }
-        }
-
         function addEventListeners() {
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
             document.getElementById('add-box-btn').addEventListener('click', openBoxModal);
@@ -685,136 +635,53 @@
         function handleBoxTypeChange() { const selectedId = boxTypeSelect.value; const preset = BOX_PRESETS.find(p => p.id === selectedId); if (preset) { customDimensionsContainer.classList.add('hidden'); boxTypeThumbnail.src = preset.imgSrc; boxTypeThumbnail.classList.remove('hidden'); boxDimensionInputs[0].value = preset.h; boxDimensionInputs[1].value = preset.w; boxDimensionInputs[2].value = preset.l; } else { customDimensionsContainer.classList.remove('hidden'); boxTypeThumbnail.classList.add('hidden'); } calculateVolume(); }
 
         function generateInventoryHtml(mode = 'pdf') {
-            const sortedBoxes = [...boxes].sort((a,b) => parseInt(a.number) - parseInt(b.number));
-            const itemsByBox = items.reduce((acc, item) => {
-                if (!acc[item.boxId]) acc[item.boxId] = [];
-                acc[item.boxId].push(item);
-                return acc;
-            }, {});
+            const sortedData = [...items].sort((a, b) => {
+                const boxA = boxes.find(box => box.id === a.boxId) || {};
+                const boxB = boxes.find(box => box.id === b.boxId) || {};
+                const boxNumA = parseInt(boxA.number) || 0;
+                const boxNumB = parseInt(boxB.number) || 0;
+                if (boxNumA !== boxNumB) return boxNumA - boxNumB;
+                return a.name.localeCompare(b.name);
+            });
+            
+            let htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title><style>
+                body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:2em}
+                table{width:100%;border-collapse:collapse;margin-top:20px;font-size:12px; border-spacing: 0;}
+                th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:middle}
+                th{background-color:#e5e7eb;font-weight:bold}
+                th:first-child, td:first-child { width: 70px; min-width: 70px; }
+                th:nth-child(2), td:nth-child(2) { width: 60px; min-width: 60px; text-align: center; }
+                img{max-height:70px;max-width:70px;object-fit:cover;border-radius:4px}
+                h1{font-size:24px}
+                .box-header-row { background-color: #334155; color: white; font-weight: bold; text-align: center; }
+                .box-group-pdf { page-break-inside: avoid; }
+            </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p><table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`;
 
-            let tableContent = '';
-            sortedBoxes.forEach((box, boxIndex) => {
-                const boxItems = (itemsByBox[box.id] || []).sort((a,b) => a.name.localeCompare(b.name));
-                if (boxItems.length === 0 && mode === 'pdf') return;
-
-                const headerClass = boxIndex % 2 === 0 ? 'box-header-even' : 'box-header-odd';
-                const itemHighlightClass = boxIndex % 2 === 0 ? 'item-highlight-even' : 'item-highlight-odd';
+            let currentBoxId = null;
+            sortedData.forEach(item => {
+                const box = boxes.find(b => b.id === item.boxId) || { number: 'N/A', room: 'N/A' };
                 
-                tableContent += `<tbody class="box-group">
-                    <tr class="box-header-row ${headerClass}">
-                        <th colspan="6">Box ${box.number} - ${box.room}</th>
-                    </tr>`;
-                
-                if(boxItems.length > 0) {
-                     tableContent += `<tr class="item-header-row">
-                        <th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th>
-                    </tr>`;
+                if(item.boxId !== currentBoxId) {
+                    currentBoxId = item.boxId;
+                    htmlContent += `<tr class="box-header-row"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
                 }
-               
-                boxItems.forEach(item => {
-                    const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
-                    const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}" style="max-height:50px;max-width:50px;object-fit:cover;border-radius:4px;">` : '';
-                    tableContent += `
-                        <tr>
-                            <td data-label="Image">${imageTag}</td>
-                            <td data-label="Box #" class="${itemHighlightClass}">${box.number}</td>
-                            <td data-label="Room">${box.room}</td>
-                            <td data-label="Item Name">${item.name || ''}</td>
-                            <td data-label="Value">$${formatCurrency(item.value)}</td>
-                            <td data-label="Notes">${item.notes || ''}</td>
-                        </tr>`;
-                });
-                tableContent += `</tbody>`;
+                
+                const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
+                const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '';
+                
+                htmlContent += `<tr class="box-group-pdf">
+                    <td>${imageTag}</td>
+                    <td>${box.number}</td>
+                    <td>${box.room}</td>
+                    <td>${item.name || ''}</td>
+                    <td>$${formatCurrency(item.value)}</td>
+                    <td>${item.notes || ''}</td>
+                </tr>`;
             });
 
-            let mobileStyles = '';
-            if (mode === 'quickview') {
-                mobileStyles = `
-                    @media (max-width: 600px) {
-                        table, thead, tbody, th, td, tr { 
-                            display: block; 
-                        }
-                        thead, .item-header-row {
-                            display: none;
-                        }
-                        tr {
-                            border: 1px solid #ddd;
-                            margin-bottom: 10px;
-                            border-radius: 8px;
-                            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-                            background-color: #fff;
-                        }
-                        tbody tr:nth-of-type(even) {
-                            background-color: #f9fafb;
-                        }
-                        tr.box-header-row {
-                            border-radius: 8px;
-                            margin-bottom: 0;
-                            border-bottom: none;
-                        }
-                        tr.box-header-row th {
-                            font-size: 14pt;
-                            border-radius: 8px;
-                        }
-                        td { 
-                            border: none;
-                            border-bottom: 1px solid #eee; 
-                            position: relative;
-                            padding-left: 50%; 
-                            text-align: right;
-                            min-height: 30px;
-                        }
-                        td:before { 
-                            position: absolute;
-                            left: 10px;
-                            width: 45%; 
-                            padding-right: 10px; 
-                            white-space: nowrap;
-                            content: attr(data-label);
-                            font-weight: bold;
-                            text-align: left;
-                        }
-                        td.item-highlight-even { background-color: #eef2ff; }
-                        td.item-highlight-odd { background-color: #e0f2fe; }
-                    }
-                `;
-            }
-
-            return `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Move Master Inventory</title>
-                    <style>
-                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10pt; margin: 20px; background-color: #f3f4f6; }
-                        table { width: 100%; border-collapse: separate; border-spacing: 0; }
-                        thead { display: table-header-group; }
-                        tbody { border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-top: 15px; }
-                        th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; word-break: break-word; }
-                        th:first-child, td:first-child { width: 70px; min-width: 70px; }
-                        td:first-child, th:first-child { border-left: none; }
-                        td:last-child, th:last-child { border-right: none; }
-                        tr:last-child td { border-bottom: none; }
-                        h1 { font-size: 22pt; }
-                        .box-header-row th { text-align: center; font-size: 12pt; border: none; border-radius: 8px 8px 0 0; }
-                        .box-header-even { background-color: #334155; color: white; }
-                        .box-header-odd { background-color: #475569; color: white; }
-                        .item-header-row th { background-color: #e5e7eb; font-weight: bold; }
-                        ${mobileStyles}
-                    </style>
-                </head>
-                <body>
-                    <h1>Move Master Inventory List</h1>
-                    <p>Generated on: ${new Date().toLocaleString()}</p>
-                    <table>
-                        <thead>
-                            <tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr>
-                        </thead>
-                        ${tableContent}
-                    </table>
-                </body>
-                </html>`;
-        }
+            htmlContent += `</tbody></table></body></html>`;
+            return htmlContent;
+        };
         
         function generatePdf() {
             if (items.length === 0) {
@@ -832,7 +699,7 @@
                 image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: 'css', avoid: '.box-group' }
+                pagebreak: { mode: 'css', avoid: '.box-group-pdf' }
             };
 
             html2pdf().from(htmlToExport).set(options).toPdf().get('pdf').then(function (pdf) {
