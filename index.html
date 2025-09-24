@@ -34,7 +34,7 @@
             background-color: #475569 !important; /* Lighter slate color */
         }
         .box-header-open h3,
-        .box-header-open .admin-buttons-container button i, /* Target icons specifically */
+        .box-header-open .admin-buttons-container button i,
         .box-header-open i.fa-chevron-down {
             color: white !important;
         }
@@ -83,6 +83,7 @@
                             <i class="fas fa-sign-out-alt h-5 w-5"></i>
                         </button>
                     </div>
+                    
                     <div class="mt-4 w-full sm:mt-0 sm:w-auto">
                         <div class="flex flex-col gap-3 sm:hidden">
                             <div class="grid grid-cols-2 gap-3">
@@ -93,7 +94,7 @@
                                     <i class="fas fa-plus-circle mr-2"></i><span>Add Item</span>
                                 </button>
                             </div>
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-2 gap-3 mt-1">
                                 <button id="quick-view-btn-mobile" class="hidden items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md">
                                     <i class="fas fa-eye mr-2"></i><span class="whitespace-nowrap">Quick View</span>
                                 </button>
@@ -333,24 +334,28 @@
                 document.getElementById('add-item-sound').play();
                 openItemModal();
             };
+            const quickViewHandler = () => openQuickViewModal();
+            const pdfHandler = () => generatePdf();
+            const guestLoginHandler = () => handleGuestLogin();
+            const loginHandler = () => openLoginModal();
             
             // Desktop Listeners
-            loginBtn.addEventListener('click', openLoginModal);
+            loginBtn.addEventListener('click', loginHandler);
             logoutBtn.addEventListener('click', logoutHandler);
             addBoxBtn.addEventListener('click', addBoxHandler);
             addItemBtn.addEventListener('click', addItemHandler);
-            document.getElementById('export-btn').addEventListener('click', generatePdf);
-            quickViewBtn.addEventListener('click', openQuickViewModal);
-            guestLoginHeaderBtn.addEventListener('click', handleGuestLogin);
+            document.getElementById('export-btn').addEventListener('click', pdfHandler);
+            quickViewBtn.addEventListener('click', quickViewHandler);
+            guestLoginHeaderBtn.addEventListener('click', guestLoginHandler);
             
             // Mobile Listeners
             logoutBtnMobile.addEventListener('click', logoutHandler);
             addBoxBtnMobile.addEventListener('click', addBoxHandler);
             addItemBtnMobile.addEventListener('click', addItemHandler);
-            exportBtnMobile.addEventListener('click', generatePdf);
-            quickViewBtnMobile.addEventListener('click', openQuickViewModal);
-            loginBtnMobile.addEventListener('click', openLoginModal);
-            guestLoginBtnMobile.addEventListener('click', handleGuestLogin);
+            exportBtnMobile.addEventListener('click', pdfHandler);
+            quickViewBtnMobile.addEventListener('click', quickViewHandler);
+            loginBtnMobile.addEventListener('click', loginHandler);
+            guestLoginBtnMobile.addEventListener('click', guestLoginHandler);
 
             document.getElementById('reset-filters-btn').addEventListener('click', resetFilters);
             loginForm.addEventListener('submit', handleLogin);
@@ -477,9 +482,8 @@
         function updateUIForLoginState(user) {
             const isLoggedIn = !!user;
             
-            // Toggle visibility for all auth-related buttons
-            const authElements = document.querySelectorAll('#guest-login-header-btn, #login-btn, #guest-login-header-btn-mobile, #login-btn-mobile');
-            authElements.forEach(el => el.classList.toggle('hidden', isLoggedIn));
+            const loggedOutElements = document.querySelectorAll('#guest-login-header-btn, #login-btn, #guest-login-header-btn-mobile, #login-btn-mobile');
+            loggedOutElements.forEach(el => el.classList.toggle('hidden', isLoggedIn));
 
             const loggedInElements = document.querySelectorAll('#logout-btn, #logout-btn-mobile, #add-box-btn, #add-item-btn, #quick-view-btn, #add-box-btn-mobile, #add-item-btn-mobile, #quick-view-btn-mobile');
             loggedInElements.forEach(el => el.classList.toggle('hidden', !isLoggedIn));
@@ -551,7 +555,7 @@
             }
 
             const header = document.createElement('div');
-            header.className = 'bg-gray-100 p-4 border-b flex justify-between items-center transition-colors duration-200';
+            header.className = 'bg-gray-100 p-4 border-b flex flex-col transition-colors duration-200';
             
             boxEl.addEventListener('click', () => toggleBoxItems(box.id, header));
 
@@ -565,18 +569,18 @@
                 <button data-action="delete-box" data-id="${box.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
             
             header.innerHTML = `
-                <div class="flex items-center gap-4">
-                    <div class="box-thumb-container">${boxPhotoThumb}</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-indigo-700 transition-colors duration-200">Box ${box.number}</h3>
-                        <p class="text-sm text-gray-500 transition-colors duration-200">${box.room} <span class="mx-2 text-gray-300">|</span> ${box.volume ? box.volume.toFixed(3) : '0.000'} m³</p>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <div class="flex items-center space-x-1 admin-buttons-container">
-                        ${adminButtons}
+                <div class="flex justify-between items-center w-full">
+                    <div class="flex items-center gap-4">
+                        <div class="box-thumb-container">${boxPhotoThumb}</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-indigo-700 transition-colors duration-200">Box ${box.number}</h3>
+                            <p class="text-sm text-gray-500 transition-colors duration-200">${box.room} | ${box.volume ? box.volume.toFixed(3) : '0.000'} m³</p>
+                        </div>
                     </div>
                     <i id="chevron-for-box-${box.id}" class="fas fa-chevron-down text-gray-500 transition-transform duration-300 ml-4"></i>
+                </div>
+                <div class="flex items-center justify-end space-x-2 admin-buttons-container w-full mt-2 pt-2 border-t border-gray-200">
+                    ${adminButtons}
                 </div>`;
             
             if (box.photoDataUrl) {
@@ -774,8 +778,6 @@
                         tr.box-header-row th {
                             font-size: 14pt;
                             border-radius: 8px;
-                            background-color: #e0e7ff;
-                            color: #3730a3;
                         }
                         td { 
                             border: none;
@@ -852,7 +854,7 @@
                 image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { before: '.box-group', mode: 'css' }
+                pagebreak: { mode: 'css', before: '.box-group' }
             };
 
             html2pdf().from(htmlToExport).set(options).toPdf().get('pdf').then(function (pdf) {
