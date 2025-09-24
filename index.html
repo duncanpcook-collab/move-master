@@ -454,7 +454,7 @@
 
         function createBoxEl(box, boxItems) {
             const boxEl = document.createElement('div');
-            boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1 active:shadow-2xl active:-translate-y-1';
+            boxEl.className = 'bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out hover:shadow-2xl hover:-translate-y-1 active:shadow-2xl active:-translate-y-1 cursor-pointer';
             
             const itemsContainer = document.createElement('div');
             itemsContainer.id = `items-of-box-${box.id}`;
@@ -469,11 +469,13 @@
             }
 
             const header = document.createElement('div');
-            header.className = 'bg-gray-100 p-4 border-b flex justify-between items-center cursor-pointer';
-            header.addEventListener('click', () => toggleBoxItems(box.id));
+            header.className = 'bg-gray-100 p-4 border-b flex justify-between items-center';
+            
+            // The main click listener is now on the parent element, boxEl
+            boxEl.addEventListener('click', () => toggleBoxItems(box.id));
 
             const boxPhotoThumb = box.photoDataUrl 
-                ? `<img src="${box.photoDataUrl}" class="h-12 w-12 rounded-md object-cover cursor-pointer">` 
+                ? `<img src="${box.photoDataUrl}" class="h-12 w-12 rounded-md object-cover">` 
                 : '';
             
             const adminButtons = `
@@ -500,7 +502,7 @@
                 header.querySelector('.box-thumb-container').addEventListener('click', e => { e.stopPropagation(); openPhotoModal([box.photoDataUrl], 0) });
             }
             header.querySelector('.admin-buttons-container').addEventListener('click', e => {
-                e.stopPropagation();
+                e.stopPropagation(); // Stop this click from bubbling up to the boxEl click listener
                 const button = e.target.closest('button');
                 if (!button) return;
                 const action = button.dataset.action;
@@ -550,6 +552,7 @@
                 itemEl.querySelector('.photo-thumb-container').addEventListener('click', () => openPhotoModal(item.photoDataUrls, 0));
             }
             itemEl.querySelector('.item-buttons-container').addEventListener('click', (e) => {
+                e.stopPropagation(); // Stop this click from bubbling up to the boxEl click listener
                 const button = e.target.closest('button');
                 if (!button) return;
                 const action = button.dataset.action;
