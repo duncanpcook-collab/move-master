@@ -562,26 +562,14 @@
                     </div>
                 </div>
                 <div class="flex items-center flex-shrink-0">
-                    <div id="collapsed-actions-for-box-${box.id}" class="flex items-center">
-                         <button data-action="qrcode" data-id="${box.id}" class="text-gray-600 p-2 rounded-full hover:bg-gray-200"><i class="fas fa-qrcode"></i></button>
+                    <div id="actions-for-box-${box.id}" class="flex items-center">
                          <button data-action="edit-box" data-id="${box.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
                          <button data-action="delete-box" data-id="${box.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>
                     </div>
                     <i id="chevron-for-box-${box.id}" class="fas fa-chevron-down text-gray-500 transition-transform duration-300 ml-2"></i>
                 </div>`;
             
-            const actionsRow = document.createElement('div');
-            actionsRow.id = `actions-for-box-${box.id}`;
-            actionsRow.className = 'hidden px-4 pb-2 justify-end';
-            actionsRow.innerHTML = `
-                <div class="flex items-center space-x-1">
-                    <button data-action="edit-box" data-id="${box.id}" class="text-blue-300 p-2 rounded-full hover:bg-white/20"><i class="fas fa-pencil-alt"></i></button>
-                    <button data-action="delete-box" data-id="${box.id}" class="text-red-400 p-2 rounded-full hover:bg-white/20"><i class="fas fa-trash-alt"></i></button>
-                </div>
-            `;
-            
             header.appendChild(mainHeaderRow);
-            header.appendChild(actionsRow);
 
             const itemsContainer = document.createElement('div');
             itemsContainer.id = `items-of-box-${box.id}`;
@@ -611,17 +599,7 @@
                 toggleBoxItems(box.id, header);
             });
            
-            mainHeaderRow.querySelector('#collapsed-actions-for-box-'+box.id).addEventListener('click', e => {
-                 e.stopPropagation();
-                const button = e.target.closest('button');
-                if (!button) return;
-                const action = button.dataset.action;
-                const id = button.dataset.id;
-                if (action === 'qrcode') showQRCodeForBox(id);
-                if (action === 'edit-box') editBox(id);
-                if (action === 'delete-box') confirmDelete('box', id);
-            });
-            actionsRow.addEventListener('click', e => {
+            mainHeaderRow.querySelector('#actions-for-box-'+box.id).addEventListener('click', e => {
                  e.stopPropagation();
                 const button = e.target.closest('button');
                 if (!button) return;
@@ -695,8 +673,6 @@
 
         function toggleBoxItems(boxId, headerEl) {
             const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
-            const collapsedActions = document.getElementById(`collapsed-actions-for-box-${boxId}`);
-            const actionsRow = document.getElementById(`actions-for-box-${boxId}`);
             const chevronIcon = headerEl.querySelector(`#chevron-for-box-${boxId}`);
             const divider = headerEl.querySelector('hr');
 
@@ -705,12 +681,6 @@
                 
                 itemsContainer.classList.toggle('hidden');
                 
-                // Toggle visibility of buttons and divider
-                collapsedActions.classList.toggle('hidden', isOpening);
-                actionsRow.classList.toggle('hidden', !isOpening);
-                actionsRow.classList.toggle('flex', isOpening);
-                // divider.classList.toggle('hidden', !isOpening);
-
                 // General open state styling
                 chevronIcon.classList.toggle('rotate-180', isOpening);
                 headerEl.classList.toggle('box-header-open', isOpening);
@@ -733,13 +703,35 @@
             // Removed box breakdown logic for simplicity as it was hidden
         }
         
-        function editBox(id) { const box = boxes.find(b => b.id === id); if (!box) return; document.getElementById('box-form').reset(); document.getElementById('box-id').value = box.id; document.getElementById('box-number').value = box.number; document.getElementById('box-room-area').value = box.room; document.getElementById('box-height').value = box.height; document.getElementById('box-width').value = box.width; document.getElementById('box-length').value = box.length; document.getElementById('box-modal-title').textContent = 'Edit Box'; qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">QR Code will appear here</div>'; printQrBtn.classList.add('hidden'); qrNewBoxNote.classList.remove('hidden'); qrCodeSection.classList.add('hidden'); boxPhotoDataUrlCache = box.photoDataUrl; updateBoxPhotoPreview(); populateBoxTypeSelect(box); boxModal.style.display = 'flex'; calculateVolume(); }
+        function editBox(id) { 
+            const box = boxes.find(b => b.id === id); 
+            if (!box) return; 
+            document.getElementById('box-form').reset(); 
+            document.getElementById('box-id').value = box.id; 
+            document.getElementById('box-number').value = box.number; 
+            document.getElementById('box-room-area').value = box.room; 
+            document.getElementById('box-height').value = box.height; 
+            document.getElementById('box-width').value = box.width; 
+            document.getElementById('box-length').value = box.length; 
+            document.getElementById('box-modal-title').textContent = 'Edit Box'; 
+            
+            qrCodeContainer.innerHTML = '<div class="text-sm text-gray-500 p-2 text-center">Click Generate to create a QR code.</div>'; 
+            printQrBtn.classList.add('hidden'); 
+            qrNewBoxNote.classList.add('hidden'); 
+            qrCodeSection.classList.remove('hidden'); 
+            
+            boxPhotoDataUrlCache = box.photoDataUrl; 
+            updateBoxPhotoPreview(); 
+            populateBoxTypeSelect(box); 
+            boxModal.style.display = 'flex'; 
+            calculateVolume(); 
+        }
         function calculateVolume() { const h = parseFloat(boxDimensionInputs[0].value) || 0, w = parseFloat(boxDimensionInputs[1].value) || 0, l = parseFloat(boxDimensionInputs[2].value) || 0; document.getElementById('box-volume').textContent = `${((h * w * l) / 1000000).toFixed(3)} m³`; }
         function editItem(id) { const item = items.find(i => i.id === id); if (!item) return; document.getElementById('item-form').reset(); updateBoxSelector(item.boxId); document.getElementById('item-id').value = item.id; document.getElementById('item-name').value = item.name; document.getElementById('estimated-value').value = item.value; document.getElementById('item-notes').value = item.notes; isNewCheckbox.checked = item.isNew; newItemDetails.classList.toggle('hidden', !item.isNew); document.getElementById('purchase-date').value = item.purchaseDate; document.getElementById('item-cost').value = item.cost; document.getElementById('has-wood-checkbox').checked = item.hasWood; document.getElementById('is-treated-checkbox').checked = item.isTreated; itemPhotosCache = Array.isArray(item.photoDataUrls) ? [...item.photoDataUrls] : []; renderItemPhotoPreviews(); document.getElementById('item-modal-title').textContent = 'Edit Item'; itemModal.style.display = 'flex'; }
         function updateBoxSelector(selectedId) { const select = document.getElementById('item-box-select'); select.innerHTML = ''; boxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).forEach(box => select.add(new Option(`Box ${box.number} (${box.room})`, box.id))); if (selectedId) select.value = selectedId; }
         
         function generateQRCodeForBox() { const boxId = document.getElementById('box-id').value; if (!currentUserId) { showInfoModal("Please log in to generate a QR code."); return; } const box = boxes.find(b => b.id === boxId); if (!box) { showInfoModal('Could not find box details.'); return; } const baseUrl = window.location.href.split('?')[0]; const qrUrl = `${baseUrl}?userId=${currentUserId}&boxId=${boxId}`; qrCodeContainer.innerHTML = ''; new QRCode(qrCodeContainer, { text: qrUrl, width: 160, height: 160 }); printQrBtn.classList.remove('hidden'); qrCodeSection.classList.remove('hidden'); qrNewBoxNote.classList.add('hidden'); }
-        function showQRCodeForBox(boxId) { editBox(boxId); setTimeout(() => generateQRCodeForBox(), 100); }
+       
         function printQRCode() { const qrCodeImage = qrCodeContainer.querySelector('img').src; const boxNumber = document.getElementById('box-number').value; const room = document.getElementById('box-room-area').value; const printWindow = window.open('', '_blank'); printWindow.document.write(`<html><head><title>Print QR Code</title><style>body { font-family: sans-serif; text-align: center; margin-top: 50px; } img { width: 300px; height: 300px; } h2 { font-size: 2em; margin: 0; } p { font-size: 1.2em; }</style></head><body><h2>Box ${boxNumber}</h2><p>${room}</p><img src="${qrCodeImage}"><script>window.onload = function() { window.print(); window.onafterprint = function() { window.close(); }; }<\/script></body></html>`); printWindow.document.close(); }
         
         function populateBoxTypeSelect(box = null) { boxTypeSelect.innerHTML = ''; BOX_PRESETS.forEach(preset => boxTypeSelect.add(new Option(preset.name, preset.id))); boxTypeSelect.add(new Option('Custom Dimensions', 'custom')); let selectedType = 'medium'; if (box) { const mediumPreset = BOX_PRESETS[0]; const jumboPreset = BOX_PRESETS[1]; const isMedium = Math.abs(box.height - mediumPreset.h) < 0.1 && Math.abs(box.width - mediumPreset.w) < 0.1 && Math.abs(box.length - mediumPreset.l) < 0.1; const isJumbo = Math.abs(box.height - jumboPreset.h) < 0.1 && Math.abs(box.width - jumboPreset.w) < 0.1 && Math.abs(box.length - jumboPreset.l) < 0.1; if (isJumbo) selectedType = 'jumbo'; else if (isMedium) selectedType = 'medium'; else selectedType = 'custom'; } boxTypeSelect.value = selectedType; handleBoxTypeChange(); }
