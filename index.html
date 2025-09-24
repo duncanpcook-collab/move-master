@@ -52,9 +52,8 @@
                 font-family: sans-serif;
                 font-size: 10pt;
             }
-            .box-group {
+            tbody.box-group { /* Target the tbody for page break control */
                 page-break-inside: avoid;
-                padding-top: 10px;
             }
         }
     </style>
@@ -458,9 +457,16 @@
             
             const itemsContainer = document.createElement('div');
             itemsContainer.id = `items-of-box-${box.id}`;
-            itemsContainer.className = 'divide-y divide-gray-200 hidden';
+            itemsContainer.className = 'hidden'; // No need for divide-y, we'll style items individually
             if (boxItems.length > 0) {
-                boxItems.forEach(item => itemsContainer.appendChild(createItemEl(item)));
+                boxItems.forEach((item, index) => {
+                    const itemEl = createItemEl(item);
+                    // Add alternating background color for items
+                    if (index % 2 !== 0) {
+                        itemEl.classList.add('bg-gray-50');
+                    }
+                    itemsContainer.appendChild(itemEl);
+                });
             } else {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = 'p-4 text-gray-500 text-sm';
@@ -471,7 +477,6 @@
             const header = document.createElement('div');
             header.className = 'bg-gray-100 p-4 border-b flex justify-between items-center';
             
-            // The main click listener is now on the parent element, boxEl
             boxEl.addEventListener('click', () => toggleBoxItems(box.id));
 
             const boxPhotoThumb = box.photoDataUrl 
@@ -502,7 +507,7 @@
                 header.querySelector('.box-thumb-container').addEventListener('click', e => { e.stopPropagation(); openPhotoModal([box.photoDataUrl], 0) });
             }
             header.querySelector('.admin-buttons-container').addEventListener('click', e => {
-                e.stopPropagation(); // Stop this click from bubbling up to the boxEl click listener
+                e.stopPropagation();
                 const button = e.target.closest('button');
                 if (!button) return;
                 const action = button.dataset.action;
@@ -519,40 +524,49 @@
 
         function createItemEl(item) {
             const itemEl = document.createElement('div');
-            itemEl.className = 'p-4 grid grid-cols-6 gap-4 items-center';
+            // UPDATED: New Flexbox layout for the item row
+            itemEl.className = 'flex items-start gap-4 p-4 border-t border-gray-200';
             
             const hasPhotos = item.photoDataUrls && item.photoDataUrls.length > 0;
+            // UPDATED: Larger image thumbnail
             const photoThumbHTML = hasPhotos
-                ? `<div class="relative cursor-pointer">
-                      <img src="${item.photoDataUrls[0]}" class="h-12 w-12 rounded-md object-cover">
+                ? `<div class="relative cursor-pointer flex-shrink-0">
+                      <img src="${item.photoDataUrls[0]}" class="h-20 w-20 rounded-md object-cover">
                       ${item.photoDataUrls.length > 1 ? `<div class="photo-count-badge">+${item.photoDataUrls.length - 1}</div>` : ''}
                    </div>`
-                : `<div class="h-12 w-12 rounded-md bg-gray-200 flex items-center justify-center"><i class="fas fa-camera text-gray-400"></i></div>`;
+                : `<div class="h-20 w-20 rounded-md bg-gray-200 flex items-center justify-center flex-shrink-0"><i class="fas fa-camera text-gray-400 text-2xl"></i></div>`;
             
             const newTag = item.isNew ? '<span class="ml-2 text-xs font-semibold bg-green-100 text-green-800 px-2 py-0.5 rounded-full">NEW</span>' : '';
             let woodInfo = item.hasWood ? `<p class="text-xs text-amber-700 mt-1"><i class="fas fa-tree mr-1"></i> Wood ${item.isTreated ? '(Treated)' : '(Untreated)'}</p>` : '';
-            const adminButtonsHTML = `<button data-action="edit-item" data-id="${item.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button><button data-action="delete-item" data-id="${item.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
+            const adminButtonsHTML = `<div class="flex items-center justify-end space-x-1 item-buttons-container flex-shrink-0">
+                                        <button data-action="edit-item" data-id="${item.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
+                                        <button data-action="delete-item" data-id="${item.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>
+                                      </div>`;
 
+            // UPDATED: New structure for the item details
             itemEl.innerHTML = `
-                <div class="col-span-1 photo-thumb-container">${photoThumbHTML}</div>
-                <div class="col-span-6 sm:col-span-3">
-                    <p class="font-semibold flex items-center">${item.name} ${newTag}</p>
-                    <p class="text-sm text-gray-500">${item.notes || ''}</p>
-                    ${woodInfo}
-                </div>
-                <div class="col-span-3 sm:col-span-1 text-right sm:text-left">
-                    <p class="font-semibold text-green-600">$${formatCurrency(item.value)}</p>
-                </div>
-                <div class="col-span-3 sm:col-span-1 flex items-center justify-end space-x-2 item-buttons-container">
-                    ${adminButtonsHTML}
+                <div class="photo-thumb-container">${photoThumbHTML}</div>
+                <div class="flex-grow">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-semibold flex items-center">${item.name} ${newTag}</p>
+                            <p class="text-sm text-gray-500 mt-1">${item.notes || ''}</p>
+                            ${woodInfo}
+                        </div>
+                        ${adminButtonsHTML}
+                    </div>
+                    <p class="font-semibold text-green-600 mt-2 text-right">$${formatCurrency(item.value)}</p>
                 </div>
             `;
 
             if (hasPhotos) {
-                itemEl.querySelector('.photo-thumb-container').addEventListener('click', () => openPhotoModal(item.photoDataUrls, 0));
+                itemEl.querySelector('.photo-thumb-container').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openPhotoModal(item.photoDataUrls, 0);
+                });
             }
             itemEl.querySelector('.item-buttons-container').addEventListener('click', (e) => {
-                e.stopPropagation(); // Stop this click from bubbling up to the boxEl click listener
+                e.stopPropagation();
                 const button = e.target.closest('button');
                 if (!button) return;
                 const action = button.dataset.action;
@@ -585,51 +599,40 @@
         function handleBoxTypeChange() { const selectedId = boxTypeSelect.value; const preset = BOX_PRESETS.find(p => p.id === selectedId); if (preset) { customDimensionsContainer.classList.add('hidden'); boxTypeThumbnail.src = preset.imgSrc; boxTypeThumbnail.classList.remove('hidden'); boxDimensionInputs[0].value = preset.h; boxDimensionInputs[1].value = preset.w; boxDimensionInputs[2].value = preset.l; } else { customDimensionsContainer.classList.remove('hidden'); boxTypeThumbnail.classList.add('hidden'); } calculateVolume(); }
 
         function generateInventoryHtml(mode = 'pdf') {
-            const sortedData = [...items].sort((a, b) => {
-                const boxA = boxes.find(box => box.id === a.boxId) || {};
-                const boxB = boxes.find(box => box.id === b.boxId) || {};
-                const boxNumA = parseInt(boxA.number) || 0;
-                const boxNumB = parseInt(boxB.number) || 0;
-                if (boxNumA !== boxNumB) return boxNumA - boxNumB;
-                return a.name.localeCompare(b.name);
-            });
+            const sortedBoxes = [...boxes].sort((a,b) => parseInt(a.number) - parseInt(b.number));
+            const itemsByBox = items.reduce((acc, item) => {
+                if (!acc[item.boxId]) acc[item.boxId] = [];
+                acc[item.boxId].push(item);
+                return acc;
+            }, {});
 
-            let groupedContent = '';
-            let currentBoxId = null;
-            sortedData.forEach(item => {
-                const box = boxes.find(b => b.id === item.boxId) || { number: 'N/A', room: 'N/A' };
-                if (item.boxId !== currentBoxId) {
-                    if (currentBoxId !== null) {
-                        groupedContent += `</tbody></table></div>`;
-                    }
-                    currentBoxId = item.boxId;
-                    groupedContent += `<div class="box-group">
-                        <table>
-                            <thead>
-                                <tr class="box-header-row">
-                                    <th colspan="6">Box ${box.number} - ${box.room}</th>
-                                </tr>
-                                <tr>
-                                    <th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
-                }
-                const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
-                const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}" style="max-height:50px;max-width:50px;object-fit:cover;border-radius:4px;">` : '';
-                groupedContent += `
-                    <tr>
-                        <td data-label="Image">${imageTag}</td>
-                        <td data-label="Box #">${box.number}</td>
-                        <td data-label="Room">${box.room}</td>
-                        <td data-label="Item Name">${item.name || ''}</td>
-                        <td data-label="Value">$${formatCurrency(item.value)}</td>
-                        <td data-label="Notes">${item.notes || ''}</td>
+            let tableContent = '';
+            sortedBoxes.forEach((box, boxIndex) => {
+                const boxItems = (itemsByBox[box.id] || []).sort((a,b) => a.name.localeCompare(b.name));
+                if (boxItems.length === 0) return;
+
+                const headerClass = boxIndex % 2 === 0 ? 'box-header-even' : 'box-header-odd';
+                
+                tableContent += `<tbody class="box-group">
+                    <tr class="box-header-row ${headerClass}">
+                        <th colspan="6">Box ${box.number} - ${box.room}</th>
                     </tr>`;
+                
+                boxItems.forEach(item => {
+                    const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
+                    const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}" style="max-height:50px;max-width:50px;object-fit:cover;border-radius:4px;">` : '';
+                    tableContent += `
+                        <tr>
+                            <td data-label="Image">${imageTag}</td>
+                            <td data-label="Box #">${box.number}</td>
+                            <td data-label="Room">${box.room}</td>
+                            <td data-label="Item Name">${item.name || ''}</td>
+                            <td data-label="Value">$${formatCurrency(item.value)}</td>
+                            <td data-label="Notes">${item.notes || ''}</td>
+                        </tr>`;
+                });
+                tableContent += `</tbody>`;
             });
-            if (currentBoxId !== null) {
-                groupedContent += `</tbody></table></div>`;
-            }
 
             let mobileStyles = '';
             if (mode === 'quickview') {
@@ -638,10 +641,8 @@
                         table, thead, tbody, th, td, tr { 
                             display: block; 
                         }
-                        thead tr { 
-                            position: absolute;
-                            top: -9999px;
-                            left: -9999px;
+                        thead {
+                            display: none;
                         }
                         tr {
                             border: 1px solid #ddd;
@@ -652,6 +653,15 @@
                         }
                         tbody tr:nth-of-type(odd) {
                             background-color: #f9fafb;
+                        }
+                        tr.box-header-row {
+                            border-radius: 8px 8px 0 0;
+                            margin-bottom: 0;
+                            border-bottom: none;
+                        }
+                        tr.box-header-row th {
+                            font-size: 14pt;
+                            border-radius: 8px 8px 0 0;
                         }
                         td { 
                             border: none;
@@ -671,9 +681,6 @@
                             font-weight: bold;
                             text-align: left;
                         }
-                        .box-header-row th {
-                            font-size: 14pt;
-                        }
                     }
                 `;
             }
@@ -685,19 +692,28 @@
                     <title>Move Master Inventory</title>
                     <style>
                         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10pt; margin: 20px; background-color: #f3f4f6; }
-                        table { width: 100%; border-collapse: collapse; }
-                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; word-break: break-word; }
-                        th { background-color: #e5e7eb; font-weight: bold; }
+                        table { width: 100%; border-collapse: separate; border-spacing: 0 15px; }
+                        thead { display: none; } /* Hide the main thead, headers are in the tbody now */
+                        tbody { border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+                        th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; word-break: break-word; }
+                        td:first-child, th:first-child { border-left: none; }
+                        td:last-child, th:last-child { border-right: none; }
+                        tr:last-child td { border-bottom: none; }
                         h1 { font-size: 22pt; }
-                        .box-group { margin-top: 15px; }
-                        .box-header-row th { background-color: #4A5568; color: white; text-align: center; font-size: 12pt; }
+                        .box-header-row th { color: white; text-align: center; font-size: 12pt; border: none; }
+                        .box-header-even { background-color: #4A5568; }
+                        .box-header-odd { background-color: #64748b; }
                         ${mobileStyles}
                     </style>
                 </head>
                 <body>
                     <h1>Move Master Inventory List</h1>
                     <p>Generated on: ${new Date().toLocaleString()}</p>
-                    ${groupedContent}
+                    <table>
+                        <thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr>
+                        </thead>
+                        ${tableContent}
+                    </table>
                 </body>
                 </html>`;
         }
@@ -718,7 +734,7 @@
                 image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'] }
+                pagebreak: { before: '.box-group' }
             };
 
             html2pdf().from(htmlToExport).set(options).toPdf().get('pdf').then(function (pdf) {
