@@ -1134,14 +1134,24 @@
             }
         }
 
-        function playSound(soundId) {
-            if (audioContext && audioContext.state === 'running' && soundBuffers[soundId]) {
+        async function playSound(soundId) {
+            if (!audioContext || !soundBuffers[soundId]) {
+                console.log("Audio context not initialized or sound buffer not found for:", soundId);
+                return;
+            }
+
+            // Resume the AudioContext if it's been suspended by the browser
+            if (audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+
+            if (audioContext.state === 'running') {
                 const source = audioContext.createBufferSource();
                 source.buffer = soundBuffers[soundId];
                 source.connect(audioContext.destination);
                 source.start(0);
             } else {
-                console.log("Audio not ready or sound buffer not found for:", soundId);
+                 console.log("Audio context is not running. State:", audioContext.state);
             }
         }
 
