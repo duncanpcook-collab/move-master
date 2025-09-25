@@ -184,7 +184,7 @@
                                <span class="font-bold text-gray-800 text-base sm:text-lg text-right" id="total-boxes-custom">0</span>
                                <span class="text-left">Custom</span>
                             </div>
-                        </div>
+                         </div>
                     </div>
                 </div>
                 <!-- Total Items -->
@@ -733,8 +733,79 @@
                 showInfoModal("Guest login failed. Please ensure the guest account has been created in Firebase with the password 'guest123'."); 
             } 
         }
-        async function handleSaveBox(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-box-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('box-id').value; const boxData = { number: document.getElementById('box-number').value, room: document.getElementById('box-room-area').value, height: parseFloat(document.getElementById('box-height').value) || 0, width: parseFloat(document.getElementById('box-width').value) || 0, length: parseFloat(document.getElementById('box-length').value) || 0, photoDataUrl: boxPhotoDataUrlCache }; boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000; try { if (id) { await setDoc(doc(db, "users", currentUserId, "boxes", id), boxData); } else { const newBoxRef = await addDoc(collection(db, "users", currentUserId, "boxes"), boxData); newestBoxId = newBoxRef.id; } closeBoxModal(); } catch (error) { console.error("Error saving box: ", error); showInfoModal("Failed to save box. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Box'; } }
-        async function handleSaveItem(e) { e.preventDefault(); if (!currentUserId) { showInfoModal("You must be logged in to save changes."); return; } const saveBtn = document.getElementById('save-item-btn'); saveBtn.disabled = true; saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`; const id = document.getElementById('item-id').value; const isNew = isNewCheckbox.checked; const itemData = { boxId: document.getElementById('item-box-select').value, name: document.getElementById('item-name').value, value: parseFloat(document.getElementById('estimated-value').value) || 0, notes: document.getElementById('item-notes').value, photoDataUrls: itemPhotosCache, isNew: isNew, purchaseDate: isNew ? document.getElementById('purchase-date').value : '', cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0, hasWood: document.getElementById('has-wood-checkbox').checked, isTreated: document.getElementById('is-treated-checkbox').checked, }; try { if (id) { await setDoc(doc(db, "users", currentUserId, "items", id), itemData); } else { await addDoc(collection(db, "users", currentUserId, "items"), itemData); } closeItemModal(); } catch (error) { console.error("Error saving item: ", error); showInfoModal("Failed to save item. Please try again."); } finally { saveBtn.disabled = false; saveBtn.innerHTML = 'Save Item'; } }
+        async function handleSaveBox(e) {
+            e.preventDefault();
+            if (!currentUserId) {
+                showInfoModal("You must be logged in to save changes.");
+                return;
+            }
+            const saveBtn = document.getElementById('save-box-btn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
+            const id = document.getElementById('box-id').value;
+            const boxData = {
+                number: document.getElementById('box-number').value,
+                room: document.getElementById('box-room-area').value,
+                height: parseFloat(document.getElementById('box-height').value) || 0,
+                width: parseFloat(document.getElementById('box-width').value) || 0,
+                length: parseFloat(document.getElementById('box-length').value) || 0,
+                photoDataUrl: boxPhotoDataUrlCache
+            };
+            boxData.volume = (boxData.height * boxData.width * boxData.length) / 1000000;
+            try {
+                if (id) {
+                    await setDoc(doc(db, "users", currentUserId, "boxes", id), boxData);
+                } else {
+                    const newBoxRef = await addDoc(collection(db, "users", currentUserId, "boxes"), boxData);
+                    newestBoxId = newBoxRef.id;
+                }
+                closeBoxModal();
+            } catch (error) {
+                console.error("Error saving box: ", error);
+                showInfoModal("Failed to save box. Please try again.");
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = 'Save Box';
+            }
+        }
+        async function handleSaveItem(e) {
+            e.preventDefault();
+            if (!currentUserId) {
+                showInfoModal("You must be logged in to save changes.");
+                return;
+            }
+            const saveBtn = document.getElementById('save-item-btn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Saving...`;
+            const id = document.getElementById('item-id').value;
+            const isNew = isNewCheckbox.checked;
+            const itemData = {
+                boxId: document.getElementById('item-box-select').value,
+                name: document.getElementById('item-name').value,
+                value: parseFloat(document.getElementById('estimated-value').value) || 0,
+                notes: document.getElementById('item-notes').value,
+                photoDataUrls: itemPhotosCache,
+                isNew: isNew,
+                purchaseDate: isNew ? document.getElementById('purchase-date').value : '',
+                cost: isNew ? parseFloat(document.getElementById('item-cost').value) || 0 : 0,
+                hasWood: document.getElementById('has-wood-checkbox').checked,
+                isTreated: document.getElementById('is-treated-checkbox').checked,
+            };
+            try {
+                if (id) {
+                    await setDoc(doc(db, "users", currentUserId, "items", id), itemData);
+                } else {
+                    await addDoc(collection(db, "users", currentUserId, "items"), itemData);
+                }
+                closeItemModal();
+            } catch (error) {
+                console.error("Error saving item: ", error);
+                showInfoModal("Failed to save item. Please try again.");
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = 'Save Item';
+            }
+        }
 
         function toggleBoxItems(boxId, headerEl) {
             const itemsContainer = document.getElementById(`items-of-box-${boxId}`);
@@ -756,7 +827,7 @@
                     divider.classList.toggle('border-white/20', isOpening);
                 }
             }
-        };
+        }
         
         function updateSummary() {
             document.getElementById('total-boxes').textContent = boxes.length;
@@ -926,9 +997,9 @@
             </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}${boxTypesHtml}<table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead>`;
 
             const sortedBoxIds = Object.keys(groupedByBox).sort((a, b) => {
-                 const boxA = boxes.find(box => box.id === a) || {};
-                 const boxB = boxes.find(box => box.id === b) || {};
-                 return (parseInt(boxA.number) || 0) - (parseInt(boxB.number) || 0);
+                  const boxA = boxes.find(box => box.id === a) || {};
+                  const boxB = boxes.find(box => box.id === b) || {};
+                  return (parseInt(boxA.number) || 0) - (parseInt(boxB.number) || 0);
             });
 
             sortedBoxIds.forEach(boxId => {
@@ -956,7 +1027,7 @@
 
             htmlContent += `</table></body></html>`;
             return htmlContent;
-        };
+        }
         
         function generatePdf() {
             if (items.length === 0) {
@@ -1024,6 +1095,16 @@
         function confirmDelete(type, id) { if (!currentUserId) return; if (type === 'item') {itemToDelete=id; boxToDelete=null;} if (type === 'box') {boxToDelete=id; itemToDelete=null;} confirmModal.style.display = 'flex'; }
         async function executeDelete() { try { if (itemToDelete) { await deleteDoc(doc(db, "users", currentUserId, "items", itemToDelete)); } if (boxToDelete) { const itemsInBoxQuery = query(collection(db, "users", currentUserId, "items"), where("boxId", "==", boxToDelete)); const itemsInBoxSnapshot = await getDocs(itemsInBoxQuery); const batch = writeBatch(db); itemsInBoxSnapshot.forEach(doc => batch.delete(doc.ref)); batch.delete(doc(db, "users", currentUserId, "boxes", boxToDelete)); await batch.commit(); } } catch (error) { console.error("Error deleting document: ", error); showInfoModal("Failed to delete. Please try again."); } closeConfirmModal(); }
         
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+        
         async function initAudio() {
             if (audioInitialized) return;
             audioInitialized = true;
@@ -1032,16 +1113,21 @@
                 if (audioContext.state === 'suspended') {
                     await audioContext.resume();
                 }
-                const soundUrls = {
-                    addBox: 'https://assets.mixkit.co/sfx/preview/mixkit-hard-pop-click-2364.mp3',
-                    addItem: 'https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3'
+                
+                // Base64 encoded WAV files
+                const soundData = {
+                    addBox: 'UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSQAAAAA/v//f/7//3/+///+//9//v//f/7//3/+///+//9//v//f/7//3/+///+//9//v//f/7//3/+///+//9//g==',
+                    addItem: 'UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSBvT18AAAAA//8DAAAAAQABAA=='
                 };
-                for (const key in soundUrls) {
-                    const response = await fetch(soundUrls[key]);
-                    const arrayBuffer = await response.arrayBuffer();
-                    const buffer = await audioContext.decodeAudioData(arrayBuffer);
-                    soundBuffers[key] = buffer;
-                }
+
+                const audioPromises = Object.keys(soundData).map(key => {
+                    const arrayBuffer = base64ToArrayBuffer(soundData[key]);
+                    return audioContext.decodeAudioData(arrayBuffer).then(buffer => {
+                        soundBuffers[key] = buffer;
+                    });
+                });
+                await Promise.all(audioPromises);
+
             } catch (e) {
                 console.error("Could not initialize Web Audio API:", e);
                 audioInitialized = false; // Reset if failed
