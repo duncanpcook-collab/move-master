@@ -918,6 +918,19 @@
                 return a.name.localeCompare(b.name);
             });
             
+            // --- Color Palette for Boxes ---
+            const boxColors = [
+                '#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', 
+                '#A0C4FF', '#BDB2FF', '#FFC6FF', '#E4C1F9', '#F1C0B9'
+            ];
+            const boxColorMap = {};
+            let colorIndex = 0;
+            const sortedBoxIds = boxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).map(b => b.id);
+            sortedBoxIds.forEach(id => {
+                boxColorMap[id] = boxColors[colorIndex % boxColors.length];
+                colorIndex++;
+            });
+            
             // --- Summary Calculation ---
             const totalBoxesCount = boxes.length;
             const totalItemsCount = items.length;
@@ -975,12 +988,14 @@
             let htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title><style>
                 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:2em}
                 table{width:100%;border-collapse:collapse;margin-top:1em;font-size:12px; border-spacing: 0;}
-                th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:middle}
+                th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:middle; word-wrap: break-word;}
                 thead { display: table-header-group; }
-                tr { page-break-inside: avoid; page-break-after: auto; }
+                tr { page-break-inside: avoid !important; }
+                tbody.box-group { page-break-inside: avoid; }
                 th{background-color:#e5e7eb;font-weight:bold}
                 th:first-child, td:first-child { width: 70px; min-width: 70px; }
                 th:nth-child(2), td:nth-child(2) { width: 60px; min-width: 60px; text-align: center; }
+                td.box-number-cell { color: #333; font-weight: bold; }
                 img{max-height:70px;max-width:70px;object-fit:cover;border-radius:4px}
                 h1{font-size:24px; margin-bottom: 0.5em; page-break-inside: avoid;}
                 .box-header-row { background-color: #334155; color: white; font-weight: bold; text-align: center; page-break-after: avoid; }
@@ -996,15 +1011,11 @@
                 .box-types-card dd { margin: 0; color: #4b5563; }
             </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}${boxTypesHtml}<table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead>`;
 
-            const sortedBoxIds = Object.keys(groupedByBox).sort((a, b) => {
-                  const boxA = boxes.find(box => box.id === a) || {};
-                  const boxB = boxes.find(box => box.id === b) || {};
-                  return (parseInt(boxA.number) || 0) - (parseInt(boxB.number) || 0);
-            });
-
             sortedBoxIds.forEach(boxId => {
                 const boxItems = groupedByBox[boxId];
+                if (!boxItems) return; // Skip if a box has no items after filtering
                 const box = boxes.find(b => b.id === boxId) || { number: 'N/A', room: 'N/A' };
+                const boxColor = boxColorMap[boxId] || '#FFFFFF';
                 
                 htmlContent += `<tbody class="box-group">`;
                 htmlContent += `<tr class="box-header-row"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
@@ -1015,7 +1026,7 @@
                     
                     htmlContent += `<tr>
                         <td>${imageTag}</td>
-                        <td>${box.number}</td>
+                        <td class="box-number-cell" style="background-color: ${boxColor};">${box.number}</td>
                         <td>${box.room}</td>
                         <td>${item.name || ''}</td>
                         <td>$${formatCurrency(item.value)}</td>
@@ -1273,4 +1284,5 @@
     </script>
 </body>
 </html>
+
 
