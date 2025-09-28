@@ -49,26 +49,6 @@
             animation: button-pop 0.2s ease-out;
         }
     </style>
-    <style id="print-styles">
-        @media print {
-            @page {
-                size: A4;
-                margin: 20mm;
-                @bottom-right {
-                    content: "Page " counter(page) " of " counter(pages);
-                    font-family: sans-serif;
-                    font-size: 10pt;
-                }
-            }
-            body {
-                font-family: sans-serif;
-                font-size: 10pt;
-            }
-            .box-group-pdf {
-                page-break-inside: avoid;
-            }
-        }
-    </style>
 </head>
 <body class="text-gray-800">
 
