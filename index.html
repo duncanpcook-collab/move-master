@@ -1053,7 +1053,7 @@
                 td.box-number-cell { color: #333; font-weight: bold; }
                 img{max-height:70px;max-width:100%;object-fit:cover;border-radius:4px}
                 h1, .box-header-row { page-break-inside: avoid; }
-                .summary-grid, .box-types-card { page-break-inside: avoid; } /* Keep summary blocks together */
+                .summary-section { page-break-after: always; }
                 .box-header-row { page-break-after: avoid; background-color: #334155; color: white; font-weight: bold; text-align: center; }
                 .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin-bottom: 1em; }
                 .summary-card { background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1em; text-align: center; font-size: 12px; }
@@ -1114,27 +1114,24 @@
             const content = element.querySelector('#pdf-content');
 
             const options = {
-                margin: [25, 10, 15, 10], // Increased top margin for header
+                margin: [15, 10, 15, 10], 
                 filename: `Move-Master-Inventory-${new Date().toISOString().slice(0,10)}.pdf`,
                 image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'] }
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
             html2pdf().from(content).set(options).toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
                 const tableHeader = element.querySelector('thead').outerHTML;
-                const headerHTML = `<div style="position: absolute; top: 15mm; left: 10mm; right: 10mm;"><table>${tableHeader}</table></div>`;
+                const headerHTML = `<div style="position: absolute; top: 15mm; left: 10mm; right: 10mm; font-size:12px; "><table>${tableHeader}</table></div>`;
 
-                for (let i = 2; i <= totalPages; i++) {
+                for (let i = 2; i <= totalPages; i++) { // Start from page 2 for repeating headers
                     pdf.setPage(i);
                      pdf.html(headerHTML, {
-                        html2canvas: {
-                            scale: 2, // Match the original scale
-                        },
+                         callback: () => {},
                         x: 0,
-                        y: 0,
+                        y: -15
                     });
                 }
                  for (let i = 1; i <= totalPages; i++) {
