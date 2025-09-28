@@ -308,9 +308,9 @@
         
         const GUEST_USER_EMAIL = "guest@guest.com";
         // UID of the guest@guest.com account itself, used for QR code sharing checks
-        const GUEST_USER_UID = "FzazuoOmr8ZVyM6r2EOGZEg1LqB3";
+        const GUEST_USER_UID = "mZ6imyS71Uc9NYxgpDhDVQZ7Y6m2";
         // IMPORTANT: This is the User ID of the main admin account whose data will be displayed in the demo.
-        const ADMIN_USER_ID_FOR_DEMO = "mZ6imyS71Uc9NYxgpDhDVQZ7Y6m2";
+        const ADMIN_USER_ID_FOR_DEMO = "FzazuoOmr8ZVyM6r2EOGZEg1LqB3";
         
         // --- Box Presets ---
         const MEDIUM_BOX_IMG_URL = 'https://placehold.co/100x100/DEB887/333333?text=Medium';
@@ -1114,7 +1114,7 @@
             const content = element.querySelector('#pdf-content');
 
             const options = {
-                margin: [15, 10, 15, 10], 
+                margin: [25, 10, 15, 10], // Increased top margin for header
                 filename: `Move-Master-Inventory-${new Date().toISOString().slice(0,10)}.pdf`,
                 image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true },
