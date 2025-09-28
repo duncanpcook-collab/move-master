@@ -433,9 +433,6 @@
             });
         }
 
-        function isGuest() {
-            return auth.currentUser && auth.currentUser.email === GUEST_USER_EMAIL;
-        }
         
         async function initFirebase() {
             try {
@@ -475,15 +472,9 @@
                         currentUserId = user ? user.uid : null;
                         
                         if (user) {
-                            const dataUserId = isGuest() ? ADMIN_USER_ID_FOR_DEMO : user.uid;
-                             if (isGuest() && dataUserId === "PUT_YOUR_ADMIN_USER_ID_HERE") {
-                                showInfoModal("Guest mode is not configured. Please set the admin User ID in the code to enable the demo.", "Configuration Needed");
-                                loadingOverlay.style.display = 'none';
-                                boxes = []; items = [];
-                                render();
-                            } else {
-                                attachFirestoreListeners(dataUserId);
-                            }
+                            const isGuestUser = user.email === GUEST_USER_EMAIL;
+                            const dataUserId = isGuestUser ? ADMIN_USER_ID_FOR_DEMO : user.uid;
+                            attachFirestoreListeners(dataUserId);
                         } else {
                             if (unsubscribeBoxes) unsubscribeBoxes();
                             if (unsubscribeItems) unsubscribeItems();
@@ -502,6 +493,11 @@
 
         function attachFirestoreListeners(userId) {
             loadingOverlay.style.display = 'flex';
+            
+            // Detach previous listeners before attaching new ones
+            if (unsubscribeBoxes) unsubscribeBoxes();
+            if (unsubscribeItems) unsubscribeItems();
+            
             const boxesCollection = collection(db, "users", userId, "boxes");
             unsubscribeBoxes = onSnapshot(boxesCollection, (snapshot) => { 
                 boxes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
@@ -509,6 +505,7 @@
             }, (error) => {
                 console.error("Error listening to boxes:", error);
                 loadingOverlay.style.display = 'none';
+                 showInfoModal("Could not load inventory data. This might be a permission issue or the demo account may be empty.", "Error");
             });
             
             const itemsCollection = collection(db, "users", userId, "items");
@@ -524,7 +521,8 @@
 
         function updateUIForLoginState(user) {
             const isLoggedIn = !!user;
-            
+            const isGuestUser = user && user.email === GUEST_USER_EMAIL;
+
             // Desktop buttons
             document.getElementById('guest-login-header-btn').classList.toggle('hidden', isLoggedIn);
             document.getElementById('login-btn').classList.toggle('hidden', isLoggedIn);
@@ -542,7 +540,7 @@
             document.getElementById('quick-view-btn-mobile').classList.toggle('hidden', !isLoggedIn);
             
             if (user) {
-                const displayName = isGuest() ? 'Guest (Demo)' : `Admin: ${user.email}`;
+                const displayName = isGuestUser ? 'Guest (Demo)' : `Admin: ${user.email}`;
                 document.getElementById('user-id-display').textContent = `Logged in as ${displayName}`;
                 document.getElementById('user-id-display-mobile').textContent = `Logged in as ${displayName}`;
                 document.getElementById('empty-state-title').textContent = 'Your inventory is empty!';
@@ -597,7 +595,8 @@
                 ? `<img src="${box.photoDataUrl}" class="h-12 w-12 rounded-md object-cover">` 
                 : `<div class="h-12 w-12 rounded-md bg-gray-300 flex items-center justify-center"><i class="fas fa-box text-white text-2xl"></i></div>`;
 
-            const adminButtonsHTML = isGuest()
+            const isGuestUser = auth.currentUser && auth.currentUser.email === GUEST_USER_EMAIL;
+            const adminButtonsHTML = isGuestUser
                 ? `<button data-action="edit-box" data-id="${box.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>`
                 : `<button data-action="edit-box" data-id="${box.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
                    <button data-action="delete-box" data-id="${box.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
@@ -679,7 +678,8 @@
             
             const newTag = item.isNew ? '<span class="ml-2 text-xs font-semibold bg-green-100 text-green-800 px-2 py-0.5 rounded-full">NEW</span>' : '';
             let woodInfo = item.hasWood ? `<p class="text-xs text-amber-700 mt-1"><i class="fas fa-tree mr-1"></i> Wood ${item.isTreated ? '(Treated)' : '(Untreated)'}</p>` : '';
-            const adminButtonsHTML = isGuest()
+            const isGuestUser = auth.currentUser && auth.currentUser.email === GUEST_USER_EMAIL;
+            const adminButtonsHTML = isGuestUser
                 ? `<button data-action="edit-item" data-id="${item.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>`
                 : `<button data-action="edit-item" data-id="${item.id}" class="text-blue-500 p-2 rounded-full hover:bg-blue-100"><i class="fas fa-pencil-alt"></i></button>
                    <button data-action="delete-item" data-id="${item.id}" class="text-red-500 p-2 rounded-full hover:bg-red-100"><i class="fas fa-trash-alt"></i></button>`;
@@ -756,7 +756,8 @@
         }
         async function handleSaveBox(e) {
             e.preventDefault();
-            if (isGuest()) {
+            const isGuestUser = auth.currentUser && auth.currentUser.email === GUEST_USER_EMAIL;
+            if (isGuestUser) {
                 showInfoModal("This is a DEMO account only. Changes cannot be saved.");
                 return;
             }
@@ -795,7 +796,8 @@
         }
         async function handleSaveItem(e) {
             e.preventDefault();
-            if (isGuest()) {
+            const isGuestUser = auth.currentUser && auth.currentUser.email === GUEST_USER_EMAIL;
+            if (isGuestUser) {
                 showInfoModal("This is a DEMO account only. Changes cannot be saved.");
                 return;
             }
@@ -942,7 +944,8 @@
                 return; 
             } 
             const baseUrl = window.location.href.split('?')[0]; 
-            const dataUserId = isGuest() ? ADMIN_USER_ID_FOR_DEMO : currentUserId;
+            const isGuestUser = auth.currentUser && auth.currentUser.email === GUEST_USER_EMAIL;
+            const dataUserId = isGuestUser ? ADMIN_USER_ID_FOR_DEMO : currentUserId;
             const qrUrl = `${baseUrl}?userId=${dataUserId}&boxId=${boxId}`; 
             qrCodeContainer.innerHTML = ''; 
             new QRCode(qrCodeContainer, { text: qrUrl, width: 160, height: 160 }); 
@@ -1049,7 +1052,8 @@
                 th:nth-child(6), td:nth-child(6) { width: 25%; }
                 td.box-number-cell { color: #333; font-weight: bold; }
                 img{max-height:70px;max-width:100%;object-fit:cover;border-radius:4px}
-                h1, .summary-grid, .box-types-card, .box-header-row { page-break-inside: avoid; }
+                h1, .box-header-row { page-break-inside: avoid; }
+                .summary-grid, .box-types-card { page-break-inside: avoid; } /* Keep summary blocks together */
                 .box-header-row { page-break-after: avoid; background-color: #334155; color: white; font-weight: bold; text-align: center; }
                 .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin-bottom: 1em; }
                 .summary-card { background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1em; text-align: center; font-size: 12px; }
@@ -1061,7 +1065,12 @@
                 .box-types-card div { display: flex; justify-content: space-between; padding: 0.25em 0; }
                 .box-types-card dt { font-weight: bold; color: #374151; }
                 .box-types-card dd { margin: 0; color: #4b5563; }
-            </style></head><body><h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}${boxTypesHtml}<table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead>`;
+            </style></head><body>
+            <div id="pdf-content">
+                <div style="page-break-after: always;">
+                    <h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}${boxTypesHtml}
+                </div>
+                <table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`;
 
             sortedBoxIds.forEach(boxId => {
                 const boxItems = groupedByBox[boxId];
@@ -1069,7 +1078,6 @@
                 const box = boxes.find(b => b.id === boxId) || { number: 'N/A', room: 'N/A' };
                 const boxColor = boxColorMap[boxId] || '#FFFFFF';
                 
-                htmlContent += `<tbody class="box-group">`;
                 htmlContent += `<tr class="box-header-row"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
                 
                 boxItems.forEach(item => {
@@ -1085,34 +1093,51 @@
                         <td>${item.notes || ''}</td>
                     </tr>`;
                 });
-                htmlContent += `</tbody>`;
             });
 
-            htmlContent += `</table></body></html>`;
+            htmlContent += `</tbody></table></div></body></html>`;
             return htmlContent;
         }
         
-        function generatePdf() {
+       function generatePdf() {
             if (items.length === 0) {
                 showInfoModal("No items to export.");
                 return;
             }
             loadingOverlay.querySelector('p').textContent = 'Generating PDF...';
             loadingOverlay.style.display = 'flex';
-            
+
             const htmlToExport = generateInventoryHtml('pdf');
+            const element = document.createElement('div');
+            element.innerHTML = htmlToExport;
+            
+            // Logic to manually handle repeating headers
+            const table = element.querySelector('table');
+            const thead = table.querySelector('thead').outerHTML;
 
             const options = {
-                margin: [15, 10, 15, 10],
+                margin: [25, 10, 15, 10], // Increased top margin for header
                 filename: `Move-Master-Inventory-${new Date().toISOString().slice(0,10)}.pdf`,
                 image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css', 'legacy'] }
             };
 
-            html2pdf().from(htmlToExport).set(options).toPdf().get('pdf').then(function (pdf) {
+            html2pdf().from(element.querySelector('#pdf-content')).set(options).toPdf().get('pdf').then(function (pdf) {
                 var totalPages = pdf.internal.getNumberOfPages();
-                for (var i = 1; i <= totalPages; i++) {
+                for (var i = 2; i <= totalPages; i++) { // Start from page 2 for repeating headers
+                    pdf.setPage(i);
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(100);
+                     pdf.html(thead, {
+                        x: 10,
+                        y: 15, // Top margin
+                        width: 190, // A4 width minus margins
+                        windowWidth: table.clientWidth
+                    });
+                }
+                 for (var i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
                     pdf.setFontSize(8);
                     pdf.setTextColor(150);
@@ -1156,7 +1181,7 @@
         function closePhotoModal() { photoModal.style.display = 'none'; currentPhotoGallery = []; }
 
         function confirmDelete(type, id) { 
-            if (isGuest()) {
+            if (auth.currentUser && auth.currentUser.email === GUEST_USER_EMAIL) {
                 showInfoModal("This is a DEMO account only. Deletions are not allowed.");
                 return;
             }
@@ -1166,7 +1191,7 @@
             confirmModal.style.display = 'flex'; 
         }
         async function executeDelete() { 
-            if (isGuest()) {
+            if (auth.currentUser && auth.currentUser.email === GUEST_USER_EMAIL) {
                 showInfoModal("This is a DEMO account only. Deletions are not allowed.");
                 closeConfirmModal();
                 return;
