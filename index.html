@@ -162,7 +162,7 @@
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 sm:mb-8">
                 <!-- Expanded Total Boxes Card -->
-                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 col-span-2">
+                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 col-span-2 lg:col-span-1">
                     <div class="flex items-center justify-between flex-wrap gap-y-2">
                          <!-- Main Total -->
                          <div class="flex items-center">
@@ -173,11 +173,16 @@
                             </div>
                          </div>
                          <!-- Breakdown -->
-                         <div class="flex-grow">
-                            <div class="grid grid-cols-[auto,1fr] sm:grid-cols-3 items-baseline sm:justify-items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-600">
-                               <div class="sm:text-center"><span class="font-bold text-gray-800 text-base sm:text-lg" id="total-boxes-medium">0</span> <span class="text-left sm:block">Medium</span></div>
-                               <div class="sm:text-center"><span class="font-bold text-gray-800 text-base sm:text-lg" id="total-boxes-jumbo">0</span> <span class="text-left sm:block">Jumbo</span></div>
-                               <div class="sm:text-center"><span class="font-bold text-gray-800 text-base sm:text-lg" id="total-boxes-custom">0</span> <span class="text-left sm:block">Custom</span></div>
+                         <div class="lg:block">
+                            <div class="grid grid-cols-[auto,1fr] items-baseline gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-600">
+                               <span class="font-bold text-gray-800 text-base sm:text-lg text-right" id="total-boxes-medium">0</span>
+                               <span class="text-left">Medium</span>
+
+                               <span class="font-bold text-gray-800 text-base sm:text-lg text-right" id="total-boxes-jumbo">0</span>
+                               <span class="text-left">Jumbo</span>
+
+                               <span class="font-bold text-gray-800 text-base sm:text-lg text-right" id="total-boxes-custom">0</span>
+                               <span class="text-left">Custom</span>
                             </div>
                          </div>
                     </div>
@@ -196,6 +201,14 @@
                     <div class="ml-3 sm:ml-4">
                         <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Volume</p>
                         <p id="total-volume" class="text-lg sm:text-2xl font-bold">0 m³</p>
+                    </div>
+                </div>
+                 <!-- Total Value Card -->
+                <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
+                    <div class="bg-yellow-100 text-yellow-600 p-2 sm:p-4 rounded-full"><i class="fas fa-dollar-sign text-xl sm:text-2xl"></i></div>
+                    <div class="ml-3 sm:ml-4">
+                        <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Value</p>
+                        <p id="total-value" class="text-lg sm:text-2xl font-bold">$0.00</p>
                     </div>
                 </div>
             </div>
