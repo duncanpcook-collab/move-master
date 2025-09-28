@@ -1114,7 +1114,7 @@
             const content = element.querySelector('#pdf-content');
 
             const options = {
-                margin: [15, 10, 15, 10], 
+                margin: [25, 10, 15, 10], // Increased top margin for header
                 filename: `Move-Master-Inventory-${new Date().toISOString().slice(0,10)}.pdf`,
                 image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true },
@@ -1123,7 +1123,18 @@
 
             html2pdf().from(content).set(options).toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
-                for (var i = 1; i <= totalPages; i++) {
+                const tableHeader = element.querySelector('thead').outerHTML;
+                const headerHTML = `<div style="position: absolute; top: 15mm; left: 10mm; right: 10mm; font-size:12px; "><table>${tableHeader}</table></div>`;
+
+                for (let i = 2; i <= totalPages; i++) { // Start from page 2 for repeating headers
+                    pdf.setPage(i);
+                     pdf.html(headerHTML, {
+                         callback: () => {},
+                        x: 0,
+                        y: -15
+                    });
+                }
+                 for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
                     pdf.setFontSize(8);
                     pdf.setTextColor(150);
