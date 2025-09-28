@@ -60,15 +60,12 @@
     <div id="app-container" class="hidden">
         <header class="header-gradient text-white shadow-lg sticky top-0 z-30">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-5">
-                <!-- DESKTOP/TABLET HEADER -->
                 <div class="hidden sm:flex items-center justify-between gap-4">
-                    <!-- Left: Title -->
                     <div class="text-left flex-shrink-0">
                         <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
                         <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
                     </div>
                     
-                    <!-- Center: Action Buttons -->
                     <div class="flex items-center gap-5 flex-grow justify-center">
                         <button id="add-box-btn" class="hidden flex items-center justify-center rounded-xl bg-cyan-500 py-4 px-14 text-lg font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-cyan-600">
                             <i class="fas fa-box mr-2 text-xl"></i><span>Add Box</span>
@@ -77,8 +74,7 @@
                             <i class="fas fa-plus-circle mr-2 text-xl"></i><span>Add Item</span>
                         </button>
                     </div>
-        
-                    <!-- Right: Auth -->
+    
                     <div class="flex items-center gap-3 flex-shrink-0">
                         <button id="quick-view-btn" class="hidden flex items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-purple-600">
                             <i class="fas fa-eye mr-2"></i><span>Quick View</span>
@@ -99,8 +95,7 @@
                         </div>
                     </div>
                 </div>
-        
-                <!-- MOBILE HEADER -->
+    
                 <div class="sm:hidden">
                     <div class="flex items-center justify-between">
                         <div class="text-left">
@@ -141,19 +136,16 @@
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 sm:mb-8">
-                <!-- Expanded Total Boxes Card -->
                 <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 col-span-2 lg:col-span-1">
                     <div class="flex items-center justify-between flex-wrap gap-y-2">
-                         <!-- Main Total -->
-                         <div class="flex items-center">
+                          <div class="flex items-center">
                             <div class="bg-blue-100 text-blue-600 p-3 sm:p-4 rounded-full"><i class="fas fa-box-open text-xl sm:text-2xl"></i></div>
                             <div class="ml-3 sm:ml-4">
                                 <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Boxes</p>
                                 <p id="total-boxes" class="text-lg sm:text-2xl font-bold">0</p>
                             </div>
-                         </div>
-                         <!-- Breakdown -->
-                         <div class="lg:block">
+                          </div>
+                          <div class="lg:block">
                             <div class="grid grid-cols-[auto,1fr] items-baseline gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-600">
                                <span class="font-bold text-gray-800 text-base sm:text-lg text-right" id="total-boxes-medium">0</span>
                                <span class="text-left">Medium</span>
@@ -164,10 +156,9 @@
                                <span class="font-bold text-gray-800 text-base sm:text-lg text-right" id="total-boxes-custom">0</span>
                                <span class="text-left">Custom</span>
                             </div>
-                         </div>
+                          </div>
                     </div>
                 </div>
-                <!-- Total Items -->
                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
                     <div class="bg-green-100 text-green-600 p-2 sm:p-4 rounded-full"><i class="fas fa-clipboard-list text-xl sm:text-2xl"></i></div>
                     <div class="ml-3 sm:ml-4">
@@ -175,7 +166,6 @@
                         <p id="total-items" class="text-lg sm:text-2xl font-bold">0</p>
                     </div>
                 </div>
-                <!-- Total Volume -->
                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
                     <div class="bg-purple-100 text-purple-600 p-2 sm:p-4 rounded-full"><i class="fas fa-cube text-xl sm:text-2xl"></i></div>
                     <div class="ml-3 sm:ml-4">
@@ -183,8 +173,7 @@
                         <p id="total-volume" class="text-lg sm:text-2xl font-bold">0 m³</p>
                     </div>
                 </div>
-                 <!-- Total Value Card -->
-                <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
+                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
                     <div class="bg-yellow-100 text-yellow-600 p-2 sm:p-4 rounded-full"><i class="fas fa-dollar-sign text-xl sm:text-2xl"></i></div>
                     <div class="ml-3 sm:ml-4">
                         <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Value</p>
@@ -622,10 +611,10 @@
             mainHeaderRow.addEventListener('click', (e) => {
                 if (e.target.closest('button')) return;
                  if (e.target.closest('.box-thumb-container')) {
-                    e.stopPropagation();
-                    if(box.photoDataUrl) openPhotoModal([box.photoDataUrl], 0);
-                    return;
-                }
+                     e.stopPropagation();
+                     if(box.photoDataUrl) openPhotoModal([box.photoDataUrl], 0);
+                     return;
+                 }
                 toggleBoxItems(box.id, header);
             });
             
@@ -651,9 +640,9 @@
             const hasPhotos = item.photoDataUrls && item.photoDataUrls.length > 0;
             const photoThumbHTML = hasPhotos
                 ? `<div class="relative cursor-pointer flex-shrink-0">
-                      <img src="${item.photoDataUrls[0]}" class="h-20 w-20 rounded-md object-cover">
-                      ${item.photoDataUrls.length > 1 ? `<div class="photo-count-badge">+${item.photoDataUrls.length - 1}</div>` : ''}
-                   </div>`
+                       <img src="${item.photoDataUrls[0]}" class="h-20 w-20 rounded-md object-cover">
+                       ${item.photoDataUrls.length > 1 ? `<div class="photo-count-badge">+${item.photoDataUrls.length - 1}</div>` : ''}
+                      </div>`
                 : `<div class="h-20 w-20 rounded-md bg-gray-200 flex items-center justify-center flex-shrink-0"><i class="fas fa-camera text-gray-400 text-2xl"></i></div>`;
             
             const newTag = item.isNew ? '<span class="ml-2 text-xs font-semibold bg-green-100 text-green-800 px-2 py-0.5 rounded-full">NEW</span>' : '';
@@ -939,29 +928,22 @@
         function populateBoxTypeSelect(box = null) { boxTypeSelect.innerHTML = ''; BOX_PRESETS.forEach(preset => boxTypeSelect.add(new Option(preset.name, preset.id))); boxTypeSelect.add(new Option('Custom Dimensions', 'custom')); let selectedType = 'medium'; if (box) { const mediumPreset = BOX_PRESETS[0]; const jumboPreset = BOX_PRESETS[1]; const isMedium = Math.abs(box.height - mediumPreset.h) < 0.1 && Math.abs(box.width - mediumPreset.w) < 0.1 && Math.abs(box.length - mediumPreset.l) < 0.1; const isJumbo = Math.abs(box.height - jumboPreset.h) < 0.1 && Math.abs(box.width - jumboPreset.w) < 0.1 && Math.abs(box.length - jumboPreset.l) < 0.1; if (isJumbo) selectedType = 'jumbo'; else if (isMedium) selectedType = 'medium'; else selectedType = 'custom'; } boxTypeSelect.value = selectedType; handleBoxTypeChange(); }
         function handleBoxTypeChange() { const selectedId = boxTypeSelect.value; const preset = BOX_PRESETS.find(p => p.id === selectedId); if (preset) { customDimensionsContainer.classList.add('hidden'); boxTypeThumbnail.src = preset.imgSrc; boxTypeThumbnail.classList.remove('hidden'); boxDimensionInputs[0].value = preset.h; boxDimensionInputs[1].value = preset.w; boxDimensionInputs[2].value = preset.l; } else { customDimensionsContainer.classList.remove('hidden'); boxTypeThumbnail.classList.add('hidden'); } calculateVolume(); }
 
+        /**
+         * [REVISED] Generates the complete HTML string for PDF export or quick view.
+         */
         function generateInventoryHtml(mode = 'pdf') {
-            const sortedData = [...items].sort((a, b) => {
-                const boxA = boxes.find(box => box.id === a.boxId) || {};
-                const boxB = boxes.find(box => box.id === b.boxId) || {};
-                const boxNumA = parseInt(boxA.number) || 0;
-                const boxNumB = parseInt(boxB.number) || 0;
-                if (boxNumA !== boxNumB) return boxNumA - boxNumB;
-                return a.name.localeCompare(b.name);
-            });
-            
-            // --- Color Palette for Boxes ---
-            const boxColors = [
-                '#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', 
-                '#A0C4FF', '#BDB2FF', '#FFC6FF', '#E4C1F9', '#F1C0B9'
-            ];
-            const boxColorMap = {};
-            let colorIndex = 0;
-            const sortedBoxIds = boxes.sort((a, b) => parseInt(a.number) - parseInt(b.number)).map(b => b.id);
-            sortedBoxIds.forEach(id => {
-                boxColorMap[id] = boxColors[colorIndex % boxColors.length];
-                colorIndex++;
-            });
-            
+            const sortedBoxes = [...boxes].sort((a, b) => parseInt(a.number) - parseInt(b.number));
+            const sortedBoxIds = sortedBoxes.map(b => b.id);
+            const itemsByBox = items.reduce((acc, item) => {
+                (acc[item.boxId] = acc[item.boxId] || []).push(item);
+                return acc;
+            }, {});
+
+            // Sort items within each box alphabetically by name
+            for (const boxId in itemsByBox) {
+                itemsByBox[boxId].sort((a, b) => a.name.localeCompare(b.name));
+            }
+
             // --- Summary Calculation ---
             const totalBoxesCount = boxes.length;
             const totalItemsCount = items.length;
@@ -996,46 +978,25 @@
                     <h4>Box Type Dimensions</h4>
                     <dl>
                         ${BOX_PRESETS.map(preset => `
-                          <div>
-                            <dt>${preset.name.split('(')[0].trim()}</dt>
-                            <dd>${preset.l}cm L x ${preset.w}cm W x ${preset.h}cm H</dd>
-                          </div>
+                            <div>
+                                <dt>${preset.name.split('(')[0].trim()}</dt>
+                                <dd>${preset.l}cm L x ${preset.w}cm W x ${preset.h}cm H</dd>
+                            </div>
                         `).join('')}
                         <div>
-                          <dt>Custom</dt>
-                          <dd>Dimensions specified per-box.</dd>
+                            <dt>Custom</dt>
+                            <dd>Dimensions specified per-box.</dd>
                         </div>
                     </dl>
                 </div>
             `;
-            // --- End Summary ---
-
-            // Group items by box
-            const groupedByBox = sortedData.reduce((acc, item) => {
-                (acc[item.boxId] = acc[item.boxId] || []).push(item);
-                return acc;
-            }, {});
-
+            
             let htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title><style>
-                body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0}
-                table{width:100%;border-collapse:collapse;margin-top:1em;font-size:12px; border-spacing:0; table-layout: fixed;}
-                th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:middle;word-wrap:break-word}
-                thead { display: table-header-group; }
-                tbody { page-break-inside: auto; }
-                tr { page-break-inside: avoid; }
-                th{background-color:#e5e7eb;font-weight:bold}
-                th:nth-child(1), td:nth-child(1) { width: 15%; }
-                th:nth-child(2), td:nth-child(2) { width: 10%; text-align: center; }
-                th:nth-child(3), td:nth-child(3) { width: 20%; }
-                th:nth-child(4), td:nth-child(4) { width: 20%; }
-                th:nth-child(5), td:nth-child(5) { width: 10%; }
-                th:nth-child(6), td:nth-child(6) { width: 25%; }
-                td.box-number-cell { color: #333; font-weight: bold; }
-                img{max-height:70px;max-width:100%;object-fit:cover;border-radius:4px}
-                h1, .box-header-row { page-break-inside: avoid; }
-                .summary-section { padding: 2em; }
-                .box-header-row { page-break-after: avoid; background-color: #334155; color: white; font-weight: bold; text-align: center; }
-                .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin-bottom: 1em; }
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; font-size: 10pt; color: #333; }
+                #pdf-content { padding: 0 1em; }
+                h1 { font-size: 22pt; margin-bottom: 0.5em; color: #334155; }
+                .summary-section { padding: 1em 0; }
+                .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin: 1em 0; }
                 .summary-card { background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1em; text-align: center; font-size: 12px; }
                 .summary-card strong { display: block; font-size: 14px; margin-bottom: 0.25em; color: #1f2937; }
                 .box-breakdown { font-size: 11px; color: #4b5563; }
@@ -1045,42 +1006,66 @@
                 .box-types-card div { display: flex; justify-content: space-between; padding: 0.25em 0; }
                 .box-types-card dt { font-weight: bold; color: #374151; }
                 .box-types-card dd { margin: 0; color: #4b5563; }
+                
+                table { width: 100%; border-collapse: collapse; font-size: 9pt; table-layout: fixed; }
+                thead { display: table-header-group; /* Crucial for repeating headers */ }
+                tr { page-break-inside: avoid; page-break-after: auto; }
+                th { background-color: #334155; color: white; font-weight: bold; text-align: left; padding: 12px 8px; border: 1px solid #334155; }
+                td { border: 1px solid #ddd; padding: 10px 8px; text-align: left; vertical-align: top; word-wrap: break-word; }
+                tbody tr:nth-child(even) { background-color: #f8f9fa; }
+                
+                th:nth-child(1), td:nth-child(1) { width: 12%; } /* Image */
+                th:nth-child(2), td:nth-child(2) { width: 8%; text-align: center; } /* Box # */
+                th:nth-child(3), td:nth-child(3) { width: 15%; } /* Room */
+                th:nth-child(4), td:nth-child(4) { width: 25%; } /* Item Name */
+                th:nth-child(5), td:nth-child(5) { width: 10%; text-align: right; padding-right: 12px; } /* Value */
+                th:nth-child(6), td:nth-child(6) { width: 30%; } /* Notes */
+
+                .box-title-row td { background-color: #e2e8f0; font-weight: bold; font-size: 1.1em; padding: 10px 8px; border-top: 2px solid #a0aec0; border-bottom: 1px solid #a0aec0; }
+                
+                img { max-width: 100%; height: auto; max-height: 80px; object-fit: contain; border-radius: 4px; display: block; margin: auto; page-break-inside: avoid; }
             </style></head><body>
             <div id="pdf-content">
                 <div class="summary-section" style="page-break-after: always;">
                     <h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}${boxTypesHtml}
                 </div>
                 <div class="table-section">
-                    <table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`;
+                    <table>
+                        <thead>
+                            <tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr>
+                        </thead>
+                        <tbody>`;
 
-            sortedBoxIds.forEach(boxId => {
-                const boxItems = groupedByBox[boxId];
-                if (!boxItems) return; // Skip if a box has no items after filtering
-                const box = boxes.find(b => b.id === boxId) || { number: 'N/A', room: 'N/A' };
-                const boxColor = boxColorMap[boxId] || '#FFFFFF';
+            sortedBoxes.forEach(box => {
+                const boxItemsList = itemsByBox[box.id] || [];
+                htmlContent += `<tr class="box-title-row"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
                 
-                htmlContent += `<tr class="box-header-row"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
-                
-                boxItems.forEach(item => {
-                    const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
-                    const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '';
-                    
-                    htmlContent += `<tr>
-                        <td>${imageTag}</td>
-                        <td class="box-number-cell" style="background-color: ${boxColor};">${box.number}</td>
-                        <td>${box.room}</td>
-                        <td>${item.name || ''}</td>
-                        <td>$${formatCurrency(item.value)}</td>
-                        <td>${item.notes || ''}</td>
-                    </tr>`;
-                });
+                if (boxItemsList.length > 0) {
+                    boxItemsList.forEach(item => {
+                        const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
+                        const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '';
+                        htmlContent += `<tr>
+                            <td>${imageTag}</td>
+                            <td style="text-align: center; font-weight: bold; vertical-align: middle;">${box.number}</td>
+                            <td style="vertical-align: middle;">${box.room}</td>
+                            <td style="vertical-align: middle;">${item.name || ''}</td>
+                            <td style="text-align: right; padding-right: 12px; vertical-align: middle;">$${formatCurrency(item.value)}</td>
+                            <td style="vertical-align: middle;">${item.notes || ''}</td>
+                        </tr>`;
+                    });
+                } else {
+                     htmlContent += `<tr><td colspan="6" style="text-align: center; color: #777; font-style: italic; padding: 12px;">This box is empty.</td></tr>`;
+                }
             });
 
             htmlContent += `</tbody></table></div></div></body></html>`;
             return htmlContent;
         }
-        
-       function generatePdf() {
+
+        /**
+         * [REVISED] Generates and saves a PDF of the inventory with improved formatting.
+         */
+        function generatePdf() {
             if (items.length === 0) {
                 showInfoModal("No items to export.");
                 return;
@@ -1095,34 +1080,35 @@
             const content = element.querySelector('#pdf-content');
 
             const options = {
-                margin: [15, 10, 15, 10], 
+                margin: [15, 10, 20, 10], // Top, Left, Bottom, Right. Increased bottom margin for footer.
                 filename: `Move-Master-Inventory-${new Date().toISOString().slice(0,10)}.pdf`,
                 image: { type: 'jpeg', quality: 0.95 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css', 'legacy'] } // Helps with legacy CSS for page breaks
             };
 
             html2pdf().from(content).set(options).toPdf().get('pdf').then(function (pdf) {
+                // Headers are now handled automatically by CSS. We just add the page numbers.
                 const totalPages = pdf.internal.getNumberOfPages();
-                const tableHeader = element.querySelector('thead').outerHTML;
-                const headerHTML = `<div style="font-size:12px; position:absolute; top: 15mm; left:10mm; right:10mm;"><table>${tableHeader}</table></div>`;
-
-                for (let i = 2; i <= totalPages; i++) { 
-                    pdf.setPage(i);
-                    pdf.html(headerHTML, {
-                        callback: function() {},
-                        x: 0,
-                        y: 0,
-                    });
-                }
-
-                 for (let i = 1; i <= totalPages; i++) {
+                for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
                     pdf.setFontSize(8);
                     pdf.setTextColor(150);
-                    pdf.text('Page ' + i + ' of ' + totalPages, pdf.internal.pageSize.getWidth() - 25, pdf.internal.pageSize.getHeight() - 10);
+                    // Add page number to the footer
+                    pdf.text(
+                        'Page ' + i + ' of ' + totalPages,
+                        pdf.internal.pageSize.getWidth() / 2, // Centered horizontally
+                        pdf.internal.pageSize.getHeight() - 10, // 10mm from the bottom
+                        { align: 'center' }
+                    );
                 }
             }).save().then(() => {
+                loadingOverlay.style.display = 'none';
+                loadingOverlay.querySelector('p').textContent = 'Connecting...';
+            }).catch(err => {
+                console.error("PDF generation failed:", err);
+                showInfoModal("An error occurred while generating the PDF. Please try again.", "Error");
                 loadingOverlay.style.display = 'none';
                 loadingOverlay.querySelector('p').textContent = 'Connecting...';
             });
@@ -1363,8 +1349,8 @@
                 console.error("Error fetching box contents:", error);
                 document.getElementById('viewer-title').textContent = "Could not load box contents.";
                  if (error.code === 'permission-denied') {
-                    document.getElementById('viewer-item-list').innerHTML = `<p class="text-red-500 font-semibold text-center">Access Denied. This is a private inventory. Please log in to view.</p><div class="text-center mt-4"><a href="./" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">Go to Login</a></div>`;
-                }
+                     document.getElementById('viewer-item-list').innerHTML = `<p class="text-red-500 font-semibold text-center">Access Denied. This is a private inventory. Please log in to view.</p><div class="text-center mt-4"><a href="./" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700">Go to Login</a></div>`;
+                 }
             } finally {
                 loadingOverlay.style.display = 'none';
             }
@@ -1372,4 +1358,3 @@
     </script>
 </body>
 </html>
-
