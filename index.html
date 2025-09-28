@@ -162,7 +162,7 @@
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 sm:mb-8">
                 <!-- Expanded Total Boxes Card -->
-                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 col-span-2 lg:col-span-1">
+                <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 col-span-2">
                     <div class="flex items-center justify-between flex-wrap gap-y-2">
                          <!-- Main Total -->
                          <div class="flex items-center">
@@ -173,16 +173,11 @@
                             </div>
                          </div>
                          <!-- Breakdown -->
-                         <div class="lg:hidden">
-                            <div class="grid grid-cols-[auto,1fr] items-baseline gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-600">
-                               <span class="font-bold text-gray-800 text-base sm:text-lg text-right" id="total-boxes-medium">0</span>
-                               <span class="text-left">Medium</span>
-
-                               <span class="font-bold text-gray-800 text-base sm:text-lg text-right" id="total-boxes-jumbo">0</span>
-                               <span class="text-left">Jumbo</span>
-
-                               <span class="font-bold text-gray-800 text-base sm:text-lg text-right" id="total-boxes-custom">0</span>
-                               <span class="text-left">Custom</span>
+                         <div class="flex-grow">
+                            <div class="grid grid-cols-[auto,1fr] sm:grid-cols-3 items-baseline sm:justify-items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-600">
+                               <div class="sm:text-center"><span class="font-bold text-gray-800 text-base sm:text-lg" id="total-boxes-medium">0</span> <span class="text-left sm:block">Medium</span></div>
+                               <div class="sm:text-center"><span class="font-bold text-gray-800 text-base sm:text-lg" id="total-boxes-jumbo">0</span> <span class="text-left sm:block">Jumbo</span></div>
+                               <div class="sm:text-center"><span class="font-bold text-gray-800 text-base sm:text-lg" id="total-boxes-custom">0</span> <span class="text-left sm:block">Custom</span></div>
                             </div>
                          </div>
                     </div>
@@ -201,14 +196,6 @@
                     <div class="ml-3 sm:ml-4">
                         <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Volume</p>
                         <p id="total-volume" class="text-lg sm:text-2xl font-bold">0 m³</p>
-                    </div>
-                </div>
-                 <!-- Total Value Card -->
-                <div class="hidden lg:flex bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 items-center">
-                    <div class="bg-yellow-100 text-yellow-600 p-2 sm:p-4 rounded-full"><i class="fas fa-dollar-sign text-xl sm:text-2xl"></i></div>
-                    <div class="ml-3 sm:ml-4">
-                        <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Value</p>
-                        <p id="total-value" class="text-lg sm:text-2xl font-bold">$0.00</p>
                     </div>
                 </div>
             </div>
@@ -1053,7 +1040,7 @@
                 td.box-number-cell { color: #333; font-weight: bold; }
                 img{max-height:70px;max-width:100%;object-fit:cover;border-radius:4px}
                 h1, .box-header-row { page-break-inside: avoid; }
-                .summary-section { page-break-after: always; padding: 2em; }
+                .summary-section { padding: 2em; }
                 .box-header-row { page-break-after: avoid; background-color: #334155; color: white; font-weight: bold; text-align: center; }
                 .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin-bottom: 1em; }
                 .summary-card { background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1em; text-align: center; font-size: 12px; }
@@ -1067,10 +1054,11 @@
                 .box-types-card dd { margin: 0; color: #4b5563; }
             </style></head><body>
             <div id="pdf-content">
-                <div class="summary-section">
+                <div class="summary-section" style="page-break-after: always;">
                     <h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}${boxTypesHtml}
                 </div>
-                <table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`;
+                <div class="table-section">
+                    <table><thead><tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr></thead><tbody>`;
 
             sortedBoxIds.forEach(boxId => {
                 const boxItems = groupedByBox[boxId];
@@ -1095,7 +1083,7 @@
                 });
             });
 
-            htmlContent += `</tbody></table></div></body></html>`;
+            htmlContent += `</tbody></table></div></div></body></html>`;
             return htmlContent;
         }
         
@@ -1114,7 +1102,7 @@
             const content = element.querySelector('#pdf-content');
 
             const options = {
-                margin: [25, 10, 15, 10], // Increased top margin for header
+                margin: [15, 10, 15, 10], 
                 filename: `Move-Master-Inventory-${new Date().toISOString().slice(0,10)}.pdf`,
                 image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true },
@@ -1124,16 +1112,17 @@
             html2pdf().from(content).set(options).toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
                 const tableHeader = element.querySelector('thead').outerHTML;
-                const headerHTML = `<div style="position: absolute; top: 15mm; left: 10mm; right: 10mm; font-size:12px; "><table>${tableHeader}</table></div>`;
+                const headerHTML = `<div style="font-size:12px; position:absolute; top: 15mm; left:10mm; right:10mm;"><table>${tableHeader}</table></div>`;
 
-                for (let i = 2; i <= totalPages; i++) { // Start from page 2 for repeating headers
+                for (let i = 2; i <= totalPages; i++) { 
                     pdf.setPage(i);
-                     pdf.html(headerHTML, {
-                         callback: () => {},
+                    pdf.html(headerHTML, {
+                        callback: function() {},
                         x: 0,
-                        y: -15
+                        y: 0,
                     });
                 }
+
                  for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
                     pdf.setFontSize(8);
