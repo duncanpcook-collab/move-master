@@ -1000,8 +1000,6 @@
                 const boxItemsList = itemsByBox[box.id] || [];
                 const boxColor = boxColorMap[box.id] || '#FFFFFF';
                 
-                // Using page-break-before: 'always' for all but the first table will ensure boxes start on a new page if they don't fit
-                // Using page-break-inside: 'avoid' helps keep the whole table together if it's short.
                 let boxTableHtml = `
                     <table class="box-table" style="page-break-inside: avoid; ${index > 0 ? 'page-break-before: always;' : ''}">
                         <thead>
@@ -1049,7 +1047,7 @@
                 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; font-size: 9pt; color: #333; }
                 .pdf-container { padding: 0 1em; }
                 h1 { font-size: 20pt; margin-bottom: 0.25em; color: #1e293b; }
-                .summary-section { padding: 1em 0; } /* No page break here */
+                .summary-section { padding: 1em 0; }
                 .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin: 1em 0; }
                 .summary-card { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75em; text-align: center; font-size: 10pt; }
                 .summary-card strong { display: block; font-size: 11pt; margin-bottom: 0.25em; color: #1e293b; }
@@ -1063,7 +1061,7 @@
                 .box-types-card dd { margin: 0; color: #475569; }
                 
                 .box-table { width: 100%; border-collapse: collapse; font-size: 9pt; table-layout: fixed; margin-top: 1.5em; }
-                thead { display: table-header-group; /* Repeats header on each page */ }
+                thead { display: table-header-group; }
                 tbody tr { page-break-inside: avoid; }
                 th, td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; vertical-align: middle; word-wrap: break-word; }
                 
@@ -1118,23 +1116,18 @@
             loadingOverlay.querySelector('p').textContent = 'Generating PDF... This may take a moment.';
             loadingOverlay.style.display = 'flex';
 
-            const htmlToExport = generateInventoryHtml('pdf');
+            const htmlString = generateInventoryHtml('pdf');
             
-            // Create a temporary, off-screen element to render the HTML.
-            // This element will be passed to html2pdf.js.
-            const element = document.createElement('div');
-            element.style.position = 'absolute';
-            element.style.left = '-9999px'; // Move it off-screen
-            element.innerHTML = htmlToExport;
-            document.body.appendChild(element);
+            // Use DOMParser to safely and correctly parse the full HTML string into a document object.
+            const parser = new DOMParser();
+            const pdfDoc = parser.parseFromString(htmlString, 'text/html');
+            const contentToPrint = pdfDoc.body; // We will render the entire body content.
 
-            const contentToPrint = element.querySelector('.pdf-container');
-            
-            if (!contentToPrint) {
-                console.error("Could not find .pdf-container element to print.");
-                showInfoModal("An error occurred while preparing the PDF. Could not find content.", "Error");
+            // Check if parsing was successful and there's content to print.
+            if (!contentToPrint || !contentToPrint.hasChildNodes()) {
+                console.error("Parsed document for PDF is empty or invalid.");
+                showInfoModal("An error occurred while preparing the PDF content.", "Error");
                 loadingOverlay.style.display = 'none';
-                document.body.removeChild(element); // Clean up
                 return;
             }
 
@@ -1146,11 +1139,13 @@
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
+            // Pass the parsed and validated DOM element to the PDF generator.
             const worker = html2pdf().from(contentToPrint).set(options);
 
             worker.toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
-                // Add page number footer to all pages
+                
+                // Add page number footer to all pages.
                 for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
                     pdf.setFontSize(8);
@@ -1165,13 +1160,11 @@
             }).save().then(() => {
                 loadingOverlay.style.display = 'none';
                 loadingOverlay.querySelector('p').textContent = 'Connecting...';
-                document.body.removeChild(element); // Clean up the temporary element
             }).catch(err => {
                 console.error("PDF generation failed:", err);
                 showInfoModal("An error occurred while generating the PDF. Please try again.", "Error");
                 loadingOverlay.style.display = 'none';
                 loadingOverlay.querySelector('p').textContent = 'Connecting...';
-                document.body.removeChild(element); // Clean up on error too
             });
         }
 
