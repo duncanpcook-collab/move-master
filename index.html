@@ -939,10 +939,7 @@
         function populateBoxTypeSelect(box = null) { boxTypeSelect.innerHTML = ''; BOX_PRESETS.forEach(preset => boxTypeSelect.add(new Option(preset.name, preset.id))); boxTypeSelect.add(new Option('Custom Dimensions', 'custom')); let selectedType = 'medium'; if (box) { const mediumPreset = BOX_PRESETS[0]; const jumboPreset = BOX_PRESETS[1]; const isMedium = Math.abs(box.height - mediumPreset.h) < 0.1 && Math.abs(box.width - mediumPreset.w) < 0.1 && Math.abs(box.length - mediumPreset.l) < 0.1; const isJumbo = Math.abs(box.height - jumboPreset.h) < 0.1 && Math.abs(box.width - jumboPreset.w) < 0.1 && Math.abs(box.length - jumboPreset.l) < 0.1; if (isJumbo) selectedType = 'jumbo'; else if (isMedium) selectedType = 'medium'; else selectedType = 'custom'; } boxTypeSelect.value = selectedType; handleBoxTypeChange(); }
         function handleBoxTypeChange() { const selectedId = boxTypeSelect.value; const preset = BOX_PRESETS.find(p => p.id === selectedId); if (preset) { customDimensionsContainer.classList.add('hidden'); boxTypeThumbnail.src = preset.imgSrc; boxTypeThumbnail.classList.remove('hidden'); boxDimensionInputs[0].value = preset.h; boxDimensionInputs[1].value = preset.w; boxDimensionInputs[2].value = preset.l; } else { customDimensionsContainer.classList.remove('hidden'); boxTypeThumbnail.classList.add('hidden'); } calculateVolume(); }
 
-        /**
-         * [REVISED] Generates the complete HTML string for PDF export or quick view.
-         */
-        function generateInventoryHtml(mode = 'pdf') {
+        function generateInventoryHtml() {
             const sortedBoxes = [...boxes].sort((a, b) => parseInt(a.number) - parseInt(b.number));
             const itemsByBox = items.reduce((acc, item) => {
                 (acc[item.boxId] = acc[item.boxId] || []).push(item);
@@ -953,10 +950,7 @@
                 itemsByBox[boxId].sort((a, b) => a.name.localeCompare(b.name));
             }
 
-            const boxColors = [
-                '#FFF1F2', '#FFFBEB', '#F7FEE7', '#F0FDF4', '#EFF6FF', 
-                '#F5F3FF', '#FAF5FF', '#FFF7ED', '#FEFCE8', '#F0FDFA'
-            ];
+            const boxColors = ['#FFF1F2', '#FFFBEB', '#F7FEE7', '#F0FDF4', '#EFF6FF', '#F5F3FF', '#FAF5FF', '#FFF7ED', '#FEFCE8', '#F0FDFA'];
             const boxColorMap = {};
             sortedBoxes.forEach((box, index) => {
                 boxColorMap[box.id] = boxColors[index % boxColors.length];
@@ -996,12 +990,12 @@
                 </div>`;
             
             let allBoxesHtml = '';
-            sortedBoxes.forEach((box, index) => {
+            sortedBoxes.forEach((box) => {
                 const boxItemsList = itemsByBox[box.id] || [];
                 const boxColor = boxColorMap[box.id] || '#FFFFFF';
                 
                 let boxTableHtml = `
-                    <table class="box-table" style="${index > 0 ? 'page-break-before: always;' : ''}">
+                    <table class="box-table">
                         <thead>
                             <tr class="box-title-row"><th colspan="6">Box ${box.number} - ${box.room}</th></tr>
                             <tr class="item-header-row">
@@ -1038,12 +1032,8 @@
                 allBoxesHtml += boxTableHtml;
             });
 
-            return `<!DOCTYPE html>
-            <html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title>
+            return `
             <style>
-                @media print {
-                    body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                }
                 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; font-size: 9pt; color: #333; }
                 .pdf-container { padding: 0 1em; }
                 h1 { font-size: 20pt; margin-bottom: 0.25em; color: #1e293b; }
@@ -1060,7 +1050,7 @@
                 .box-types-card dt { font-weight: 600; color: #334155; }
                 .box-types-card dd { margin: 0; color: #475569; }
                 
-                .box-table { width: 100%; border-collapse: collapse; font-size: 9pt; table-layout: fixed; margin-top: 1.5em; }
+                .box-table { width: 100%; border-collapse: collapse; font-size: 9pt; table-layout: fixed; margin-top: 1.5em; page-break-before: auto; }
                 thead { display: table-header-group; }
                 tbody tr { page-break-inside: avoid; }
                 th, td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; vertical-align: middle; word-wrap: break-word; }
@@ -1079,35 +1069,26 @@
                     color: white !important;
                     font-weight: bold;
                 }
-
                 .item-header-row th:nth-child(1), td:nth-child(1) { width: 12%; text-align: center; }
                 .item-header-row th:nth-child(2), td:nth-child(2) { width: 8%; text-align: center; }
                 .item-header-row th:nth-child(3), td:nth-child(3) { width: 18%; }
                 .item-header-row th:nth-child(4), td:nth-child(4) { width: 27%; }
                 .item-header-row th:nth-child(5), td:nth-child(5) { width: 10%; }
                 .item-header-row th:nth-child(6), td:nth-child(6) { width: 25%; }
-
                 .box-number-cell { text-align: center; font-weight: bold; vertical-align: middle; }
                 .empty-box-cell { text-align: center; color: #64748b; font-style: italic; padding: 12px; }
-
                 img { max-width: 60px; max-height: 60px; object-fit: contain; border-radius: 4px; display: block; margin: auto; }
                 img + span { display: none; }
                 td:has(> span) { text-align: center; color: #94a3b8; font-size: 8pt; }
             </style>
-            </head><body>
             <div class="pdf-container">
                 <div class="summary-section">
                     <h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}${boxTypesHtml}
                 </div>
                 ${allBoxesHtml}
-            </div>
-            </body></html>`;
+            </div>`;
         }
 
-
-        /**
-         * [REVISED] Generates and saves a PDF of the inventory with improved formatting and headers.
-         */
         function generatePdf() {
             if (items.length === 0) {
                 showInfoModal("No items to export.");
@@ -1116,17 +1097,23 @@
             loadingOverlay.querySelector('p').textContent = 'Generating PDF... This may take a moment.';
             loadingOverlay.style.display = 'flex';
 
-            const htmlString = generateInventoryHtml('pdf');
+            const htmlString = generateInventoryHtml();
             
-            // Use DOMParser to safely and correctly parse the full HTML string into a document object.
-            const parser = new DOMParser();
-            const pdfDoc = parser.parseFromString(htmlString, 'text/html');
-            const contentToPrint = pdfDoc.body;
+            // Create a temporary, off-screen element to render the HTML.
+            // This is the crucial step to ensure html2pdf has a live DOM element to render.
+            const renderContainer = document.createElement('div');
+            renderContainer.style.position = 'absolute';
+            renderContainer.style.left = '-9999px'; 
+            renderContainer.innerHTML = htmlString;
+            document.body.appendChild(renderContainer);
 
-            if (!contentToPrint || !contentToPrint.hasChildNodes()) {
-                console.error("Parsed document for PDF is empty or invalid.");
-                showInfoModal("An error occurred while preparing the PDF content.", "Error");
+            const elementToPrint = renderContainer.querySelector('.pdf-container');
+
+            if (!elementToPrint) {
+                console.error("Could not find .pdf-container element to print.");
+                showInfoModal("An error occurred while preparing the PDF.", "Error");
                 loadingOverlay.style.display = 'none';
+                document.body.removeChild(renderContainer); // Clean up
                 return;
             }
 
@@ -1138,11 +1125,8 @@
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            const worker = html2pdf().from(contentToPrint).set(options);
-
-            worker.toPdf().get('pdf').then(function (pdf) {
+            html2pdf().from(elementToPrint).set(options).toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
-                
                 for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
                     pdf.setFontSize(8);
@@ -1154,24 +1138,19 @@
                         { align: 'center' }
                     );
                 }
-            }).save().then(() => {
+            }).save().finally(() => {
                 loadingOverlay.style.display = 'none';
                 loadingOverlay.querySelector('p').textContent = 'Connecting...';
-            }).catch(err => {
-                console.error("PDF generation failed:", err);
-                showInfoModal("An error occurred while generating the PDF. Please try again.", "Error");
-                loadingOverlay.style.display = 'none';
-                loadingOverlay.querySelector('p').textContent = 'Connecting...';
+                document.body.removeChild(renderContainer); // Clean up the temporary element
             });
         }
-
 
         function openQuickViewModal() {
             if (items.length === 0) {
                 showInfoModal('There are no items to view.');
                 return;
             }
-            const htmlContent = generateInventoryHtml('quickview');
+            const htmlContent = `<html><head>${generateInventoryHtml()}</head></html>`;
             const iframe = document.getElementById('quick-view-iframe');
             iframe.srcdoc = htmlContent;
             quickViewModal.style.display = 'flex';
