@@ -995,29 +995,34 @@
                     </dl>
                 </div>`;
             
-            let tableBodyHtml = '';
-            sortedBoxes.forEach(box => {
+            let allBoxesHtml = '';
+            sortedBoxes.forEach((box, index) => {
                 const boxItemsList = itemsByBox[box.id] || [];
                 const boxColor = boxColorMap[box.id] || '#FFFFFF';
                 
-                tableBodyHtml += `<tr class="box-title-row" style="page-break-after: avoid;"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
-                
-                tableBodyHtml += `
-                    <tr class="item-header-row" style="page-break-after: avoid;">
-                        <td>Image</td>
-                        <td>Box #</td>
-                        <td>Room</td>
-                        <td>Item Name</td>
-                        <td>Value</td>
-                        <td>Notes</td>
-                    </tr>
+                // Using page-break-before: 'always' for all but the first table will ensure boxes start on a new page if they don't fit
+                // Using page-break-inside: 'avoid' helps keep the whole table together if it's short.
+                let boxTableHtml = `
+                    <table class="box-table" style="page-break-inside: avoid; ${index > 0 ? 'page-break-before: always;' : ''}">
+                        <thead>
+                            <tr class="box-title-row"><th colspan="6">Box ${box.number} - ${box.room}</th></tr>
+                            <tr class="item-header-row">
+                                <th>Image</th>
+                                <th>Box #</th>
+                                <th>Room</th>
+                                <th>Item Name</th>
+                                <th>Value</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                 `;
 
                 if (boxItemsList.length > 0) {
                     boxItemsList.forEach(item => {
                         const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
                         const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '<span>No Image</span>';
-                        tableBodyHtml += `
+                        boxTableHtml += `
                         <tr>
                             <td>${imageTag}</td>
                             <td class="box-number-cell" style="background-color: ${boxColor};">${box.number}</td>
@@ -1028,8 +1033,11 @@
                         </tr>`;
                     });
                 } else {
-                     tableBodyHtml += `<tr><td colspan="6" class="empty-box-cell">This box is empty.</td></tr>`;
+                     boxTableHtml += `<tr><td colspan="6" class="empty-box-cell">This box is empty.</td></tr>`;
                 }
+
+                boxTableHtml += `</tbody></table>`;
+                allBoxesHtml += boxTableHtml;
             });
 
             return `<!DOCTYPE html>
@@ -1039,9 +1047,9 @@
                     body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                 }
                 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; font-size: 9pt; color: #333; }
-                #pdf-content { padding: 0 1em; }
+                .pdf-container { padding: 0 1em; }
                 h1 { font-size: 20pt; margin-bottom: 0.25em; color: #1e293b; }
-                .summary-section { padding: 1em 0; page-break-after: auto; }
+                .summary-section { padding: 1em 0; } /* No page break here */
                 .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin: 1em 0; }
                 .summary-card { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75em; text-align: center; font-size: 10pt; }
                 .summary-card strong { display: block; font-size: 11pt; margin-bottom: 0.25em; color: #1e293b; }
@@ -1054,30 +1062,33 @@
                 .box-types-card dt { font-weight: 600; color: #334155; }
                 .box-types-card dd { margin: 0; color: #475569; }
                 
-                table { width: 100%; border-collapse: collapse; font-size: 9pt; table-layout: fixed; margin-top: 1em; }
-                thead { display: table-header-group; }
-                tbody { display: table-row-group; }
-                tr { page-break-inside: avoid; }
-                th { background-color: #1e293b !important; color: white !important; font-weight: bold; text-align: left; padding: 10px 8px; border: 1px solid #1e293b; }
-                td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; vertical-align: middle; word-wrap: break-word; }
+                .box-table { width: 100%; border-collapse: collapse; font-size: 9pt; table-layout: fixed; margin-top: 1.5em; }
+                thead { display: table-header-group; /* Repeats header on each page */ }
+                tbody tr { page-break-inside: avoid; }
+                th, td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; vertical-align: middle; word-wrap: break-word; }
                 
-                .item-header-row td {
+                .box-title-row th {
+                    background-color: #e2e8f0 !important;
+                    font-weight: bold;
+                    font-size: 10pt;
+                    padding: 8px;
+                    color: #1e293b !important;
+                    border: 1px solid #cbd5e1;
+                }
+                
+                .item-header-row th {
                     background-color: #1e293b !important;
                     color: white !important;
                     font-weight: bold;
-                    text-align: left;
-                    padding: 10px 8px;
-                    border: 1px solid #1e293b;
                 }
 
-                th:nth-child(1), .item-header-row td:nth-child(1), td:nth-child(1) { width: 12%; text-align: center; }
-                th:nth-child(2), .item-header-row td:nth-child(2), td:nth-child(2) { width: 8%; text-align: center; }
-                th:nth-child(3), .item-header-row td:nth-child(3), td:nth-child(3) { width: 18%; }
-                th:nth-child(4), .item-header-row td:nth-child(4), td:nth-child(4) { width: 27%; }
-                th:nth-child(5), .item-header-row td:nth-child(5), td:nth-child(5) { width: 10%; }
-                th:nth-child(6), .item-header-row td:nth-child(6), td:nth-child(6) { width: 25%; }
+                .item-header-row th:nth-child(1), td:nth-child(1) { width: 12%; text-align: center; }
+                .item-header-row th:nth-child(2), td:nth-child(2) { width: 8%; text-align: center; }
+                .item-header-row th:nth-child(3), td:nth-child(3) { width: 18%; }
+                .item-header-row th:nth-child(4), td:nth-child(4) { width: 27%; }
+                .item-header-row th:nth-child(5), td:nth-child(5) { width: 10%; }
+                .item-header-row th:nth-child(6), td:nth-child(6) { width: 25%; }
 
-                .box-title-row td { background-color: #e2e8f0 !important; font-weight: bold; font-size: 10pt; padding: 8px; }
                 .box-number-cell { text-align: center; font-weight: bold; vertical-align: middle; }
                 .empty-box-cell { text-align: center; color: #64748b; font-style: italic; padding: 12px; }
 
@@ -1086,23 +1097,15 @@
                 td:has(> span) { text-align: center; color: #94a3b8; font-size: 8pt; }
             </style>
             </head><body>
-            <div id="pdf-content">
+            <div class="pdf-container">
                 <div class="summary-section">
                     <h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}${boxTypesHtml}
                 </div>
-                <div class="table-section">
-                    <table>
-                        <thead>
-                            <tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr>
-                        </thead>
-                        <tbody id="inventory-table-body">
-                           ${tableBodyHtml}
-                        </tbody>
-                    </table>
-                </div>
+                ${allBoxesHtml}
             </div>
             </body></html>`;
         }
+
 
         /**
          * [REVISED] Generates and saves a PDF of the inventory with improved formatting and headers.
@@ -1117,14 +1120,21 @@
 
             const htmlToExport = generateInventoryHtml('pdf');
             
+            // Create a temporary, off-screen element to render the HTML.
+            // This element will be passed to html2pdf.js.
             const element = document.createElement('div');
+            element.style.position = 'absolute';
+            element.style.left = '-9999px'; // Move it off-screen
             element.innerHTML = htmlToExport;
-            const contentToPrint = element.querySelector('#pdf-content');
+            document.body.appendChild(element);
 
+            const contentToPrint = element.querySelector('.pdf-container');
+            
             if (!contentToPrint) {
-                console.error("Could not find #pdf-content element to print.");
+                console.error("Could not find .pdf-container element to print.");
                 showInfoModal("An error occurred while preparing the PDF. Could not find content.", "Error");
                 loadingOverlay.style.display = 'none';
+                document.body.removeChild(element); // Clean up
                 return;
             }
 
@@ -1140,7 +1150,6 @@
 
             worker.toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
-
                 // Add page number footer to all pages
                 for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
@@ -1156,11 +1165,13 @@
             }).save().then(() => {
                 loadingOverlay.style.display = 'none';
                 loadingOverlay.querySelector('p').textContent = 'Connecting...';
+                document.body.removeChild(element); // Clean up the temporary element
             }).catch(err => {
                 console.error("PDF generation failed:", err);
                 showInfoModal("An error occurred while generating the PDF. Please try again.", "Error");
                 loadingOverlay.style.display = 'none';
                 loadingOverlay.querySelector('p').textContent = 'Connecting...';
+                document.body.removeChild(element); // Clean up on error too
             });
         }
 
