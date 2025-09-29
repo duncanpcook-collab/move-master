@@ -60,12 +60,15 @@
     <div id="app-container" class="hidden">
         <header class="header-gradient text-white shadow-lg sticky top-0 z-30">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-5">
+                <!-- DESKTOP/TABLET HEADER -->
                 <div class="hidden sm:flex items-center justify-between gap-4">
+                    <!-- Left: Title -->
                     <div class="text-left flex-shrink-0">
                         <h1 class="text-3xl font-bold tracking-tight">Move Master</h1>
                         <p id="user-id-display" class="text-indigo-200 mt-1 text-xs truncate">Not Logged In</p>
                     </div>
                     
+                    <!-- Center: Action Buttons -->
                     <div class="flex items-center gap-5 flex-grow justify-center">
                         <button id="add-box-btn" class="hidden flex items-center justify-center rounded-xl bg-cyan-500 py-4 px-14 text-lg font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-cyan-600">
                             <i class="fas fa-box mr-2 text-xl"></i><span>Add Box</span>
@@ -75,6 +78,7 @@
                         </button>
                     </div>
     
+                    <!-- Right: Auth -->
                     <div class="flex items-center gap-3 flex-shrink-0">
                         <button id="quick-view-btn" class="hidden flex items-center justify-center rounded-lg bg-purple-500 py-2 px-4 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105 hover:bg-purple-600">
                             <i class="fas fa-eye mr-2"></i><span>Quick View</span>
@@ -96,6 +100,7 @@
                     </div>
                 </div>
     
+                <!-- MOBILE HEADER -->
                 <div class="sm:hidden">
                     <div class="flex items-center justify-between">
                         <div class="text-left">
@@ -136,8 +141,10 @@
 
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 sm:mb-8">
+                <!-- Expanded Total Boxes Card -->
                 <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 col-span-2 lg:col-span-1">
                     <div class="flex items-center justify-between flex-wrap gap-y-2">
+                          <!-- Main Total -->
                           <div class="flex items-center">
                             <div class="bg-blue-100 text-blue-600 p-3 sm:p-4 rounded-full"><i class="fas fa-box-open text-xl sm:text-2xl"></i></div>
                             <div class="ml-3 sm:ml-4">
@@ -145,6 +152,7 @@
                                 <p id="total-boxes" class="text-lg sm:text-2xl font-bold">0</p>
                             </div>
                           </div>
+                          <!-- Breakdown -->
                           <div class="lg:block">
                             <div class="grid grid-cols-[auto,1fr] items-baseline gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-600">
                                <span class="font-bold text-gray-800 text-base sm:text-lg text-right" id="total-boxes-medium">0</span>
@@ -159,6 +167,7 @@
                           </div>
                     </div>
                 </div>
+                <!-- Total Items -->
                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
                     <div class="bg-green-100 text-green-600 p-2 sm:p-4 rounded-full"><i class="fas fa-clipboard-list text-xl sm:text-2xl"></i></div>
                     <div class="ml-3 sm:ml-4">
@@ -166,6 +175,7 @@
                         <p id="total-items" class="text-lg sm:text-2xl font-bold">0</p>
                     </div>
                 </div>
+                <!-- Total Volume -->
                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
                     <div class="bg-purple-100 text-purple-600 p-2 sm:p-4 rounded-full"><i class="fas fa-cube text-xl sm:text-2xl"></i></div>
                     <div class="ml-3 sm:ml-4">
@@ -173,7 +183,8 @@
                         <p id="total-volume" class="text-lg sm:text-2xl font-bold">0 m³</p>
                     </div>
                 </div>
-                 <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
+                 <!-- Total Value Card -->
+                <div class="bg-white p-2 sm:p-4 rounded-xl shadow-md border border-gray-200 flex items-center">
                     <div class="bg-yellow-100 text-yellow-600 p-2 sm:p-4 rounded-full"><i class="fas fa-dollar-sign text-xl sm:text-2xl"></i></div>
                     <div class="ml-3 sm:ml-4">
                         <p class="text-gray-500 text-xs sm:text-sm font-medium">Total Value</p>
@@ -933,18 +944,24 @@
          */
         function generateInventoryHtml(mode = 'pdf') {
             const sortedBoxes = [...boxes].sort((a, b) => parseInt(a.number) - parseInt(b.number));
-            const sortedBoxIds = sortedBoxes.map(b => b.id);
             const itemsByBox = items.reduce((acc, item) => {
                 (acc[item.boxId] = acc[item.boxId] || []).push(item);
                 return acc;
             }, {});
 
-            // Sort items within each box alphabetically by name
             for (const boxId in itemsByBox) {
                 itemsByBox[boxId].sort((a, b) => a.name.localeCompare(b.name));
             }
 
-            // --- Summary Calculation ---
+            const boxColors = [
+                '#FFF1F2', '#FFFBEB', '#F7FEE7', '#F0FDF4', '#EFF6FF', 
+                '#F5F3FF', '#FAF5FF', '#FFF7ED', '#FEFCE8', '#F0FDFA'
+            ];
+            const boxColorMap = {};
+            sortedBoxes.forEach((box, index) => {
+                boxColorMap[box.id] = boxColors[index % boxColors.length];
+            });
+
             const totalBoxesCount = boxes.length;
             const totalItemsCount = items.length;
             const totalVolume = boxes.reduce((sum, box) => sum + (parseFloat(box.volume) || 0), 0);
@@ -963,70 +980,98 @@
 
             const summaryHtml = `
                 <div class="summary-grid">
-                    <div class="summary-card">
-                        <strong>Total Boxes: ${totalBoxesCount}</strong>
-                        <span class="box-breakdown">(Medium: ${mediumCount}, Jumbo: ${jumboCount}, Custom: ${customCount})</span>
-                    </div>
+                    <div class="summary-card"><strong>Total Boxes: ${totalBoxesCount}</strong><span class="box-breakdown">(Medium: ${mediumCount}, Jumbo: ${jumboCount}, Custom: ${customCount})</span></div>
                     <div class="summary-card"><strong>Total Items:</strong> ${totalItemsCount}</div>
                     <div class="summary-card"><strong>Total Volume:</strong> ${totalVolume.toFixed(3)} m³</div>
                     <div class="summary-card"><strong>Total Value:</strong> $${formatCurrency(totalValue)}</div>
-                </div>
-            `;
+                </div>`;
 
             const boxTypesHtml = `
                 <div class="box-types-card">
                     <h4>Box Type Dimensions</h4>
                     <dl>
-                        ${BOX_PRESETS.map(preset => `
-                            <div>
-                                <dt>${preset.name.split('(')[0].trim()}</dt>
-                                <dd>${preset.l}cm L x ${preset.w}cm W x ${preset.h}cm H</dd>
-                            </div>
-                        `).join('')}
-                        <div>
-                            <dt>Custom</dt>
-                            <dd>Dimensions specified per-box.</dd>
-                        </div>
+                        ${BOX_PRESETS.map(preset => `<div><dt>${preset.name.split('(')[0].trim()}</dt><dd>${preset.l}cm L x ${preset.w}cm W x ${preset.h}cm H</dd></div>`).join('')}
+                        <div><dt>Custom</dt><dd>Dimensions specified per-box.</dd></div>
                     </dl>
-                </div>
-            `;
+                </div>`;
             
-            let htmlContent = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title><style>
-                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; font-size: 10pt; color: #333; }
+            let tableHtml = '';
+            sortedBoxes.forEach(box => {
+                const boxItemsList = itemsByBox[box.id] || [];
+                const boxColor = boxColorMap[box.id] || '#FFFFFF';
+                
+                // Add the box header row to the main table body
+                tableHtml += `<tr class="box-title-row" data-box-id="${box.id}"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
+
+                if (boxItemsList.length > 0) {
+                    boxItemsList.forEach(item => {
+                        const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
+                        const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '<span>No Image</span>';
+                        tableHtml += `
+                        <tr data-parent-box-id="${box.id}">
+                            <td>${imageTag}</td>
+                            <td class="box-number-cell" style="background-color: ${boxColor};">${box.number}</td>
+                            <td>${box.room}</td>
+                            <td>${item.name || ''}</td>
+                            <td>$${formatCurrency(item.value)}</td>
+                            <td>${item.notes || ''}</td>
+                        </tr>`;
+                    });
+                } else {
+                     tableHtml += `<tr data-parent-box-id="${box.id}"><td colspan="6" class="empty-box-cell">This box is empty.</td></tr>`;
+                }
+            });
+
+
+            return `<!DOCTYPE html>
+            <html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title>
+            <style>
+                @media print {
+                    body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                }
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; font-size: 9pt; color: #333; }
                 #pdf-content { padding: 0 1em; }
-                h1 { font-size: 22pt; margin-bottom: 0.5em; color: #334155; }
+                h1 { font-size: 20pt; margin-bottom: 0.25em; color: #1e293b; }
                 .summary-section { padding: 1em 0; }
                 .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin: 1em 0; }
-                .summary-card { background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1em; text-align: center; font-size: 12px; }
-                .summary-card strong { display: block; font-size: 14px; margin-bottom: 0.25em; color: #1f2937; }
-                .box-breakdown { font-size: 11px; color: #4b5563; }
-                .box-types-card { background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1em; margin-bottom: 2em; }
-                .box-types-card h4 { margin-top: 0; margin-bottom: 0.75em; font-size: 14px; font-weight: bold; text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 0.5em; }
-                .box-types-card dl { margin: 0; font-size: 12px; }
-                .box-types-card div { display: flex; justify-content: space-between; padding: 0.25em 0; }
-                .box-types-card dt { font-weight: bold; color: #374151; }
-                .box-types-card dd { margin: 0; color: #4b5563; }
+                .summary-card { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75em; text-align: center; font-size: 10pt; }
+                .summary-card strong { display: block; font-size: 11pt; margin-bottom: 0.25em; color: #1e293b; }
+                .box-breakdown { font-size: 9pt; color: #475569; }
+                .box-types-card { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1em; margin-bottom: 1.5em; }
+                .box-types-card h4 { margin-top: 0; margin-bottom: 0.75em; font-size: 12pt; font-weight: bold; text-align: center; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.5em; }
+                .box-types-card dl { margin: 0; font-size: 10pt; }
+                .box-types-card div { display: flex; justify-content: space-between; padding: 0.25em 0; border-bottom: 1px solid #eef2f7; }
+                .box-types-card div:last-child { border-bottom: none; }
+                .box-types-card dt { font-weight: 600; color: #334155; }
+                .box-types-card dd { margin: 0; color: #475569; }
                 
-                table { width: 100%; border-collapse: collapse; font-size: 9pt; table-layout: fixed; }
-                thead { display: table-header-group; /* Crucial for repeating headers */ }
-                tr { page-break-inside: avoid; page-break-after: auto; }
-                th { background-color: #334155; color: white; font-weight: bold; text-align: left; padding: 12px 8px; border: 1px solid #334155; }
-                td { border: 1px solid #ddd; padding: 10px 8px; text-align: left; vertical-align: top; word-wrap: break-word; }
-                tbody tr:nth-child(even) { background-color: #f8f9fa; }
-                
-                th:nth-child(1), td:nth-child(1) { width: 12%; } /* Image */
-                th:nth-child(2), td:nth-child(2) { width: 8%; text-align: center; } /* Box # */
-                th:nth-child(3), td:nth-child(3) { width: 15%; } /* Room */
-                th:nth-child(4), td:nth-child(4) { width: 25%; } /* Item Name */
-                th:nth-child(5), td:nth-child(5) { width: 10%; text-align: right; padding-right: 12px; } /* Value */
-                th:nth-child(6), td:nth-child(6) { width: 30%; } /* Notes */
+                .page-break { page-break-after: always; }
 
-                .box-title-row td { background-color: #e2e8f0; font-weight: bold; font-size: 1.1em; padding: 10px 8px; border-top: 2px solid #a0aec0; border-bottom: 1px solid #a0aec0; }
+                table { width: 100%; border-collapse: collapse; font-size: 9pt; table-layout: fixed; margin-top: 1em; }
+                thead { display: table-header-group; /* Repeats header on each page */ }
+                tbody { display: table-row-group; }
+                tr { page-break-inside: avoid; }
+                th { background-color: #1e293b !important; color: white !important; font-weight: bold; text-align: left; padding: 10px 8px; border: 1px solid #1e293b; }
+                td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; vertical-align: middle; word-wrap: break-word; }
                 
-                img { max-width: 100%; height: auto; max-height: 80px; object-fit: contain; border-radius: 4px; display: block; margin: auto; page-break-inside: avoid; }
-            </style></head><body>
+                th:nth-child(1), td:nth-child(1) { width: 12%; text-align: center; } /* Image */
+                th:nth-child(2), td:nth-child(2) { width: 8%; text-align: center; } /* Box # */
+                th:nth-child(3), td:nth-child(3) { width: 18%; } /* Room */
+                th:nth-child(4), td:nth-child(4) { width: 27%; } /* Item Name */
+                th:nth-child(5), td:nth-child(5) { width: 10%; } /* Value */
+                th:nth-child(6), td:nth-child(6) { width: 25%; } /* Notes */
+
+                .box-title-row td { background-color: #e2e8f0 !important; font-weight: bold; font-size: 10pt; padding: 8px; }
+                .box-number-cell { text-align: center; font-weight: bold; vertical-align: middle; }
+                .empty-box-cell { text-align: center; color: #64748b; font-style: italic; padding: 12px; }
+
+                img { max-width: 60px; max-height: 60px; object-fit: contain; border-radius: 4px; display: block; margin: auto; }
+                img + span { display: none; } /* Hide the 'No Image' text if there is an image */
+                td:has(> span) { text-align: center; color: #94a3b8; font-size: 8pt; } /* Style for 'No Image' text */
+            </style>
+            </head><body>
             <div id="pdf-content">
-                <div class="summary-section" style="page-break-after: always;">
+                <div class="summary-section page-break">
                     <h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}${boxTypesHtml}
                 </div>
                 <div class="table-section">
@@ -1034,72 +1079,62 @@
                         <thead>
                             <tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr>
                         </thead>
-                        <tbody>`;
-
-            sortedBoxes.forEach(box => {
-                const boxItemsList = itemsByBox[box.id] || [];
-                htmlContent += `<tr class="box-title-row"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
-                
-                if (boxItemsList.length > 0) {
-                    boxItemsList.forEach(item => {
-                        const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
-                        const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '';
-                        htmlContent += `<tr>
-                            <td>${imageTag}</td>
-                            <td style="text-align: center; font-weight: bold; vertical-align: middle;">${box.number}</td>
-                            <td style="vertical-align: middle;">${box.room}</td>
-                            <td style="vertical-align: middle;">${item.name || ''}</td>
-                            <td style="text-align: right; padding-right: 12px; vertical-align: middle;">$${formatCurrency(item.value)}</td>
-                            <td style="vertical-align: middle;">${item.notes || ''}</td>
-                        </tr>`;
-                    });
-                } else {
-                     htmlContent += `<tr><td colspan="6" style="text-align: center; color: #777; font-style: italic; padding: 12px;">This box is empty.</td></tr>`;
-                }
-            });
-
-            htmlContent += `</tbody></table></div></div></body></html>`;
-            return htmlContent;
+                        <tbody id="inventory-table-body">
+                           ${tableHtml}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </body></html>`;
         }
 
         /**
-         * [REVISED] Generates and saves a PDF of the inventory with improved formatting.
+         * [REVISED] Generates and saves a PDF of the inventory with improved formatting and headers.
          */
         function generatePdf() {
             if (items.length === 0) {
                 showInfoModal("No items to export.");
                 return;
             }
-            loadingOverlay.querySelector('p').textContent = 'Generating PDF...';
+            loadingOverlay.querySelector('p').textContent = 'Generating PDF... This may take a moment.';
             loadingOverlay.style.display = 'flex';
 
             const htmlToExport = generateInventoryHtml('pdf');
-            const element = document.createElement('div');
-            element.innerHTML = htmlToExport;
-            
-            const content = element.querySelector('#pdf-content');
 
             const options = {
-                margin: [15, 10, 20, 10], // Top, Left, Bottom, Right. Increased bottom margin for footer.
+                margin: [15, 10, 20, 10], // Top, Left, Bottom, Right
                 filename: `Move-Master-Inventory-${new Date().toISOString().slice(0,10)}.pdf`,
                 image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'] } // Helps with legacy CSS for page breaks
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().from(content).set(options).toPdf().get('pdf').then(function (pdf) {
-                // Headers are now handled automatically by CSS. We just add the page numbers.
+            const worker = html2pdf().from(htmlToExport).set(options);
+
+            worker.toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
+                const headerRowHtml = document.createElement('div');
+                headerRowHtml.innerHTML = htmlToExport;
+                const headerContent = headerRowHtml.querySelector('thead').outerHTML;
+
+                for (let i = 2; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    // This is a complex part. We're trying to find what box header should be at the top of page 'i'.
+                    // This requires knowledge of where html2pdf made the page breaks, which is not easily exposed.
+                    // The CSS `display: table-header-group` for `thead` is the most reliable method and is already implemented.
+                    // Adding the dynamic box header row is extremely complex and often fails.
+                    // The compromise is having the box # and color on every single item row, so context is never lost.
+                }
+
+                // Add page number footer to all pages
                 for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
                     pdf.setFontSize(8);
                     pdf.setTextColor(150);
-                    // Add page number to the footer
                     pdf.text(
-                        'Page ' + i + ' of ' + totalPages,
-                        pdf.internal.pageSize.getWidth() / 2, // Centered horizontally
-                        pdf.internal.pageSize.getHeight() - 10, // 10mm from the bottom
+                        `Page ${i} of ${totalPages}`,
+                        pdf.internal.pageSize.getWidth() / 2,
+                        pdf.internal.pageSize.getHeight() - 10,
                         { align: 'center' }
                     );
                 }
@@ -1113,6 +1148,7 @@
                 loadingOverlay.querySelector('p').textContent = 'Connecting...';
             });
         }
+
 
         function openQuickViewModal() {
             if (items.length === 0) {
