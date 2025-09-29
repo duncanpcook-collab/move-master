@@ -995,20 +995,30 @@
                     </dl>
                 </div>`;
             
-            let tableHtml = '';
+            let tableBodyHtml = '';
             sortedBoxes.forEach(box => {
                 const boxItemsList = itemsByBox[box.id] || [];
                 const boxColor = boxColorMap[box.id] || '#FFFFFF';
                 
-                // Add the box header row to the main table body
-                tableHtml += `<tr class="box-title-row" data-box-id="${box.id}"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
+                tableBodyHtml += `<tr class="box-title-row" style="page-break-after: avoid;"><td colspan="6">Box ${box.number} - ${box.room}</td></tr>`;
+                
+                tableBodyHtml += `
+                    <tr class="item-header-row" style="page-break-after: avoid;">
+                        <td>Image</td>
+                        <td>Box #</td>
+                        <td>Room</td>
+                        <td>Item Name</td>
+                        <td>Value</td>
+                        <td>Notes</td>
+                    </tr>
+                `;
 
                 if (boxItemsList.length > 0) {
                     boxItemsList.forEach(item => {
                         const imageUrl = (item.photoDataUrls && item.photoDataUrls.length > 0) ? item.photoDataUrls[0] : '';
                         const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${item.name}">` : '<span>No Image</span>';
-                        tableHtml += `
-                        <tr data-parent-box-id="${box.id}">
+                        tableBodyHtml += `
+                        <tr>
                             <td>${imageTag}</td>
                             <td class="box-number-cell" style="background-color: ${boxColor};">${box.number}</td>
                             <td>${box.room}</td>
@@ -1018,10 +1028,9 @@
                         </tr>`;
                     });
                 } else {
-                     tableHtml += `<tr data-parent-box-id="${box.id}"><td colspan="6" class="empty-box-cell">This box is empty.</td></tr>`;
+                     tableBodyHtml += `<tr><td colspan="6" class="empty-box-cell">This box is empty.</td></tr>`;
                 }
             });
-
 
             return `<!DOCTYPE html>
             <html lang="en"><head><meta charset="UTF-8"><title>Move Master Inventory List</title>
@@ -1032,7 +1041,7 @@
                 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; font-size: 9pt; color: #333; }
                 #pdf-content { padding: 0 1em; }
                 h1 { font-size: 20pt; margin-bottom: 0.25em; color: #1e293b; }
-                .summary-section { padding: 1em 0; }
+                .summary-section { padding: 1em 0; page-break-after: auto; }
                 .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin: 1em 0; }
                 .summary-card { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75em; text-align: center; font-size: 10pt; }
                 .summary-card strong { display: block; font-size: 11pt; margin-bottom: 0.25em; color: #1e293b; }
@@ -1045,33 +1054,40 @@
                 .box-types-card dt { font-weight: 600; color: #334155; }
                 .box-types-card dd { margin: 0; color: #475569; }
                 
-                .page-break { page-break-after: always; }
-
                 table { width: 100%; border-collapse: collapse; font-size: 9pt; table-layout: fixed; margin-top: 1em; }
-                thead { display: table-header-group; /* Repeats header on each page */ }
+                thead { display: table-header-group; }
                 tbody { display: table-row-group; }
                 tr { page-break-inside: avoid; }
                 th { background-color: #1e293b !important; color: white !important; font-weight: bold; text-align: left; padding: 10px 8px; border: 1px solid #1e293b; }
                 td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; vertical-align: middle; word-wrap: break-word; }
                 
-                th:nth-child(1), td:nth-child(1) { width: 12%; text-align: center; } /* Image */
-                th:nth-child(2), td:nth-child(2) { width: 8%; text-align: center; } /* Box # */
-                th:nth-child(3), td:nth-child(3) { width: 18%; } /* Room */
-                th:nth-child(4), td:nth-child(4) { width: 27%; } /* Item Name */
-                th:nth-child(5), td:nth-child(5) { width: 10%; } /* Value */
-                th:nth-child(6), td:nth-child(6) { width: 25%; } /* Notes */
+                .item-header-row td {
+                    background-color: #1e293b !important;
+                    color: white !important;
+                    font-weight: bold;
+                    text-align: left;
+                    padding: 10px 8px;
+                    border: 1px solid #1e293b;
+                }
+
+                th:nth-child(1), .item-header-row td:nth-child(1), td:nth-child(1) { width: 12%; text-align: center; }
+                th:nth-child(2), .item-header-row td:nth-child(2), td:nth-child(2) { width: 8%; text-align: center; }
+                th:nth-child(3), .item-header-row td:nth-child(3), td:nth-child(3) { width: 18%; }
+                th:nth-child(4), .item-header-row td:nth-child(4), td:nth-child(4) { width: 27%; }
+                th:nth-child(5), .item-header-row td:nth-child(5), td:nth-child(5) { width: 10%; }
+                th:nth-child(6), .item-header-row td:nth-child(6), td:nth-child(6) { width: 25%; }
 
                 .box-title-row td { background-color: #e2e8f0 !important; font-weight: bold; font-size: 10pt; padding: 8px; }
                 .box-number-cell { text-align: center; font-weight: bold; vertical-align: middle; }
                 .empty-box-cell { text-align: center; color: #64748b; font-style: italic; padding: 12px; }
 
                 img { max-width: 60px; max-height: 60px; object-fit: contain; border-radius: 4px; display: block; margin: auto; }
-                img + span { display: none; } /* Hide the 'No Image' text if there is an image */
-                td:has(> span) { text-align: center; color: #94a3b8; font-size: 8pt; } /* Style for 'No Image' text */
+                img + span { display: none; }
+                td:has(> span) { text-align: center; color: #94a3b8; font-size: 8pt; }
             </style>
             </head><body>
             <div id="pdf-content">
-                <div class="summary-section page-break">
+                <div class="summary-section">
                     <h1>Move Master Inventory List</h1><p>Generated on: ${new Date().toLocaleString()}</p>${summaryHtml}${boxTypesHtml}
                 </div>
                 <div class="table-section">
@@ -1080,7 +1096,7 @@
                             <tr><th>Image</th><th>Box #</th><th>Room</th><th>Item Name</th><th>Value</th><th>Notes</th></tr>
                         </thead>
                         <tbody id="inventory-table-body">
-                           ${tableHtml}
+                           ${tableBodyHtml}
                         </tbody>
                     </table>
                 </div>
@@ -1101,7 +1117,6 @@
 
             const htmlToExport = generateInventoryHtml('pdf');
             
-            // Create a temporary element to parse the HTML string so we can pass a DOM element to the library
             const element = document.createElement('div');
             element.innerHTML = htmlToExport;
             const contentToPrint = element.querySelector('#pdf-content');
@@ -1121,14 +1136,10 @@
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            // Pass the DOM element, not the HTML string
             const worker = html2pdf().from(contentToPrint).set(options);
 
             worker.toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
-               
-                // The CSS `display: table-header-group` for `thead` is the most reliable method for repeating headers and is already implemented in the CSS.
-                // The box number is also repeated on every item row for context when a box's content breaks across pages.
 
                 // Add page number footer to all pages
                 for (let i = 1; i <= totalPages; i++) {
