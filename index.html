@@ -1001,7 +1001,7 @@
                 const boxColor = boxColorMap[box.id] || '#FFFFFF';
                 
                 let boxTableHtml = `
-                    <table class="box-table" style="page-break-inside: avoid; ${index > 0 ? 'page-break-before: always;' : ''}">
+                    <table class="box-table" style="${index > 0 ? 'page-break-before: always;' : ''}">
                         <thead>
                             <tr class="box-title-row"><th colspan="6">Box ${box.number} - ${box.room}</th></tr>
                             <tr class="item-header-row">
@@ -1121,9 +1121,8 @@
             // Use DOMParser to safely and correctly parse the full HTML string into a document object.
             const parser = new DOMParser();
             const pdfDoc = parser.parseFromString(htmlString, 'text/html');
-            const contentToPrint = pdfDoc.body; // We will render the entire body content.
+            const contentToPrint = pdfDoc.body;
 
-            // Check if parsing was successful and there's content to print.
             if (!contentToPrint || !contentToPrint.hasChildNodes()) {
                 console.error("Parsed document for PDF is empty or invalid.");
                 showInfoModal("An error occurred while preparing the PDF content.", "Error");
@@ -1139,13 +1138,11 @@
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            // Pass the parsed and validated DOM element to the PDF generator.
             const worker = html2pdf().from(contentToPrint).set(options);
 
             worker.toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
                 
-                // Add page number footer to all pages.
                 for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
                     pdf.setFontSize(8);
