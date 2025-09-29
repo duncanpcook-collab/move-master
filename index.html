@@ -1100,6 +1100,18 @@
             loadingOverlay.style.display = 'flex';
 
             const htmlToExport = generateInventoryHtml('pdf');
+            
+            // Create a temporary element to parse the HTML string so we can pass a DOM element to the library
+            const element = document.createElement('div');
+            element.innerHTML = htmlToExport;
+            const contentToPrint = element.querySelector('#pdf-content');
+
+            if (!contentToPrint) {
+                console.error("Could not find #pdf-content element to print.");
+                showInfoModal("An error occurred while preparing the PDF. Could not find content.", "Error");
+                loadingOverlay.style.display = 'none';
+                return;
+            }
 
             const options = {
                 margin: [15, 10, 20, 10], // Top, Left, Bottom, Right
@@ -1109,22 +1121,14 @@
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            const worker = html2pdf().from(htmlToExport).set(options);
+            // Pass the DOM element, not the HTML string
+            const worker = html2pdf().from(contentToPrint).set(options);
 
             worker.toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
-                const headerRowHtml = document.createElement('div');
-                headerRowHtml.innerHTML = htmlToExport;
-                const headerContent = headerRowHtml.querySelector('thead').outerHTML;
-
-                for (let i = 2; i <= totalPages; i++) {
-                    pdf.setPage(i);
-                    // This is a complex part. We're trying to find what box header should be at the top of page 'i'.
-                    // This requires knowledge of where html2pdf made the page breaks, which is not easily exposed.
-                    // The CSS `display: table-header-group` for `thead` is the most reliable method and is already implemented.
-                    // Adding the dynamic box header row is extremely complex and often fails.
-                    // The compromise is having the box # and color on every single item row, so context is never lost.
-                }
+               
+                // The CSS `display: table-header-group` for `thead` is the most reliable method for repeating headers and is already implemented in the CSS.
+                // The box number is also repeated on every item row for context when a box's content breaks across pages.
 
                 // Add page number footer to all pages
                 for (let i = 1; i <= totalPages; i++) {
@@ -1394,3 +1398,4 @@
     </script>
 </body>
 </html>
+
